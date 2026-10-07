@@ -1,0 +1,1542 @@
+@import '@astryxdesign/core/reset.css';
+@import '@astryxdesign/core/astryx.css';
+/* theme: Astryx Stone (src/theme). */
+@import '../theme/portfolio.css';
+
+html {
+  scroll-behavior: smooth;
+  /*
+   * Jumps to #sections stop below the sticky header (its padding on both sides
+   * plus its 32px content row) with a little breathing room.
+   */
+  scroll-padding-top: calc(
+    var(--nav-padding-block) * 2 + var(--size-element-lg) + var(--spacing-4)
+  );
+  /* Match the page surface so overscroll and safe areas follow light/dark mode too. */
+  background-color: var(--color-background-surface);
+  color: var(--color-text-primary);
+}
+
+/*
+ * Liquid glass header. The bar stays 80% opaque in the theme's surface
+ * colour; what scrolls beneath shows through blurred and colour-boosted,
+ * with a bright specular top edge, a soft lower glint and a faint sheen so
+ * it reads as a glass slab. It shares the liquid glass material's physics
+ * (light, refraction, dispersion, depth; see below), with no grain. Falls back
+ * to solid where blur is unsupported or the visitor prefers reduced
+ * transparency.
+ */
+.astryx-app-shell-header.astryx-app-shell-header {
+  z-index: 50;
+  background-color: var(--color-background-surface);
+  box-shadow:
+    /* light: specular rim along the top */
+    inset 0 1px 0 0 var(--glass-highlight),
+    /* refraction: the lower edge catching light, and the band inside it */ inset 0 -1px 0 0
+      var(--glass-edge),
+    inset 0 -2px 0 -1px var(--glass-highlight),
+    inset 0 -10px 14px -12px var(--glass-highlight),
+    /* dark mode: shade pooling along the lower edge */ inset 0 -14px 20px -16px var(--lg-shade),
+    /* dispersion: a warm and cool fringe along the bottom edge */ inset 0 -1px 0 0
+      color-mix(in srgb, var(--lg-fringe-cool) 60%, transparent),
+    /* depth: soft shadow beneath the bar */ 0 1px 0 0
+      color-mix(in srgb, var(--lg-fringe-warm) 25%, transparent),
+    0 12px 32px -24px var(--glass-shadow);
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .astryx-app-shell-header.astryx-app-shell-header {
+    background-color: color-mix(in srgb, var(--color-background-surface) 80%, transparent);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+  }
+  .astryx-app-shell-header.astryx-app-shell-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(to bottom, var(--glass-sheen) 0%, transparent 65%);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .astryx-app-shell-header.astryx-app-shell-header {
+    background-color: var(--color-background-surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .astryx-app-shell-header.astryx-app-shell-header::before {
+    display: none;
+  }
+}
+
+/*
+ * Liquid glass material: the CTAs (primary and secondary buttons) and the
+ * navbar's current or keyboard-focused item. Built from the properties of a
+ * real glass surface rather than blur alone:
+ *  - Light: light from the top left, as a bright specular rim on the top
+ *    left edge and a soft glow from that corner (no streak).
+ *  - Refraction: a caustic band gathered inside the lower edge, as light
+ *    bends through the curved rim.
+ *  - Depth: shading under the top rim for thickness, plus a contact shadow
+ *    and a wide ambient shadow so the pill floats.
+ *  - Dispersion: a faint warm fringe on one edge and a cool one on the other.
+ *  - Frost: a light blur with a colour and brightness boost; no grain, so
+ *    the glass stays crystal clear.
+ *  - Splay: a soft glow spreading up from the bottom.
+ * Each element sets the --lg-* tokens; the material is shared. In dark mode
+ * the glass turns smoky and shadowed, as Apple's does: darker fills, a shade
+ * pooling in the body and along the edges, a dark outer edge, and dimmer
+ * light, sheen, glow and fringes (light-dark() tokens). The :not(#\#)
+ * chain outranks the design system's atomic classes (which use three).
+ * Solid and unblurred with reduced transparency.
+ */
+:root {
+  /* Dispersion: the warm and cool fringes where glass splits light. */
+  --lg-fringe-warm: light-dark(rgb(255 70 130 / 0.28), rgb(255 70 130 / 0.18));
+  --lg-fringe-cool: light-dark(rgb(40 160 255 / 0.32), rgb(40 160 255 / 0.22));
+  /* Dark mode glass is smoky and shadowed (as Apple's is): a shade pools in
+     the body and along the edges. Transparent in light mode. */
+  --lg-shade: light-dark(rgb(0 0 0 / 0), rgb(0 0 0 / 0.5));
+  --lg-rim-dark: light-dark(rgb(0 0 0 / 0), rgb(0 0 0 / 0.55));
+}
+
+/* Tokens. Secondary: frosted clear glass with a faint brand edge. */
+.astryx-button[data-variant='secondary'] {
+  --lg-fill: light-dark(
+    color-mix(in srgb, var(--color-background-surface) 40%, transparent),
+    rgb(14 14 18 / 0.5)
+  );
+  --lg-fill-hover: light-dark(
+    color-mix(in srgb, var(--color-background-surface) 60%, transparent),
+    rgb(14 14 18 / 0.66)
+  );
+  --lg-fill-solid: var(--color-background-surface);
+  --lg-text: var(--color-text-primary);
+  --lg-light: var(--glass-highlight);
+  --lg-sheen: var(--glass-sheen);
+  --lg-ring: color-mix(in srgb, var(--color-brand-text) 16%, transparent);
+  --lg-ring-hover: color-mix(in srgb, var(--color-brand-text) 30%, transparent);
+  --lg-glow: color-mix(in srgb, var(--color-brand-text) 22%, transparent);
+  --lg-drop: 0 10px 26px -14px var(--glass-shadow);
+}
+/* Primary: tinted brand-blue glass, kept vivid: a near-solid fill and a
+   light sheen and glow so the colour isn't washed out. */
+.astryx-button[data-variant='primary'] {
+  /* Vivid, near-solid brand blue (tinted glass stays saturated). */
+  --lg-fill: light-dark(
+    color-mix(in srgb, var(--color-brand) 94%, transparent),
+    color-mix(in srgb, var(--color-brand) 92%, transparent)
+  );
+  --lg-fill-hover: var(--color-brand);
+  --lg-fill-solid: var(--color-brand);
+  --lg-text: rgb(255 255 255);
+  --lg-light: light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.34));
+  --lg-sheen: light-dark(rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.12));
+  --lg-ring: rgb(255 255 255 / 0.16);
+  --lg-ring-hover: rgb(255 255 255 / 0.28);
+  --lg-glow: light-dark(rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.1));
+  --lg-drop: 0 10px 26px -12px color-mix(in srgb, var(--color-brand) 70%, transparent);
+}
+/* Navbar item: a small brand-tinted pill with brand-blue text. */
+.astryx-top-nav-item {
+  --lg-fill: color-mix(in srgb, var(--color-brand-text) 12%, transparent);
+  --lg-fill-hover: color-mix(in srgb, var(--color-brand-text) 16%, transparent);
+  --lg-fill-solid: color-mix(in srgb, var(--color-brand-text) 10%, var(--color-background-surface));
+  --lg-text: var(--color-brand-text);
+  --lg-light: var(--glass-highlight);
+  --lg-sheen: var(--glass-sheen);
+  --lg-ring: color-mix(in srgb, var(--color-brand-text) 18%, transparent);
+  --lg-ring-hover: color-mix(in srgb, var(--color-brand-text) 28%, transparent);
+  --lg-glow: color-mix(in srgb, var(--color-brand-text) 20%, transparent);
+  --lg-drop: 0 6px 16px -10px var(--glass-shadow);
+}
+
+/* The material. */
+:is(
+    .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+  ):not(#\#):not(#\#):not(#\#):not(#\#) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--lg-text);
+  border-color: var(--glass-edge);
+  background-color: var(--lg-fill-solid);
+  box-shadow:
+    /* light: specular rim, brightest on the top left */
+    inset 1.5px 1.5px 0 -0.5px var(--lg-light),
+    inset 0 1px 0 0 var(--lg-light),
+    /* refraction: the lower rim catching light, and the caustic band inside it */ inset 0 -1.5px
+      0 -0.5px var(--lg-light),
+    inset 0 -9px 12px -8px var(--lg-light),
+    /* dispersion: warm and cool fringes */ inset 2px 0 0 -0.5px var(--lg-fringe-warm),
+    inset -2px 0 0 -0.5px var(--lg-fringe-cool),
+    /* depth: thickness under the top rim */ inset 0 10px 14px -11px rgb(0 0 0 / 0.2),
+    /* dark mode: shade pooling in the lower body and along the edges */ inset 0 -10px 16px -8px
+      var(--lg-shade),
+    inset 0 0 10px 0 color-mix(in srgb, var(--lg-shade) 50%, transparent),
+    /* edge */ inset 0 0 0 1px var(--lg-ring),
+    /* depth: a dark outer edge (dark mode), contact and ambient shadows */ 0 0 0 0.5px
+      var(--lg-rim-dark),
+    0 1px 2px rgb(0 0 0 / 0.1),
+    var(--lg-drop);
+}
+:is(
+    .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+  ):not(#\#):not(#\#):not(#\#):not(#\#)::before,
+:is(
+    .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+  ):not(#\#):not(#\#):not(#\#):not(#\#)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: opacity 280ms ease;
+}
+/* Light: a soft glow from the top-left corner over a top sheen; no streak,
+   so the glass stays clear. */
+:is(
+    .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+  ):not(#\#):not(#\#):not(#\#):not(#\#)::before {
+  background:
+    radial-gradient(90% 140% at 0% 0%, var(--lg-sheen) 0%, transparent 60%),
+    linear-gradient(to bottom, var(--lg-sheen) 0%, transparent 55%);
+  opacity: 0.95;
+}
+/* Splay: light spreading up from the bottom. */
+:is(
+    .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+  ):not(#\#):not(#\#):not(#\#):not(#\#)::after {
+  background: radial-gradient(140% 110% at 50% 140%, var(--lg-glow) 0%, transparent 72%);
+  opacity: 0.9;
+}
+:is(
+    .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+  ):not(#\#):not(#\#):not(#\#):not(#\#):hover {
+  --lg-ring: var(--lg-ring-hover);
+}
+:is(
+    .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+  ):not(#\#):not(#\#):not(#\#):not(#\#):hover::before,
+:is(
+    .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+  ):not(#\#):not(#\#):not(#\#):not(#\#):hover::after {
+  opacity: 1;
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :is(
+      .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
+      .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+    ):not(#\#):not(#\#):not(#\#):not(#\#) {
+    background-color: var(--lg-fill);
+    -webkit-backdrop-filter: blur(10px) saturate(180%) brightness(1.05);
+    backdrop-filter: blur(10px) saturate(180%) brightness(1.05);
+  }
+  :is(
+      .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
+      .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+    ):not(#\#):not(#\#):not(#\#):not(#\#):hover {
+    background-color: var(--lg-fill-hover);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :is(
+      .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
+      .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+    ):not(#\#):not(#\#):not(#\#):not(#\#),
+  :is(
+      .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
+      .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+    ):not(#\#):not(#\#):not(#\#):not(#\#):hover {
+    background-color: var(--lg-fill-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+/* The nav pill's inner label takes the pill's brand-blue text. Scoped to nav
+   items only: on buttons it would override the design system hiding the
+   label (color: transparent) while a button shows its loading spinner. */
+.astryx-top-nav-item:is([aria-current='page'], :focus-visible):not(#\#):not(#\#):not(#\#):not(#\#)
+  * {
+  color: inherit;
+}
+
+/* Navbar page links: 20px between them. */
+/* Each link sits in its own wrapper (for the hover hint); the row holding
+   the wrappers sets the spacing. */
+:has(> * > .astryx-top-nav-item):not(#\#):not(#\#):not(#\#):not(#\#) {
+  gap: var(--spacing-5);
+}
+
+/* Header vertical padding: 16px top and bottom at every viewport. The hero
+   height, sticky offsets, anchor scroll offset and mobile menu header all
+   follow this variable. */
+:root {
+  --nav-padding-block: var(--spacing-4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/*
+ * Footer columns, following the Astryx layout thresholds:
+ * 1 column below 768px, 2 from 768px, 4 above 1024px (the brand column is a little wider).
+ * Overrides the Grid's own column template, which lives in a lower-priority CSS layer.
+ */
+
+/* ---------- Editorial components (components/editorial) ---------- */
+
+/* StickySplit: 5/7 columns with a pinned aside on desktop. */
+@media (min-width: 1024px) {
+  .sticky-split {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: start;
+  }
+  .sticky-split-aside {
+    position: sticky;
+    top: calc(var(--nav-padding-block) * 2 + var(--size-element-lg) + var(--spacing-8));
+  }
+}
+
+/* IndexList rows: full-width, unstyled interactive rows. */
+.index-row {
+  display: flex;
+  width: 100%;
+  text-align: start;
+  color: inherit;
+  font: inherit;
+  text-decoration: none;
+  background: none;
+  border-inline: 0;
+  border-block-end: 0;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+.index-row:focus-visible {
+  outline: 2px solid var(--color-focus-ring, var(--color-brand));
+  outline-offset: 4px;
+  border-radius: var(--radius-container-sm, 4px);
+}
+
+/* IndexList row layout. */
+.index-row-content.index-row-content {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'number title arrow'
+    '. summary .';
+  column-gap: var(--spacing-4);
+  row-gap: var(--spacing-2);
+  align-items: baseline;
+}
+.index-row-content.is-unnumbered {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'title arrow'
+    'summary .';
+}
+.index-row-number {
+  grid-area: number;
+}
+.index-row-title {
+  grid-area: title;
+}
+.index-row-summary {
+  grid-area: summary;
+  max-inline-size: 40ch;
+}
+.index-row-arrow {
+  grid-area: arrow;
+  display: inline-flex;
+  align-self: center;
+}
+@media (min-width: 1024px) {
+  .index-row-content.index-row-content {
+    grid-template-columns: 3ch minmax(0, 1.3fr) minmax(0, 1fr) auto;
+    grid-template-areas: 'number title summary arrow';
+    column-gap: var(--spacing-8);
+    align-items: center;
+  }
+  .index-row-content.is-unnumbered {
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) auto;
+    grid-template-areas: 'title summary arrow';
+  }
+}
+
+/* BuildUp: each layer steps further in, so the lines stack like layers. */
+.build-up {
+  --layer-indent: var(--spacing-3);
+  border-block-end: 1px solid var(--color-border);
+}
+/* Label above the line on phones, beside it from tablet up. */
+.build-up-row.build-up-row {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-2);
+}
+@media (min-width: 768px) {
+  .build-up {
+    --layer-indent: var(--spacing-8);
+  }
+  .build-up-row.build-up-row {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--spacing-5);
+  }
+}
+
+/* Expanded IndexList detail lines up with the title, past the number column. */
+.index-row-detail {
+  padding-inline-start: calc(3ch + var(--spacing-4));
+}
+@media (min-width: 1024px) {
+  .index-row-detail {
+    padding-inline-start: calc(3ch + var(--spacing-8));
+  }
+}
+
+/* QuestionRail: 1, 2, then 4 columns, divided by hairlines. */
+.question-rail {
+  border-block: 1px solid var(--color-border);
+}
+.question-rail-item {
+  padding-block: var(--spacing-8);
+}
+.question-rail-item + .question-rail-item {
+  border-block-start: 1px solid var(--color-border);
+}
+@media (min-width: 768px) {
+  .question-rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .question-rail-item {
+    padding: var(--spacing-8) var(--spacing-6);
+  }
+  .question-rail-item + .question-rail-item {
+    border-block-start: 0;
+  }
+  .question-rail-item:nth-child(even) {
+    border-inline-start: 1px solid var(--color-border);
+  }
+  .question-rail-item:nth-child(n + 3) {
+    border-block-start: 1px solid var(--color-border);
+  }
+  /* Outer columns sit flush with the content edge; padding only between. */
+  .question-rail-item:nth-child(odd) {
+    padding-inline-start: 0;
+  }
+  .question-rail-item:nth-child(even) {
+    padding-inline-end: 0;
+  }
+}
+@media (min-width: 1024px) {
+  .question-rail {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .question-rail-item.question-rail-item {
+    padding-inline: var(--spacing-6);
+  }
+  .question-rail-item.question-rail-item:nth-child(4n + 1) {
+    padding-inline-start: 0;
+  }
+  .question-rail-item.question-rail-item:nth-child(4n) {
+    padding-inline-end: 0;
+  }
+  .question-rail-item:nth-child(n + 3) {
+    border-block-start: 0;
+  }
+  .question-rail-item + .question-rail-item {
+    border-inline-start: 1px solid var(--color-border);
+  }
+}
+
+/* Thinking: the featured title and the article back link. */
+.featured-article-link,
+.back-link {
+  color: inherit;
+  text-decoration: none;
+}
+.featured-article-link:hover h2 {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.12em;
+  text-decoration-color: var(--color-brand-text);
+}
+.back-link {
+  display: inline-flex;
+  color: var(--color-text-secondary);
+  transition: color 200ms ease;
+}
+.back-link:hover {
+  color: var(--color-text-primary);
+}
+
+/* Legal pages: paragraphs line up under the heading from tablet up; full width on phones. */
+@media (min-width: 768px) {
+  .legal-body {
+    padding-inline-start: calc(3ch + var(--spacing-4));
+  }
+}
+
+/* Mobile menu drawer: the header (logo and close) matches the navbar exactly,
+   16px top and bottom (--nav-padding-block) and the page gutter at the sides, so the
+   logo stays put when the drawer opens. The body shares the same gutter. */
+.astryx-mobile-nav > div > div:first-child {
+  block-size: auto;
+  min-block-size: 0;
+  padding: var(--nav-padding-block) var(--space-gutter);
+}
+.astryx-mobile-nav > div > div:nth-child(2) {
+  padding: 0 var(--space-gutter);
+}
+
+/* Mobile menu: full-width rows on hairlines, quiet contact links. */
+.menu-row {
+  display: flex;
+  padding-block: var(--spacing-5);
+  border-block-start: 1px solid var(--color-border);
+  color: inherit;
+  text-decoration: none;
+}
+.menu-row:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: var(--radius-container-sm, 4px);
+}
+.menu-row-arrow {
+  display: inline-flex;
+  align-self: center;
+  color: var(--color-text-secondary);
+  transition:
+    transform 250ms cubic-bezier(0.2, 0, 0, 1.4),
+    color 200ms ease;
+}
+.menu-row:hover .menu-row-arrow,
+.menu-row:active .menu-row-arrow {
+  color: var(--color-brand-text);
+  transform: translateX(4px);
+}
+.menu-contact {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+.menu-contact:hover {
+  color: var(--color-text-primary);
+}
+
+/* StepTimeline numeral: outlined, so it reads as structure, not content. */
+.step-row {
+  column-gap: var(--spacing-8);
+}
+.step-numeral {
+  /* Beside the step at every width: Display XL from tablet, Display M on phones. */
+  font-size: var(--type-display-xl-size);
+  line-height: var(--type-display-xl-leading);
+  min-inline-size: 2.2ch;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--color-text-secondary);
+  font-weight: 600;
+}
+
+@media (max-width: 767px) {
+  .step-row {
+    column-gap: var(--spacing-5);
+  }
+  .step-numeral {
+    font-size: var(--type-display-m-size);
+    line-height: 1;
+  }
+}
+
+/* SequenceRail: hairline columns like the question rail. Stacked on phones,
+   three columns on tablets and small laptops, one row from 1280px. */
+.sequence-rail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-block: 1px solid var(--color-border);
+}
+.sequence-rail-step {
+  padding-block: var(--spacing-8);
+}
+.sequence-rail-step + .sequence-rail-step {
+  border-block-start: 1px solid var(--color-border);
+}
+.sequence-rail-progress {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 1;
+  display: block;
+  block-size: 2px;
+  margin-block-start: -0.5px;
+  background-color: var(--color-brand-text);
+  transform-origin: left center;
+}
+@media (min-width: 768px) {
+  .sequence-rail {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .sequence-rail-step {
+    padding: var(--spacing-8) var(--spacing-6);
+  }
+  .sequence-rail-step + .sequence-rail-step {
+    border-block-start: 0;
+  }
+  .sequence-rail-step:not(:nth-child(3n + 1)) {
+    border-inline-start: 1px solid var(--color-border);
+  }
+  .sequence-rail-step:nth-child(n + 4) {
+    border-block-start: 1px solid var(--color-border);
+  }
+  /* Outer columns sit flush with the content edge; padding only between. */
+  .sequence-rail-step:nth-child(3n + 1) {
+    padding-inline-start: 0;
+  }
+  .sequence-rail-step:nth-child(3n) {
+    padding-inline-end: 0;
+  }
+}
+/* Pinned rail (SequenceRail isPinned): the track adds a third of a screen of
+   scroll per step; the stage sticks under the header with the rail centred
+   in the space below it. From 1280px the steps sit in one row; below that
+   they slide in sideways (.sequence-rail-sliding). */
+.sequence-pin {
+  block-size: calc(100svh + var(--steps) * 33svh);
+}
+.sequence-pin-stage {
+  position: sticky;
+  inset-block-start: var(--header-height);
+  min-block-size: calc(100svh - var(--header-height));
+  justify-content: center;
+  box-sizing: border-box;
+}
+/* The sliding row: one card per ~78% of the screen (max 320px), hairlines
+   between, so the next card peeks in from the right. Beats the stacked and
+   three-column borders above. */
+.sequence-rail.sequence-rail-sliding {
+  display: flex;
+  border-block: 1px solid var(--color-border);
+}
+.sequence-rail-sliding .sequence-rail-step.sequence-rail-step {
+  flex: 0 0 min(78vw, 20rem);
+  box-sizing: border-box;
+  padding: var(--spacing-8) var(--spacing-6);
+  border-block-start: 0;
+}
+.sequence-rail-sliding .sequence-rail-step.sequence-rail-step:first-child {
+  padding-inline-start: 0;
+}
+.sequence-rail-sliding .sequence-rail-step + .sequence-rail-step {
+  border-inline-start: 1px solid var(--color-border);
+}
+@media (min-width: 1280px) {
+  .sequence-rail {
+    grid-template-columns: repeat(var(--steps), minmax(0, 1fr));
+  }
+  .sequence-rail-step:nth-child(n + 4) {
+    border-block-start: 0;
+  }
+  .sequence-rail-step + .sequence-rail-step {
+    border-inline-start: 1px solid var(--color-border);
+  }
+  .sequence-rail-step.sequence-rail-step {
+    padding-inline: var(--spacing-6);
+  }
+  .sequence-rail-step.sequence-rail-step:first-child {
+    padding-inline-start: 0;
+  }
+  .sequence-rail-step.sequence-rail-step:last-child {
+    padding-inline-end: 0;
+  }
+}
+
+/* Form fields: the "∙ Required" marker in brand blue ("∙ Optional" stays
+   secondary). Astryx renders both in the same span, so required fields are
+   picked out by their required input. */
+.astryx-field:has(:is(input, textarea, select)[required], [aria-required='true'])
+  > *
+  > .astryx-field-label
+  > span,
+.astryx-field:has(:is(input, textarea, select)[required], [aria-required='true'])
+  .astryx-field-label
+  > span {
+  color: var(--color-brand-text);
+}
+
+/* BigStatement: email and action on the left, the illustration on the
+   right edge from 1024px; stacked (illustration last) below that. */
+/* Start a project: illustration first on phones and tablets; on desktop the
+   label and title span the width with the email left and the art right. */
+.big-statement-grid {
+  grid-template-areas: 'art' 'label' 'title' 'text';
+}
+.big-statement-label {
+  grid-area: label;
+}
+.big-statement-title {
+  grid-area: title;
+}
+.big-statement-text {
+  grid-area: text;
+}
+.big-statement-art {
+  grid-area: art;
+  align-items: flex-start;
+}
+@media (min-width: 1024px) {
+  .big-statement-grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-areas: 'label label' 'title title' 'text art';
+    align-items: center;
+  }
+  .big-statement-art {
+    align-items: flex-end;
+  }
+}
+
+/* Maybe this sounds familiar: one column on phones, two from 768px, each
+   situation under a hairline. */
+.familiar-grid {
+  column-gap: var(--space-chapter-gap);
+}
+.familiar-item {
+  border-block-start: 1px solid var(--color-border);
+  padding-block: var(--spacing-8) var(--spacing-10);
+}
+@media (min-width: 768px) {
+  .familiar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Sections stack below 1024px; their illustration then leads, above the
+   headline. Page heroes keep their text first. .section-split is a two-column
+   section grid from 1024px. */
+@media (max-width: 1023px) {
+  .section-art {
+    order: -1;
+  }
+}
+@media (min-width: 1024px) {
+  .section-split {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+  }
+}
+
+/* Profile note: photo, quote, bio when stacked; quote left with the photo
+   above the bio on the right from 1024px. */
+.profile-grid {
+  grid-template-areas: 'art' 'quote' 'bio';
+}
+.profile-quote {
+  grid-area: quote;
+}
+.profile-art {
+  grid-area: art;
+}
+.profile-bio {
+  grid-area: bio;
+}
+@media (min-width: 1024px) {
+  .profile-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas: 'quote art' 'quote bio';
+    align-items: start;
+  }
+}
+
+/* Page hero with an illustration: text left, illustration right, centred
+   against each other from 1024px; stacked below. */
+@media (min-width: 1024px) {
+  .hero-split {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: center;
+  }
+}
+
+/* Privacy and Terms header: text left, illustration on the right content
+   edge from 1024px; stacked, illustration below, on smaller screens. */
+.legal-header {
+  align-items: center;
+}
+.legal-header-art {
+  align-items: flex-start;
+}
+@media (min-width: 1024px) {
+  .legal-header {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+  .legal-header-art {
+    align-items: flex-end;
+  }
+}
+
+/* Legal pages read like documents: lists with small brand-blue square
+   markers, and plain-words callouts on a brand-blue hairline. */
+.legal-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.legal-list > li {
+  position: relative;
+  padding-inline-start: var(--spacing-6);
+}
+.legal-list > li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: var(--spacing-1);
+  inset-block-start: 0.7em;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 1px;
+  background: var(--color-brand-text);
+}
+.legal-note {
+  margin: var(--spacing-2) 0 0;
+  padding-inline-start: var(--spacing-5);
+  border-inline-start: 2px solid var(--color-brand-text);
+  color: var(--color-text-primary);
+}
+
+/* BigStatement email: underline grows on hover. */
+.giant-email {
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.15em;
+  text-decoration-color: var(--color-border-emphasized);
+  transition: text-decoration-color 200ms ease;
+}
+.giant-email > span {
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+}
+.giant-email:hover {
+  text-decoration-color: var(--color-brand-text);
+}
+
+/* Illustrations: line art that inherits the text colour. */
+.illustration {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  color: var(--color-text-primary);
+  overflow: visible;
+}
+
+/* ---------- Footer ---------- */
+
+/* The muted surface of the current theme: set apart, never flipped. */
+.site-footer {
+  background-color: var(--color-background-muted);
+  color: var(--color-text-primary);
+  border-block-start: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+/* Contact bar: cells divided by hairlines. 1, 2, then 4 columns. */
+.footer-bar {
+  grid-template-columns: minmax(0, 1fr);
+  border-block: 1px solid var(--color-border);
+}
+.footer-bar-cell {
+  display: flex;
+  padding: var(--spacing-6) var(--spacing-5);
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  background: none;
+  border: 0;
+  border-block-start: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+.footer-bar-cell:first-child {
+  border-block-start: 0;
+}
+.footer-bar-cell:hover {
+  background-color: var(--color-background-surface);
+}
+.footer-bar-cell:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
+.footer-bar-arrow {
+  display: inline-flex;
+  color: var(--color-text-secondary);
+  transition:
+    transform 250ms cubic-bezier(0.2, 0, 0, 1.4),
+    color 200ms ease;
+}
+.footer-bar-cell:hover .footer-bar-arrow,
+.footer-bar-cell:focus-visible .footer-bar-arrow {
+  color: var(--color-brand-text);
+  transform: translate(3px, -3px);
+}
+.footer-bar-cell:last-child:hover .footer-bar-arrow {
+  transform: translateY(-4px);
+}
+@media (min-width: 768px) {
+  .footer-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .footer-bar-cell {
+    border-block-start: 0;
+  }
+  .footer-bar-cell:nth-child(n + 3) {
+    border-block-start: 1px solid var(--color-border);
+  }
+  .footer-bar-cell:nth-child(even) {
+    border-inline-start: 1px solid var(--color-border);
+  }
+}
+@media (min-width: 1024px) {
+  .footer-bar {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .footer-bar-cell:nth-child(n + 3) {
+    border-block-start: 0;
+  }
+  .footer-bar-cell + .footer-bar-cell {
+    border-inline-start: 1px solid var(--color-border);
+  }
+}
+
+/* ---------- Illustration loops (components/illustrations) ---------- */
+/* Slow and continuous. Paused off screen and on hover via [data-playing];
+   off entirely with reduced motion, leaving the finished still. */
+
+.illustration .ill-loop {
+  animation-play-state: paused;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.illustration[data-playing='true'] .ill-loop {
+  animation-play-state: running;
+}
+
+/* A blue segment or dot travelling the length of a path (pathLength = 1). */
+.ill-travel {
+  animation: ill-travel 9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+@keyframes ill-travel {
+  from {
+    stroke-dashoffset: 0.08;
+  }
+  to {
+    stroke-dashoffset: -1;
+  }
+}
+
+/* A ring rippling outwards from a node. */
+.ill-pulse {
+  animation: ill-pulse 3s cubic-bezier(0.2, 0, 0, 1) infinite;
+}
+@keyframes ill-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+/* Layers drifting apart and settling. --float sets the distance. */
+.ill-float {
+  animation: ill-float 8s ease-in-out infinite;
+}
+@keyframes ill-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(var(--float, 6px) * -1));
+  }
+}
+
+/* The top layer tilting out of line and back. */
+.ill-tilt {
+  animation: ill-tilt 8s ease-in-out infinite;
+}
+@keyframes ill-tilt {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(-4deg);
+  }
+}
+
+/* A cell lighting up as the pulse passes, then fading. */
+.ill-blink {
+  opacity: 0;
+  animation: ill-blink 10.8s ease-in-out infinite;
+}
+@keyframes ill-blink {
+  0%,
+  16%,
+  100% {
+    opacity: 0;
+  }
+  4%,
+  9% {
+    opacity: 1;
+  }
+}
+
+/* The lens scanning across the lines. */
+.illustration .ill-scan {
+  animation: ill-scan 11s ease-in-out infinite;
+  transform-box: view-box;
+}
+@keyframes ill-scan {
+  0%,
+  100% {
+    transform: translate(-56px, -36px);
+  }
+  33% {
+    transform: translate(64px, -8px);
+  }
+  66% {
+    transform: translate(-24px, 44px);
+  }
+}
+
+/* The question mark swaying, as if still thinking. */
+.illustration .ill-sway {
+  animation: ill-sway 7s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+@keyframes ill-sway {
+  0%,
+  100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+/* The paper plane gliding. */
+.ill-glide {
+  animation: ill-glide 9s ease-in-out infinite;
+}
+@keyframes ill-glide {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(-10px, -12px) rotate(-3deg);
+  }
+}
+
+/* Hero pieces gliding from scattered to settled and back (12s loop):
+   scattered, glide in, hold the clear card, drift apart. Each piece is drawn
+   settled; --dx/--dy/--rot describe where it floats when scattered. */
+.ill-assemble {
+  animation: ill-assemble 12s infinite;
+}
+@keyframes ill-assemble {
+  0%,
+  10% {
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot));
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  34%,
+  76% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  98%,
+  100% {
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot));
+  }
+}
+
+/* Ideas orbiting the centre of the Studio scene (viewBox 400 × 300).
+   Scoped like .illustration .ill-loop so its pivot (the scene centre, not
+   each shape's own centre) wins over the shared fill-box origin. */
+.illustration .ill-orbit {
+  animation: ill-orbit 40s linear infinite;
+  transform-box: view-box;
+  transform-origin: 200px 150px;
+}
+@keyframes ill-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Typing dots: slow, so it reads as thinking rather than urgency. */
+.ill-typing {
+  animation: ill-typing 2.4s ease-in-out infinite;
+}
+@keyframes ill-typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .illustration .ill-loop {
+    animation: none;
+  }
+  .illustration .ill-blink {
+    opacity: 0;
+  }
+}
+
+/* ---------- 404 (app/not-found) ---------- */
+/* A giant 404 whose 0 is the brand's italic serif in blue. The serif sits
+   a little small beside the sans, so it is set slightly larger. */
+.not-found-numerals {
+  display: block;
+  font-weight: 700;
+  line-height: 0.9;
+  color: var(--color-text-primary);
+}
+.not-found-zero {
+  font-family: var(--font-family-accent);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.14em;
+  color: var(--color-brand-text);
+  letter-spacing: -0.02em;
+  padding-inline: 0.04em;
+}
+
+/* ---------- Portfolio frame, header and hero ---------- */
+/* The page frame: hairlines along the content column's left and right edges,
+   the full height of the page (the content column is the Container's inner
+   width: the screen minus gutters, capped at --content-max). Drawn above the
+   header so the lines run through it, and never interactive. */
+:root {
+  --frame-inset: max(var(--space-gutter), calc((100vw - var(--content-max)) / 2));
+  --header-height: calc(var(--nav-padding-block) * 2 + var(--size-element-lg));
+  /* Breathing room between the frame lines and the content inside them:
+     6px on phones (390px and below), 16px from 1440px, fluid in between. */
+  --frame-padding: clamp(0.375rem, 0.1429rem + 0.9524vw, 1rem);
+}
+.page-frame {
+  position: fixed;
+  inset-block: 0;
+  inset-inline: var(--frame-inset);
+  z-index: 60;
+  border-inline: 1px solid var(--color-border);
+  pointer-events: none;
+}
+
+/* Header: links left, square icon cells right, on the frame. The app shell's
+   header supplies the glass and the full-width bottom rule. */
+.portfolio-header {
+  inline-size: 100%;
+  max-inline-size: calc(var(--content-max) + 2 * var(--space-gutter));
+  margin-inline: auto;
+  padding-inline: var(--space-gutter);
+  box-sizing: border-box;
+  block-size: var(--header-height);
+}
+/* Desktop: links | wordmark | icons, the wordmark exactly centred. */
+.portfolio-header-desktop {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  column-gap: var(--spacing-4);
+}
+.portfolio-header-desktop .portfolio-header-icons {
+  justify-self: end;
+}
+.portfolio-header > a:first-child {
+  margin-inline-start: var(--frame-padding);
+}
+.portfolio-header-brand {
+  display: inline-flex;
+}
+.portfolio-header-links {
+  /* The first link's own padding plus this lines its text up with the
+     content's frame padding. */
+  margin: 0;
+  margin-inline-start: calc(var(--frame-padding) - var(--spacing-3));
+  padding: 0;
+  list-style: none;
+}
+.portfolio-header-link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--size-element-lg);
+  padding-inline: var(--spacing-3);
+  font-size: var(--text-supporting-size);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+.portfolio-header-link:hover,
+.portfolio-header-link[aria-current='page'] {
+  color: var(--color-brand-text);
+}
+.portfolio-header-icons {
+  align-self: stretch;
+}
+.portfolio-header-icon {
+  display: grid;
+  place-items: center;
+  inline-size: var(--header-height);
+  block-size: var(--header-height);
+  border-inline-start: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  transition:
+    color 200ms ease,
+    background-color 200ms ease;
+}
+/* Phones: the Menu toggle fills the bar's height like the desktop icon cells.
+   Astryx's atomic classes carry :not(#\#)x3, so this needs x4. */
+.portfolio-header-icons > button:not(#\#):not(#\#):not(#\#):not(#\#) {
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+  inline-size: var(--size-element-lg);
+  block-size: auto;
+  padding: 0;
+  border: 0;
+  border-inline-start: 1px solid var(--color-border);
+  border-radius: 0;
+  color: var(--color-text-primary);
+}
+/* Phones: the Menu cell, a 48px touch target flush with the frame's edge. */
+@media (max-width: 767px) {
+  .portfolio-header-icon {
+    inline-size: var(--size-element-lg);
+  }
+}
+.portfolio-header-icon:hover {
+  color: var(--color-brand-text);
+  background-color: color-mix(in srgb, var(--color-brand-text) 6%, transparent);
+}
+
+/* Hero: three full-screen blocks on the left, the photo pinned on the right
+   while they scroll, from 1024px. Below that the photo leads and the blocks
+   stack at a shorter height. */
+.portfolio-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* The photo panel runs edge to edge between the frame lines; the text
+     blocks keep the frame padding themselves. */
+  margin-inline: calc(-1 * var(--frame-padding));
+}
+.portfolio-hero-block {
+  min-block-size: 70svh;
+  padding-inline: var(--frame-padding);
+  box-sizing: border-box;
+}
+.portfolio-hero-photo {
+  order: -1;
+  padding-block: var(--spacing-10);
+  background-color: color-mix(in srgb, var(--color-background-muted) 60%, transparent);
+}
+/* The portrait: a comfortable size on phones; on wide screens it is sized
+   by the column's height (about 85% of it, at the image's 300:321 ratio)
+   so it fills the frame without crowding its edges. */
+.portfolio-hero-photo .illustration {
+  inline-size: min(100%, 28rem);
+}
+/* Scroll cue: a quiet, non-interactive hint in the secondary text colour.
+   The arrow drops down and fades, then comes back, on a loop. */
+.portfolio-hero-scroll {
+  color: var(--color-text-secondary);
+}
+.portfolio-hero-scroll-arrow {
+  display: inline-flex;
+  animation: scroll-cue-nudge 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes scroll-cue-nudge {
+  0% { transform: translateY(-3px); opacity: 0; }
+  25% { opacity: 1; }
+  70% { transform: translateY(6px); opacity: 1; }
+  100% { transform: translateY(9px); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-hero-scroll-arrow { animation: none; }
+}
+.portfolio-hero-dot {
+  color: var(--color-text-secondary);
+  font-weight: 400;
+}
+.portfolio-hero-name {
+  white-space: nowrap;
+}
+.portfolio-hero-break {
+  display: none;
+}
+.portfolio-hero-names {
+  font-family:
+    'IBM Plex Sans',
+    'IBM Plex Sans Devanagari',
+    'Noto Sans Kannada',
+    -apple-system,
+    sans-serif;
+}
+@media (min-width: 1024px) {
+  .portfolio-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+  .portfolio-hero-block {
+    min-block-size: calc(100svh - var(--header-height));
+  }
+  /* The name in three scripts: 64px on desktop. Phones and tablets keep
+     the type scale's display-l. */
+  .portfolio-hero-names {
+    --hero-name-size: 4rem;
+  }
+  .portfolio-hero-break {
+    display: inline;
+  }
+  .portfolio-hero-photo {
+    order: 0;
+    position: sticky;
+    inset-block-start: var(--header-height);
+    block-size: calc(100svh - var(--header-height));
+    padding-block: 0;
+    border-inline-start: 1px solid var(--color-border);
+  }
+  .portfolio-hero-photo .illustration {
+    inline-size: min(88%, (100svh - var(--header-height)) * 0.85 * 300 / 321);
+  }
+}
+
+/* ---------- First-visit splash (components/navigation/Splash) ---------- */
+/* Covers the page on the first load of a session: the outlined logo fills
+   from the bottom up, then the tagline rises in. Hidden before the first
+   paint once the session has seen it (html.splash-seen) and without JS. */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: grid;
+  place-items: center;
+  background-color: var(--color-background-surface);
+}
+html.splash-seen .splash {
+  display: none;
+}
+html:not(.splash-seen):has(.splash) {
+  overflow: hidden;
+}
+.splash-mark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-5);
+}
+.splash-logo {
+  inline-size: min(60vw, 260px);
+  block-size: auto;
+  overflow: visible;
+}
+.splash-outline path {
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+}
+.splash-tagline {
+  text-align: center;
+}
+
+/* ---------- Page transition loader (components/navigation/PageTransition) ---------- */
+/* Covers the page for 1.4s between pages, on the theme's own surface. */
+
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background-color: var(--color-background-surface);
+  color: var(--color-text-primary);
+}
+.loader-orbits {
+  inline-size: min(28vw, 112px);
+  block-size: auto;
+  overflow: visible;
+  /* A slow, linear settle over the full 1.4s: no snap, no bounce. */
+  animation: loader-arrive 1.4s linear both;
+}
+@keyframes loader-arrive {
+  0% {
+    transform: scale(0.94);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.loader-ring {
+  fill: none;
+  stroke: var(--color-text-secondary);
+  stroke-opacity: 0.6;
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+/* Slow and linear, like the illustration loops. The viewBox is centred on
+   0,0, so that is the point the dot circles. */
+.loader-orbit {
+  animation: loader-orbit 3s linear infinite;
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
+@keyframes loader-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.loader-planet {
+  fill: var(--color-text-primary);
+}
+.loader-core {
+  fill: var(--color-brand-text);
+}
+
+/* Footer wordmark: fades from full strength at the top to 10% at the bottom.
+   A mask keeps the logo's own theme colours in light and dark mode. */
+.footer-wordmark-fade {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.1) 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.1) 100%);
+}
+
+/* ---------- Custom cursor (components/navigation/CustomCursor) ---------- */
+/* Only applied with a fine pointer; the class is added by the component. */
+
+html.has-custom-cursor,
+html.has-custom-cursor * {
+  cursor: none !important;
+}
+/* Text fields keep the native text cursor (the custom one hides there). */
+html.has-custom-cursor
+  :is(
+    input:not([type='checkbox']):not([type='radio']):not([type='button']):not([type='submit']),
+    textarea,
+    [contenteditable='true']
+  ) {
+  cursor: text !important;
+}
+.cursor-squircle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2147483647;
+  inline-size: 20px;
+  block-size: 20px;
+  margin: -10px 0 0 -10px;
+  pointer-events: none;
+}
+.cursor-lens {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+.cursor-lens svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+}
+.cursor-lens path {
+  fill: white;
+}
+
+/* Liquid glass lens: the backdrop filter inverts what is beneath (as the
+   blend did) and adds the glass material's physics: a touch of blur and a
+   colour boost (frost), a specular rim (light), a caustic band
+   (refraction), warm and cool fringes (dispersion) and depth. */
+@supports ((backdrop-filter: invert(1)) or (-webkit-backdrop-filter: invert(1))) {
+  .cursor-lens {
+    border-radius: 38%;
+    -webkit-backdrop-filter: invert(1) saturate(1.6) blur(0.6px);
+    backdrop-filter: invert(1) saturate(1.6) blur(0.6px);
+    background: linear-gradient(160deg, var(--glass-sheen) 0%, transparent 60%);
+    box-shadow:
+      /* light: specular rim, brightest on the top left */
+      inset 1px 1px 0.5px var(--glass-highlight),
+      /* refraction: caustic band inside the lower edge */ inset 0 -3px 4px -2px
+        var(--glass-highlight),
+      /* dispersion: warm and cool fringes */ inset 1.5px 0 0 -0.5px var(--lg-fringe-warm),
+      inset -1.5px 0 0 -0.5px var(--lg-fringe-cool),
+      /* depth */ inset 0 -1px 1px rgb(0 0 0 / 0.25),
+      0 2px 8px -3px var(--glass-shadow);
+  }
+  .cursor-lens svg {
+    display: none;
+  }
+  /* Over a control the glass clears: it still inverts, but without blur or
+     colour boost, so the label stays sharp. */
+  .cursor-lens.is-interactive {
+    -webkit-backdrop-filter: invert(1);
+    backdrop-filter: invert(1);
+  }
+}
+
+/* The control under the lens magnifies 1.1×, with a soft spring. Uses the
+   individual scale property so components' own transforms are untouched;
+   the hover colour transitions the controls already have are kept too. */
+html.has-custom-cursor :is(a, button, [role='button'], [role='tab'], summary, label, select) {
+  transition:
+    scale 280ms cubic-bezier(0.2, 0, 0, 1.4),
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    opacity 200ms ease,
+    text-decoration-color 200ms ease;
+}
+[data-cursor-magnify] {
+  scale: 1.1;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-cursor-magnify] {
+    scale: none;
+  }
+}
+/* Without backdrop filters: the original inverting squircle. White in
+   "difference" mode inverts whatever is underneath. */
+@supports not ((backdrop-filter: invert(1)) or (-webkit-backdrop-filter: invert(1))) {
+  .cursor-squircle {
+    mix-blend-mode: difference;
+  }
+}
