@@ -1,3 +1,4 @@
+import type {GlyphName} from '@/components/illustrations/glyphs';
 import type {SequenceStep} from '@/components/editorial/SequenceRail';
 
 /** Homepage copy, in page order. "*word*" sets the italic serif accent. */
@@ -83,6 +84,71 @@ export const workShowcase = {
   ] as WorkProject[],
 };
 
+/**
+ * About, after Work. The copy avoids em dashes (house style): the two in the
+ * supplied text became a colon and a pair of commas.
+ */
+export const aboutSection = {
+  label: 'About',
+  names: [
+    {text: 'About', lang: 'en'},
+    {text: 'मेरे बारे में', lang: 'hi'},
+    {text: 'ನನ್ನ ಬಗ್ಗೆ', lang: 'kn'},
+  ],
+  supporting: 'A little more about the guy behind the screens.',
+  /** "*word*" sets the italic serif accent. */
+  lead: 'I’m Ravi Kumar: a product designer, occasional *overthinker*, and someone who likes figuring out why things work the way they do.',
+  body: 'I found my way into design through that curiosity, and somewhere along the way it became what I do. Since then, I’ve worked across mobile apps, digital products, and design systems, picking up a few lessons, and a lot of screens, along the way.',
+};
+
+/** How I got here: the timeline after About. Dates use en dashes (house style). */
+export const timeline = {
+  label: 'How I got here',
+  title: 'A few stops along the *way.*',
+  stops: [
+    {
+      date: '2021–2025',
+      glyph: 'code' as GlyphName,
+      title: 'B.Tech · Computer Science',
+      story:
+        'Started with code, but found myself more curious about how people use what gets built.',
+      listLabel: 'Along the way',
+      items: [
+        'Explored UX & UI principles',
+        'Started designing digital interfaces',
+        'Learned by making, breaking, and making again',
+      ],
+    },
+    {
+      date: 'Aug 2025',
+      glyph: 'idcard' as GlyphName,
+      title: 'Joined Visit Health',
+      story: 'My first deep dive into working on real products, real users, and real constraints.',
+      listLabel: 'Since then',
+      items: [
+        'Explored Visit Health’s products & journeys',
+        'Designed new features and user flows',
+        'Reworked existing flows to make them simpler',
+        'Worked across mobile experiences',
+        'Contributed to the design system',
+      ],
+    },
+    {
+      date: '2025–Now',
+      glyph: 'compass' as GlyphName,
+      title: 'Still figuring things out',
+      story:
+        'Each project brought a new problem, a new perspective, and usually a few more screens.',
+      listLabel: 'Currently',
+      items: [
+        'Exploring better product experiences',
+        'Learning through every project',
+        'Building, testing, refining',
+      ],
+    },
+  ],
+};
+
 export type WorkProject = {
   /** The client or product, shown as the numbered eyebrow ("01 — Dental Care"). */
   label: string;
@@ -102,7 +168,7 @@ export const manifesto = {
 export const disciplines = {
   index: 1,
   label: 'What I do',
-  title: 'Design that holds up when things get *complicated.*',
+  title: 'I make the confusing feel *obvious.*',
   items: [
     {
       title: 'Product Design',
@@ -145,30 +211,24 @@ export const disciplines = {
 export const process = {
   index: 3,
   label: 'How I work',
-  title: "I don't rush to make it *look* good.",
+  title: 'Start with why. Finish with *wow.*',
   steps: [
-    {title: 'Understand', description: 'What are people trying to do?', glyph: 'look'},
     {
-      title: 'Question',
-      description: 'Where do they stop, wonder or work too hard?',
-      glyph: 'ask',
+      title: 'Understand',
+      description: 'Figure out what people are actually trying to do.',
+      glyph: 'look',
     },
-    {
-      title: 'Simplify',
-      description: 'What can be removed, changed or made clearer?',
-      glyph: 'reduce',
-    },
-    {
-      title: 'Shape',
-      description: 'Turn the thinking into something people can use.',
-      glyph: 'sketch',
-    },
-    {title: 'Refine', description: 'Keep going until it feels natural.', glyph: 'tune'},
+    {title: 'Question', description: 'Find the parts that make them stop and think.', glyph: 'ask'},
+    {title: 'Simplify', description: 'Remove what doesn’t need to be there.', glyph: 'reduce'},
+    {title: 'Shape', description: 'Turn the thinking into something tangible.', glyph: 'sketch'},
+    {title: 'Refine', description: 'Keep tweaking until it feels natural.', glyph: 'tune'},
   ] satisfies SequenceStep[],
 };
 
+/** The closing nudge: written for recruiters, ending in a conversation. */
 export const closing = {
   label: 'Say hello',
-  title: 'Got something that feels *difficult?*',
-  note: "Tell me where you are. I'll start from there.",
+  title: 'Got a role in mind? Let’s *talk.*',
+  intro: 'I’d love to hear what you’re working on and see where I could fit in.',
+  note: 'A good conversation is usually a good place to start.',
 };

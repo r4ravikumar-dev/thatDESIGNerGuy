@@ -28,8 +28,8 @@ const TEXT_FIELD =
 
 type Mode = 'default' | 'interactive' | 'text' | 'hidden';
 
-/** Interactive elements up to this size magnify under the lens; larger ones (full-width rows) don't. */
-const MAGNIFY_MAX = {width: 480, height: 120};
+/** Only the calls to action (primary and secondary buttons) grow under the lens. */
+const MAGNIFY = '.astryx-button[data-variant="primary"], .astryx-button[data-variant="secondary"]';
 const MAGNIFY_ATTRIBUTE = 'data-cursor-magnify';
 
 /** A squircle (superellipse) in a 100 × 100 box: softer than a circle, rounder than a square. */
@@ -41,8 +41,8 @@ const SQUIRCLE = 'M50 0C88 0 100 12 100 50C100 88 88 100 50 100C12 100 0 88 0 50
  * boost, a specular rim and a sheen), so it reads on light and dark surfaces
  * alike. It follows the pointer on a quick spring and presses in on click.
  * Over links and buttons the lens clears (no blur, so labels stay legible)
- * and grows, and the control beneath magnifies 1.1×, as Apple's pointer does;
- * large areas such as full-width rows don't magnify. Over text fields it
+ * but keeps its size; only a call to action (primary or secondary button)
+ * beneath it grows, to 1.1×. Nothing else scales. Over text fields it
  * steps aside for the native text cursor. Pointer events pass straight through,
  * keyboard use is untouched, and touch devices never see it.
  */
@@ -69,9 +69,7 @@ export function CustomCursor() {
       if (element === magnified) return;
       magnified?.removeAttribute(MAGNIFY_ATTRIBUTE);
       magnified = null;
-      if (!element || reduceMotion) return;
-      const {width, height} = element.getBoundingClientRect();
-      if (width > MAGNIFY_MAX.width || height > MAGNIFY_MAX.height) return;
+      if (!element || reduceMotion || !element.matches(MAGNIFY)) return;
       element.setAttribute(MAGNIFY_ATTRIBUTE, '');
       magnified = element;
     }
@@ -109,7 +107,8 @@ export function CustomCursor() {
   if (!isFinePointer) return null;
 
   const isVisible = mode !== 'hidden' && mode !== 'text';
-  const scale = !isVisible ? 0.4 : isPressed ? 0.8 : mode === 'interactive' ? 2.4 : 1;
+  // The lens keeps its size over controls (only the CTA under it grows).
+  const scale = !isVisible ? 0.4 : isPressed ? 0.8 : 1;
 
   return (
     <motion.span aria-hidden className="cursor-squircle" style={{x: springX, y: springY}}>

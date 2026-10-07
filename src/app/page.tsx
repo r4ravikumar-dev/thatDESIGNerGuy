@@ -6,6 +6,8 @@ import {Marquee} from '@/components/editorial/Marquee';
 import {BigStatement} from '@/components/editorial/BigStatement';
 import {PortfolioHero} from '@/components/home/PortfolioHero';
 import {WorkShowcase} from '@/components/home/WorkShowcase';
+import {AboutSection} from '@/components/home/AboutSection';
+import {Timeline} from '@/components/home/Timeline';
 import {closing, disciplines, process} from '@/content/home';
 
 export default function HomePage() {
@@ -16,6 +18,12 @@ export default function HomePage() {
 
       {/* Work: the pinned 30/70 showcase. */}
       <WorkShowcase />
+
+      {/* About: who's behind the screens. */}
+      <AboutSection />
+
+      {/* How I got here: the timeline. */}
+      <Timeline />
 
       {/* 01 What I do */}
       <Chapter label={disciplines.label}>

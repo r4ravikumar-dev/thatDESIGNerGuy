@@ -8,6 +8,7 @@ import {Text} from '@astryxdesign/core/Text';
 import {Container} from '@/components/layout/Container';
 import {Reveal} from '@/components/motion/Reveal';
 import {IndexLabel} from '@/components/editorial/IndexLabel';
+import {ScriptNames} from '@/components/editorial/ScriptNames';
 import {accentStyle} from '@/components/storytelling/Lines';
 import {typeRole} from '@/theme/typeScale';
 import {EYEBROW_STYLE} from '@/theme/eyebrow';
@@ -124,24 +125,7 @@ export function WorkShowcase() {
           <VStack className="work-showcase-side" justify="between">
             <VStack gap={6} className="work-showcase-header">
               <Reveal delay={0.05} distance={32}>
-                <Heading
-                  level={2}
-                  className="portfolio-hero-names"
-                  style={{...typeRole('display-m'), letterSpacing: '-0.03em', lineHeight: 1.3}}>
-                  {names.map((name, index) => (
-                    <Fragment key={name.lang}>
-                      <span className="portfolio-hero-name" lang={name.lang}>
-                        {name.text}
-                        {index < names.length - 1 && (
-                          <span aria-hidden className="portfolio-hero-dot">
-                            {' •'}
-                          </span>
-                        )}
-                      </span>
-                      {index < names.length - 1 && ' '}
-                    </Fragment>
-                  ))}
-                </Heading>
+                <ScriptNames names={names} />
               </Reveal>
               <Reveal delay={0.1}>
                 <Text

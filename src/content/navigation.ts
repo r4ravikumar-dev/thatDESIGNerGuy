@@ -20,14 +20,14 @@ export const navLinks: NavLink[] = [
     label: 'Work',
     href: '/work',
     description: 'Selected work and the thinking behind it.',
-    hint: "What I've made",
+    hint: 'Things I’ve made',
     mobileDescription: 'Selected work and the thinking behind it.',
   },
   {
     label: 'About',
     href: '/about',
     description: 'Who I am, what I believe and how I work.',
-    hint: 'Who I am',
+    hint: 'A little about me',
     mobileDescription: 'Who I am, what I believe and how I work.',
   },
 ];

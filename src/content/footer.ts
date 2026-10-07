@@ -17,5 +17,5 @@ export const footer = {
     top: {label: 'Back to', value: 'Top'},
   },
   note: {title: 'Lately'},
-  closing: 'Still figuring things out.\nThat’s where good things start.',
+  closing: 'Still figuring things out.\nUsually somewhere between an idea and a screen.',
 };

@@ -139,7 +139,8 @@ export function Footer() {
             {site.name} © {year}
           </Text>
           <Text type="supporting" style={labelStyle}>
-            {site.tagline}
+            {/* The signature, plain: no accent markers in the small caps line. */}
+            {site.tagline.replace(/\*/g, '')}
           </Text>
         </HStack>
       </Container>

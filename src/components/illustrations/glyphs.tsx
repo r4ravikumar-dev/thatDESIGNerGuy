@@ -31,7 +31,10 @@ export type GlyphName =
   | 'ask'
   | 'reduce'
   | 'sketch'
-  | 'tune';
+  | 'tune'
+  | 'code'
+  | 'idcard'
+  | 'compass';
 
 const VIEW_BOX = '0 0 96 72';
 
@@ -367,6 +370,47 @@ const glyphs: Record<GlyphName, () => ReactNode> = {
         <Stroke order={2} stroke={ACCENT} d={circle(62, 36, 5)} />
       </Float>
       <Stroke order={3} d={circle(46, 50, 5)} />
+    </>
+  ),
+
+  /* "How I got here", stop by stop. */
+
+  /** Started with code: a window of code, the cursor blinking in blue. */
+  code: () => (
+    <>
+      <Surface d={rect(14, 10, 68, 52, 6)} />
+      <Stroke d={rect(14, 10, 68, 52, 6)} />
+      <Stroke order={1} weight="fine" stroke={MUTED} d="M14 20 h68" />
+      <Stroke order={2} d="M36 30 l-8 8 l8 8 M60 30 l8 8 l-8 8 M52 28 l-8 20" />
+      <Float distance={2}>
+        <Stroke order={3} stroke={ACCENT} d="M72 46 v8" />
+      </Float>
+    </>
+  ),
+  /** Joined Visit Health: a staff ID card on its lanyard, the photo in blue. */
+  idcard: () => (
+    <>
+      <Stroke weight="fine" stroke={MUTED} d="M38 2 L44 12 M58 2 L52 12" />
+      <Surface d={rect(28, 12, 40, 56, 6)} />
+      <Stroke d={rect(28, 12, 40, 56, 6)} />
+      <Stroke order={1} weight="fine" stroke={MUTED} d="M42 18 h12" />
+      <Float delay={-1}>
+        <Stroke order={2} stroke={ACCENT} d={circle(48, 34, 7)} />
+        <Stroke order={2} stroke={ACCENT} d="M39 48 c0 -5 4 -7 9 -7 s9 2 9 7" />
+      </Float>
+      <Stroke order={3} weight="fine" stroke={MUTED} d="M37 56 h22 M40 62 h16" />
+    </>
+  ),
+  /** Still figuring things out: a compass, the needle finding its way. */
+  compass: () => (
+    <>
+      <Surface d={circle(48, 36, 26)} />
+      <Stroke d={circle(48, 36, 26)} />
+      <Stroke order={1} weight="fine" stroke={MUTED} d="M48 14 v4 M48 54 v4 M26 36 h4 M66 36 h4" />
+      <Float distance={2}>
+        <Stroke order={2} stroke={ACCENT} d="M58 24 L52 40 L38 48 L44 32 Z" />
+      </Float>
+      <Dot order={3} cx={48} cy={36} r={2.5} />
     </>
   ),
 };
