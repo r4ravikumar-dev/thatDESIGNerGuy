@@ -371,10 +371,10 @@ const glyphs: Record<GlyphName, () => ReactNode> = {
   ),
 };
 
-/** One step illustration, sized for a rail column. */
-export function Glyph({name}: {name: GlyphName}) {
+/** One step illustration, sized for a rail column (`size` is its widest, in px; null leaves sizing to CSS). */
+export function Glyph({name, size = 96}: {name: GlyphName; size?: number | null}) {
   return (
-    <Illustration viewBox={VIEW_BOX} maxWidth={96}>
+    <Illustration viewBox={VIEW_BOX} maxWidth={size ?? undefined}>
       {glyphs[name]()}
     </Illustration>
   );

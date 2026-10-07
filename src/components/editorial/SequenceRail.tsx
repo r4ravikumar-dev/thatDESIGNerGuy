@@ -22,8 +22,8 @@ type SequenceRailProps = {
   /** What the sequence shows, for screen readers. */
   label: string;
   /**
-   * Sticky scroll: from 1280px (one row) the rail pins in the middle of the
-   * screen and each step comes in as the reader scrolls, then it lets go.
+   * Sticky scroll: the rail pins in the middle of the screen and the steps
+   * slide in from the right one by one as the reader scrolls, then it lets go.
    */
   isPinned?: boolean;
 };
@@ -59,6 +59,8 @@ function Step({
   isSingleRow,
   hasColumns,
   isStatic,
+  isSliding = false,
+  window,
 }: {
   step: SequenceStep;
   index: number;
@@ -67,6 +69,9 @@ function Step({
   isSingleRow: boolean;
   hasColumns: boolean;
   isStatic: boolean;
+  isSliding?: boolean;
+  /** Sliding rails: the share of the pinned scroll over which this step fades in. */
+  window?: [number, number];
 }) {
   const ref = useRef<HTMLLIElement>(null);
   const {scrollYProgress: ownProgress} = useScroll({
@@ -76,8 +81,8 @@ function Step({
   const full = useTransform(ownProgress, () => 1);
   const column = hasColumns ? index % 3 : 0;
   const source = isStatic ? full : isSingleRow ? progress : ownProgress;
-  const start = isSingleRow ? index / count : column * 0.15;
-  const end = isSingleRow ? Math.min(1, start + 0.8 / count) : start + 0.6;
+  const start = window ? window[0] : isSingleRow ? index / count : column * 0.15;
+  const end = window ? window[1] : isSingleRow ? Math.min(1, start + 0.8 / count) : start + 0.6;
   const opacity = useTransform(source, [start, end], [0, 1]);
   const y = useTransform(source, [start, end], [24, 0]);
   // The number turns brand blue once the step is fully in.
@@ -89,25 +94,29 @@ function Step({
 
   return (
     <li ref={ref} className="sequence-rail-step">
-      <MotionVStack gap={4} style={{opacity, y}}>
+      {/* Sliding cards wider than 810px: illustration left, text right
+          (.sequence-rail-card in globals.css). Otherwise stacked. */}
+      <MotionVStack gap={4} className="sequence-rail-card" style={{opacity, y}}>
         {step.glyph && (
-          <VStack hAlign="start" style={{marginBlockEnd: 'var(--spacing-2)'}}>
-            <Glyph name={step.glyph} />
+          <VStack hAlign="start" className="sequence-rail-art">
+            <Glyph name={step.glyph} size={isSliding ? null : 96} />
           </VStack>
         )}
-        <motion.span
-          style={{...EYEBROW_STYLE, color: numberColor, fontSize: 'var(--text-supporting-size)'}}>
-          {String(index + 1).padStart(2, '0')}
-        </motion.span>
-        <Heading
-          level={3}
-          textWrap="balance"
-          style={{...typeRole('headline-s'), letterSpacing: '-0.01em'}}>
-          {step.title}
-        </Heading>
-        <Text color="secondary" textWrap="pretty">
-          {step.description}
-        </Text>
+        <VStack gap={4} className="sequence-rail-text">
+          <motion.span
+            style={{...EYEBROW_STYLE, color: numberColor, fontSize: 'var(--text-supporting-size)'}}>
+            {String(index + 1).padStart(2, '0')}
+          </motion.span>
+          <Heading
+            level={3}
+            textWrap="balance"
+            style={{...typeRole('headline-s'), letterSpacing: '-0.01em'}}>
+            {step.title}
+          </Heading>
+          <Text color="secondary" textWrap="pretty">
+            {step.description}
+          </Text>
+        </VStack>
       </MotionVStack>
     </li>
   );
@@ -125,19 +134,46 @@ function Step({
 /** Share of the pinned scroll spent revealing steps; the rest holds the finished row. */
 const REVEAL_SHARE = 0.85;
 
-/** How far the sliding row must travel so its last card ends at the stage's edge. */
-function useSlideDistance(railRef: React.RefObject<HTMLOListElement | null>, isSliding: boolean) {
-  const [distance, setDistance] = useState(0);
+/**
+ * The sliding row's travel (so its last card ends at the stage's edge) and
+ * how many cards fit on screen at once.
+ */
+function useSlideMetrics(railRef: React.RefObject<HTMLOListElement | null>, isSliding: boolean) {
+  const [metrics, setMetrics] = useState({distance: 0, visible: 1});
   useLayoutEffect(() => {
     const rail = railRef.current;
     if (!isSliding || !rail) return;
-    const measure = () => setDistance(Math.max(0, rail.scrollWidth - rail.clientWidth));
+    const measure = () => {
+      const card = rail.firstElementChild?.getBoundingClientRect().width ?? rail.clientWidth;
+      setMetrics({
+        distance: Math.max(0, rail.scrollWidth - rail.clientWidth),
+        visible: Math.max(1, Math.floor(rail.clientWidth / card + 0.05)),
+      });
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(rail);
     return () => observer.disconnect();
   }, [railRef, isSliding]);
-  return distance;
+  return metrics;
+}
+
+/** Share of the reveal spent bringing in the cards already on screen, before the row moves. */
+const INTRO_SHARE = 0.16;
+
+/**
+ * When each step of a sliding rail fades in: the cards that start on screen
+ * come in one after another while the row holds still; then the row slides
+ * and each later card fades in as it enters from the right.
+ */
+function slideWindow(index: number, count: number, visible: number): [number, number] {
+  if (index < visible) {
+    const step = INTRO_SHARE / visible;
+    return [index * step, (index + 1) * step];
+  }
+  const span = (1 - INTRO_SHARE) / Math.max(1, count - visible);
+  const start = INTRO_SHARE + (index - visible) * span;
+  return [start, start + span];
 }
 
 export function SequenceRail({steps, label, isPinned: canPin = false}: SequenceRailProps) {
@@ -147,9 +183,10 @@ export function SequenceRail({steps, label, isPinned: canPin = false}: SequenceR
   const isSingleRow = useMediaQuery(SINGLE_ROW, true);
   const hasColumns = useMediaQuery(COLUMNS, true);
   const isPinned = canPin && !reduceMotion;
-  // Below 1280px a pinned rail can't show every card at once, so the cards
-  // sit in one sideways row that slides across as the reader scrolls down.
-  const isSliding = isPinned && !isSingleRow;
+  // A pinned rail always slides: the cards sit in one sideways row (half the
+  // rail wide on desktop) that moves left as the reader scrolls down, each
+  // card fading in as it arrives and the next one peeking in.
+  const isSliding = isPinned;
   // In view: 0 when the rail's top enters the lower part of the screen, 1
   // once its bottom has risen past the middle.
   const {scrollYProgress: inView} = useScroll({target: ref, offset: ['start 85%', 'end 55%']});
@@ -162,11 +199,14 @@ export function SequenceRail({steps, label, isPinned: canPin = false}: SequenceR
   const pinnedReveal = useTransform(pinned, [0, REVEAL_SHARE], [0, 1]);
   const full = useTransform(inView, () => 1);
   const progress = reduceMotion ? full : isPinned ? pinnedReveal : inView;
-  const distance = useSlideDistance(ref, isSliding);
-  const slideX = useTransform(pinnedReveal, [0, 1], [0, -distance]);
+  const {distance, visible} = useSlideMetrics(ref, isSliding);
+  const slideX = useTransform(pinnedReveal, [0, INTRO_SHARE, 1], [0, 0, -distance]);
 
   const rail = (
-    <VStack gap={0} style={{position: 'relative', overflow: isSliding ? 'hidden' : undefined}}>
+    <VStack
+      gap={0}
+      className={isSliding ? 'sequence-rail-window' : undefined}
+      style={{position: 'relative', overflow: isSliding ? 'hidden' : undefined}}>
       <motion.span aria-hidden className="sequence-rail-progress" style={{scaleX: progress}} />
       <motion.ol
         ref={ref}
@@ -183,6 +223,8 @@ export function SequenceRail({steps, label, isPinned: canPin = false}: SequenceR
             isSingleRow={isSingleRow || isSliding}
             hasColumns={hasColumns}
             isStatic={Boolean(reduceMotion)}
+            isSliding={isSliding}
+            window={isSliding ? slideWindow(index, steps.length, visible) : undefined}
           />
         ))}
       </motion.ol>

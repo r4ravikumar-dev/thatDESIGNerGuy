@@ -30,6 +30,70 @@ export const hero = {
   },
 };
 
+/**
+ * The Work section, right after the hero. Add a project to `projects` and it
+ * gets its own full-height thumbnail; `thumbnail: {src, alt}` (an image in
+ * /public) replaces the placeholder panel.
+ */
+export const workShowcase = {
+  label: 'Work',
+  /** One word in three scripts, like the hero name. */
+  names: [
+    {text: 'Work', lang: 'en'},
+    {text: 'काम', lang: 'hi'},
+    {text: 'ಕೆಲಸ', lang: 'kn'},
+  ],
+  supporting: 'A few things I’ve worked on along the way.',
+  projects: [
+    {
+      label: 'Mamily × Visit Health',
+      thumbnail: {
+        src: '/work/mamily.webp',
+        focus: 'left center',
+        alt: 'Womenhood Care Program banner from the Mamily integration in the Visit Health app',
+      },
+      title: 'Making women’s wellness easier to find.',
+      description:
+        'Bringing Mamily into the Visit Health experience and shaping the journey so users can discover, understand, and access women’s wellness support with less friction.',
+      meta: ['Women’s Wellness', 'Product Design', 'Mobile'],
+    },
+    {
+      label: 'Joye × Visit Health',
+      thumbnail: {
+        src: '/work/joye.webp',
+        alt: 'Welcome to Joye screen with three hand-drawn blue mascots',
+      },
+      title: 'Making space for emotional wellness.',
+      description:
+        'Integrating Joye into the Visit Health experience and creating a simple, guided journey for corporate employees to take an emotional wellness assessment and understand what comes next.',
+      meta: ['Emotional Wellness', 'Product Design', 'Mobile'],
+    },
+    {
+      label: 'Dental Care',
+      thumbnail: {
+        src: '/work/dental.webp',
+        focus: '12% center',
+        alt: 'Visit Dental mobile app screens: cashless dental booking, pre-auth approval and appointment details',
+      },
+      title: 'Making every step easier to understand.',
+      description:
+        'Reworking the dental journey to make it simpler and more informative, helping users understand each stage of their care instead of figuring it out along the way.',
+      meta: ['Dental Care', 'UX/UI', 'Mobile'],
+    },
+  ] as WorkProject[],
+};
+
+export type WorkProject = {
+  /** The client or product, shown as the numbered eyebrow ("01 — Dental Care"). */
+  label: string;
+  title: string;
+  description: string;
+  /** Who, what and when, e.g. ['Visit Health', 'Product Design', '2025–26']. */
+  meta: string[];
+  /** `focus` is the CSS object-position kept in view when the panel crops it. */
+  thumbnail?: {src: string; alt: string; focus?: string};
+};
+
 export const manifesto = {
   label: 'How I see it',
   text: "People don't experience screens. They experience what happens *between* them. The hesitation, the extra step, the choice that almost works. I look closely at those moments, then make them *simpler.*",
@@ -76,13 +140,6 @@ export const disciplines = {
     'Simple, not simplistic',
     'Consistency without sameness',
   ],
-};
-
-export const work = {
-  index: 2,
-  label: 'Selected work',
-  title: 'Work worth *slowing down* for.',
-  action: {label: 'All work', href: '/work'},
 };
 
 export const process = {

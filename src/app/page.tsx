@@ -1,23 +1,21 @@
-import {VStack, HStack} from '@astryxdesign/core/Layout';
-import {Grid} from '@astryxdesign/core/Grid';
+import {VStack} from '@astryxdesign/core/Layout';
 import {Chapter} from '@/components/editorial/Chapter';
 import {ChapterHeader} from '@/components/editorial/ChapterHeader';
 import {SequenceRail} from '@/components/editorial/SequenceRail';
 import {Marquee} from '@/components/editorial/Marquee';
 import {BigStatement} from '@/components/editorial/BigStatement';
-import {WorkList} from '@/components/editorial/WorkList';
-import {Reveal} from '@/components/motion/Reveal';
-import {CtaButton} from '@/components/navigation/CtaButton';
-import {ThinkingLens} from '@/components/illustrations/scenes';
 import {PortfolioHero} from '@/components/home/PortfolioHero';
-import {closing, disciplines, process, work} from '@/content/home';
-import {caseStudies} from '@/content/work';
+import {WorkShowcase} from '@/components/home/WorkShowcase';
+import {closing, disciplines, process} from '@/content/home';
 
 export default function HomePage() {
   return (
     <VStack gap={0}>
       {/* Hero: the name, the intro and the story, with the photo pinned beside them. */}
       <PortfolioHero />
+
+      {/* Work: the pinned 30/70 showcase. */}
+      <WorkShowcase />
 
       {/* 01 What I do */}
       <Chapter label={disciplines.label}>
@@ -28,29 +26,6 @@ export default function HomePage() {
         />
         <SequenceRail steps={disciplines.items} label="What I do, by discipline" isPinned />
         <Marquee items={disciplines.principles} />
-      </Chapter>
-
-      {/* 02 Selected work */}
-      <Chapter tone="muted" label={work.label}>
-        <Grid columns={1} gap={10} className="section-split">
-          <ChapterHeader
-            index={work.index}
-            label={work.label}
-            title={work.title}
-            size="display-l"
-          />
-          <Reveal hAlign="end" className="section-art">
-            <ThinkingLens maxWidth={340} />
-          </Reveal>
-        </Grid>
-        <WorkList limit={3} />
-        {caseStudies.length > 0 && (
-          <Reveal>
-            <HStack>
-              <CtaButton {...work.action} variant="secondary" />
-            </HStack>
-          </Reveal>
-        )}
       </Chapter>
 
       {/* 03 How I work */}
