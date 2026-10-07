@@ -630,6 +630,10 @@ html {
    three-column borders above. */
 .sequence-rail.sequence-rail-sliding {
   display: flex;
+  border-block: 0;
+}
+/* The hairlines above and below stay put while the row slides inside. */
+.sequence-rail-window {
   border-block: 1px solid var(--color-border);
 }
 .sequence-rail-sliding .sequence-rail-step.sequence-rail-step {
@@ -643,6 +647,62 @@ html {
 }
 .sequence-rail-sliding .sequence-rail-step + .sequence-rail-step {
   border-inline-start: 1px solid var(--color-border);
+}
+/* Sliding cards are half the screen tall everywhere. Above 810px the card
+   turns sideways: illustration left, number, title and line right; cards
+   are 80% of the rail on tablets and half of it from 1024px. Astryx's
+   atomic stack classes carry :not(#\#)x3, so the direction needs x4. */
+.sequence-rail-sliding .sequence-rail-step.sequence-rail-step {
+  display: flex;
+  min-block-size: 50svh;
+}
+.sequence-rail-sliding .sequence-rail-card {
+  flex: 1;
+  justify-content: center;
+}
+.sequence-rail-art {
+  margin-block-end: var(--spacing-2);
+}
+/* Sliding cards size the illustration by the card's height (50svh): half of
+   it on phones, three quarters above 810px, never wider than the card allows. */
+.sequence-rail-sliding .sequence-rail-art {
+  max-inline-size: 100%;
+}
+.sequence-rail-sliding .sequence-rail-art .illustration {
+  block-size: calc(50svh * 0.5);
+  inline-size: auto;
+  max-inline-size: 100%;
+}
+@media (min-width: 811px) {
+  .sequence-rail-sliding .sequence-rail-step.sequence-rail-step {
+    flex-basis: 80%;
+    padding: var(--spacing-10);
+  }
+  .sequence-rail-sliding .sequence-rail-step.sequence-rail-step:first-child {
+    padding-inline-start: 0;
+  }
+  .sequence-rail-sliding .sequence-rail-card:not(#\#):not(#\#):not(#\#):not(#\#) {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-8);
+  }
+  .sequence-rail-sliding .sequence-rail-art {
+    flex: 0 0 auto;
+    max-inline-size: 50%;
+    margin-block-end: 0;
+  }
+  .sequence-rail-sliding .sequence-rail-art .illustration {
+    block-size: calc(50svh * 0.75);
+  }
+  .sequence-rail-sliding .sequence-rail-text {
+    flex: 1;
+    min-inline-size: 0;
+  }
+}
+@media (min-width: 1024px) {
+  .sequence-rail-sliding .sequence-rail-step.sequence-rail-step {
+    flex-basis: 50%;
+  }
 }
 @media (min-width: 1280px) {
   .sequence-rail {
@@ -1228,7 +1288,8 @@ html {
   display: grid;
   place-items: center;
   align-self: stretch;
-  inline-size: var(--size-element-lg);
+  /* Square: as wide as the bar is tall. */
+  inline-size: var(--header-height);
   block-size: auto;
   padding: 0;
   border: 0;
@@ -1335,6 +1396,103 @@ html {
   }
   .portfolio-hero-photo .illustration {
     inline-size: min(88%, (100svh - var(--header-height)) * 0.85 * 300 / 321);
+  }
+}
+
+/* ---------- Work showcase (components/home/WorkShowcase) ---------- */
+/* Phones and tablets: headline, then each thumbnail with its text under it.
+   From 1024px: a 30/70 split on the page frame; the left column pins under
+   the header while full-height thumbnails scroll by on the right. */
+.work-showcase-section {
+  display: flex;
+  flex-direction: column;
+  padding-block: var(--space-section);
+  border-block-start: 1px solid var(--color-border);
+}
+.work-showcase {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-chapter-gap);
+}
+.work-showcase-current {
+  display: none;
+}
+.work-showcase-list {
+  display: grid;
+  gap: var(--space-block);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.work-showcase-item {
+  display: grid;
+  gap: var(--spacing-6);
+}
+.work-showcase-frame {
+  block-size: 70svh;
+  overflow: hidden;
+}
+.work-showcase-image {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+.work-showcase-placeholder {
+  display: grid;
+  place-items: center;
+  block-size: 100%;
+  background-color: color-mix(in srgb, var(--color-background-muted) 60%, transparent);
+  background-image: radial-gradient(var(--color-border-emphasized) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+@media (min-width: 1024px) {
+  .work-showcase-section {
+    padding-block: 0;
+  }
+  .work-showcase {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 7fr);
+    align-items: start;
+    gap: 0;
+    /* Thumbnails run to the frame line; the text column keeps the padding. */
+    margin-inline: calc(-1 * var(--frame-padding));
+  }
+  .work-showcase-side {
+    position: sticky;
+    inset-block-start: var(--header-height);
+    block-size: calc(100svh - var(--header-height));
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--spacing-10) var(--frame-padding);
+    padding-inline-end: var(--spacing-8);
+  }
+  .work-showcase-current {
+    display: flex;
+  }
+  .work-showcase-list {
+    gap: 0;
+    border-inline-start: 1px solid var(--color-border);
+  }
+  .work-showcase-item {
+    display: block;
+    block-size: calc(100svh - var(--header-height));
+  }
+  .work-showcase-item + .work-showcase-item {
+    border-block-start: 1px solid var(--color-border);
+  }
+  .work-showcase-frame {
+    block-size: 100%;
+  }
+  /* The pinned column shows the current project; this copy is for screen readers. */
+  .work-showcase-item-text {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 
