@@ -677,3 +677,88 @@ export function MissingPage({label, maxWidth = 420}: SceneProps) {
     </Illustration>
   );
 }
+
+/**
+ * About: the desk, simply drawn. A phone showing a profile (the about-me
+ * screen) with one clear action, a coffee,
+ * and a sticky note on the phone holding a blue question mark (the
+ * occasional overthinker). In the loop the steam drifts and a ring
+ * breathes around the profile picture.
+ */
+export function DesignerDesk({label, maxWidth = 400}: SceneProps) {
+  const rect = (x: number, y: number, w: number, h: number, r: number) =>
+    `M${x + r} ${y} h${w - 2 * r} a${r} ${r} 0 0 1 ${r} ${r} v${h - 2 * r} a${r} ${r} 0 0 1 -${r} ${r} h-${w - 2 * r} a${r} ${r} 0 0 1 -${r} -${r} v-${h - 2 * r} a${r} ${r} 0 0 1 ${r} -${r} Z`;
+  const phone = rect(100, 70, 96, 180, 16);
+  const cup = 'M236 186 h60 v40 a18 18 0 0 1 -18 18 h-24 a18 18 0 0 1 -18 -18 Z';
+  const note = rect(166, 50, 60, 60, 4);
+  return (
+    <Illustration viewBox="0 0 360 280" label={label} maxWidth={maxWidth}>
+      {/* The desk. */}
+      <Stroke order={0} weight="fine" stroke={MUTED} d="M40 250 H320" />
+
+      {/* The phone: an about-me screen, a profile picture and one clear action. */}
+      <Surface order={1} d={phone} />
+      <Stroke order={1} d={phone} />
+      <Stroke
+        order={2}
+        weight="fine"
+        stroke={MUTED}
+        d="M148 136 m-30 0 a30 30 0 1 0 60 0 a30 30 0 1 0 -60 0"
+      />
+      <Stroke order={2} d="M148 128 m-10 0 a10 10 0 1 0 20 0 a10 10 0 1 0 -20 0" />
+      <Stroke order={2} d="M130 158 c0 -11 8 -16 18 -16 s18 5 18 16" />
+      {/* The loop: a ring breathing around the profile picture. */}
+      <Pulse cx={148} cy={136} r={30} delay={0.6} />
+      <Stroke order={3} weight="fine" stroke={MUTED} d="M128 180 h40" />
+      <Stroke order={3} stroke={ACCENT} d={rect(114, 204, 68, 22, 11)} />
+
+      {/* Coffee, with steam that drifts. */}
+      <Surface order={1} d={cup} />
+      <Stroke order={1} d={cup} />
+      <Stroke order={1} d="M296 196 a14 14 0 0 1 0 28" />
+      <g className="ill-loop ill-float" style={{['--float' as string]: '4px'}}>
+        <Stroke
+          order={5}
+          weight="fine"
+          stroke={MUTED}
+          d="M254 172 c-6 -8 6 -12 0 -20 M276 172 c-6 -8 6 -12 0 -20"
+        />
+      </g>
+
+      {/* Sticky note on the phone's corner: a question, mid-overthink. */}
+      <g transform="rotate(8 196 80)">
+        <Surface order={6} d={note} fill="var(--color-background-body)" fillOpacity={1} />
+        <Stroke order={6} d={note} />
+        <Stroke order={7} stroke={ACCENT} d="M187 70 a9 9 0 1 1 13 8 c-3 2 -4 4 -4 7" />
+        <Dot order={7} cx={196} cy={95} r={2.5} />
+      </g>
+    </Illustration>
+  );
+}
+
+/**
+ * Closing nudge: a good conversation. Two speech bubbles: theirs, a plain
+ * outline with two lines of text, and the reply in blue with three dots,
+ * typing. In the loop the reply floats and its dots pulse in turn.
+ */
+export function LetsTalk({label, maxWidth = 340}: SceneProps) {
+  const theirs =
+    'M44 40 h120 a14 14 0 0 1 14 14 v44 a14 14 0 0 1 -14 14 h-86 l-20 18 v-18 h-14 a14 14 0 0 1 -14 -14 v-44 a14 14 0 0 1 14 -14 Z';
+  const reply =
+    'M136 118 h120 a14 14 0 0 1 14 14 v44 a14 14 0 0 1 -14 14 h-14 v18 l-20 -18 h-86 a14 14 0 0 1 -14 -14 v-44 a14 14 0 0 1 14 -14 Z';
+  return (
+    <Illustration viewBox="0 0 300 230" label={label} maxWidth={maxWidth}>
+      <Surface order={0} d={theirs} />
+      <Stroke order={0} d={theirs} />
+      <Stroke order={1} weight="fine" stroke={MUTED} d="M52 66 h84 M52 84 h56" />
+      <g className="ill-loop ill-float" style={{['--float' as string]: '4px'}}>
+        <Surface order={2} d={reply} fill="var(--color-background-body)" fillOpacity={1} />
+        <Stroke order={2} stroke={ACCENT} d={reply} />
+        <Dot order={3} cx={176} cy={154} r={5} />
+        <Dot order={3} cx={196} cy={154} r={5} />
+        <Dot order={3} cx={216} cy={154} r={5} />
+      </g>
+      <Pulse cx={196} cy={154} r={10} delay={0.4} />
+    </Illustration>
+  );
+}

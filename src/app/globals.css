@@ -1496,6 +1496,222 @@ html {
   }
 }
 
+/* ---------- About (components/home/AboutSection) ---------- */
+/* Illustration first on phones and tablets; from 1024px text left and the
+   illustration right, both vertically centred. */
+.about-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-chapter-gap);
+  padding-block: var(--space-section);
+  border-block-start: 1px solid var(--color-border);
+}
+.about-section-art {
+  order: -1;
+}
+@media (min-width: 1024px) {
+  .about-section {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: center;
+  }
+  .about-section-art {
+    order: 0;
+  }
+}
+
+/* ---------- Timeline (components/home/Timeline) ---------- */
+/* 810px and below: the line runs down the left, stops stacked beside it,
+   the blue progress scaling with --p (0 to 1, set from the scroll). Above
+   810px the timeline pins and slides sideways (.timeline-sliding). */
+.timeline-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-chapter-gap);
+  padding-block: var(--space-section);
+  border-block-start: 1px solid var(--color-border);
+}
+.timeline {
+  /* From the line to the card's text: the 12px dot, a 24px gap, then the
+     card's own 24px hover surface. */
+  --timeline-offset: calc(12px + 24px + var(--spacing-6));
+  position: relative;
+  display: grid;
+  gap: var(--space-block);
+  margin: 0;
+  padding: 0 0 0 var(--timeline-offset);
+  list-style: none;
+}
+.timeline-track,
+.timeline-progress {
+  position: absolute;
+  inset-block: 6px;
+  inset-inline-start: 5px;
+  inline-size: 2px;
+  background-color: var(--color-border);
+}
+.timeline-progress {
+  background-color: var(--color-brand-text);
+  transform-origin: top;
+  transform: scaleY(var(--p, 0));
+}
+.timeline-stop {
+  position: relative;
+}
+.timeline-dot {
+  position: absolute;
+  inset-block-start: 4px;
+  inset-inline-start: calc(-1 * var(--timeline-offset));
+  inline-size: 12px;
+  block-size: 12px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px var(--color-background-body);
+}
+.timeline-list {
+  display: grid;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.timeline-list li {
+  position: relative;
+  padding-inline-start: var(--spacing-5);
+}
+.timeline-list li::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0.65em;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background-color: var(--color-brand-text);
+}
+.timeline-window {
+  position: relative;
+  overflow: hidden;
+}
+.timeline-rail {
+  display: none;
+}
+/* The card: a dark grey surface fills it on hover (mouse devices only), the
+   card lifting a little and its illustration rising with it. The padding
+   and transparent border are always there so nothing shifts on hover. */
+.timeline-card {
+  padding: var(--spacing-6);
+  margin: calc(-1 * var(--spacing-6));
+  border: 1px solid transparent;
+  border-radius: var(--radius-element);
+  transition:
+    background-color 240ms ease,
+    border-color 240ms ease,
+    box-shadow 240ms ease,
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.timeline-card-art {
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* 810px and below the card fills the timeline's width, so its hover surface
+   stays inside the frame on the right instead of being cut off there. */
+@media (max-width: 810px) {
+  .timeline-card {
+    margin-inline-end: 1px;
+    padding-inline-end: var(--spacing-4);
+  }
+}
+@media (hover: hover) {
+  .timeline-card:hover {
+    transform: translateY(-4px);
+    background-color: var(--color-background-muted);
+    border-color: var(--color-border);
+  }
+  .timeline-card:hover .timeline-card-art {
+    transform: translateY(-3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .timeline-card,
+  .timeline-card-art {
+    transition: background-color 240ms ease, border-color 240ms ease;
+  }
+  .timeline-card:hover,
+  .timeline-card:hover .timeline-card-art {
+    transform: none;
+  }
+}
+/* The current dot beeps: a ring that keeps pulsing out from it. */
+.timeline-dot-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+.timeline-dot-ring::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--color-brand-text);
+  animation: timeline-beep 1.6s ease-out infinite;
+}
+@keyframes timeline-beep {
+  0% { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .timeline-dot-ring::after { animation: none; opacity: 0; }
+}
+/* Each stop's own stretch of line: only used when sliding. */
+.timeline-seg {
+  display: none;
+}
+/* Above 810px (Timeline pins it): one sideways row, each card 60% of the
+   width, the line drawn per card along the top so it moves with the row. */
+@media (min-width: 811px) {
+  /* Room above for the current dot's beep ring, below for a hovered card. */
+  .timeline-window[data-direction='across'] {
+    padding-block: var(--spacing-6) var(--spacing-10);
+  }
+  .timeline-window[data-direction='across'] .timeline-rail {
+    display: block;
+    position: absolute;
+    inset-block-start: calc(var(--spacing-6) + 5px);
+    inset-inline: 0;
+    block-size: 2px;
+    background-color: var(--color-border);
+  }
+  .timeline.timeline-sliding {
+    display: flex;
+    gap: 0;
+    padding: var(--timeline-offset) 0 0;
+  }
+  .timeline-sliding .timeline-track,
+  .timeline-sliding .timeline-progress {
+    display: none;
+  }
+  .timeline-sliding .timeline-stop {
+    flex: 0 0 60%;
+    box-sizing: border-box;
+    padding-inline-end: var(--spacing-10);
+  }
+  .timeline-sliding .timeline-seg {
+    display: block;
+    position: absolute;
+    inset-block-start: calc(-1 * var(--timeline-offset) + 5px);
+    inset-inline: 0;
+    block-size: 2px;
+    background-color: var(--color-border);
+  }
+  .timeline-sliding .timeline-seg-fill {
+    background-color: var(--color-brand-text);
+    transform-origin: left;
+  }
+  .timeline-sliding .timeline-dot {
+    z-index: 1;
+    inset-block-start: calc(-1 * var(--timeline-offset));
+    inset-inline-start: 0;
+  }
+}
+
 /* ---------- First-visit splash (components/navigation/Splash) ---------- */
 /* Covers the page on the first load of a session: the outlined logo fills
    from the bottom up, then the tagline rises in. Hidden before the first
@@ -1670,7 +1886,8 @@ html.has-custom-cursor
   }
 }
 
-/* The control under the lens magnifies 1.1×, with a soft spring. Uses the
+/* A call to action under the lens grows 1.1×, with a soft spring (CustomCursor
+   marks only primary and secondary buttons). Uses the
    individual scale property so components' own transforms are untouched;
    the hover colour transitions the controls already have are kept too. */
 html.has-custom-cursor :is(a, button, [role='button'], [role='tab'], summary, label, select) {
