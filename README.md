@@ -1,8 +1,6 @@
 # thatDESIGNerGuy
 
-The personal portfolio of **Ravi Kumar**, product and UX designer and founder of [Graphikx](https://www.graphikx.in).
-
-This repository holds the source for the portfolio site, planned to live at [www.ravi.graphikx.in](https://www.ravi.graphikx.in).
+The personal portfolio of **Ravi Kumar**, product and UX designer.
 
 ## About
 
@@ -10,11 +8,17 @@ I work where products, people and ideas meet: product design, user experience, i
 
 This site is where that work lives: selected projects, the thinking behind them, and a way to get in touch.
 
-## Status
+## Running it
 
-The project is just getting started. The site, its structure and the setup instructions will be added here as it takes shape.
+```bash
+npm install
+npm run dev
+```
 
-## Contact
+Optional settings (in `.env.local`):
 
-- Studio: [graphikx.in](https://www.graphikx.in)
-- Email: [design@graphikx.in](mailto:design@graphikx.in)
+- `NEXT_PUBLIC_SITE_URL`: the live address, for metadata and the sitemap
+- `NEXT_PUBLIC_CONTACT_EMAIL`: the contact email
+- `NEXT_PUBLIC_LINKEDIN_URL`: the LinkedIn profile; the link stays hidden until it is set
+
+Put the résumé at `public/Ravi-Kumar-Resume.pdf`.

@@ -1,0 +1,33 @@
+{
+  "name": "thatdesignerguy",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "theme:build": "astryx theme build src/theme/portfolioTheme.ts -o src/theme/portfolio.css"
+  },
+  "dependencies": {
+    "@astryxdesign/cli": "^0.6.4",
+    "@astryxdesign/core": "^0.6.4",
+    "@astryxdesign/theme-stone": "^0.6.4",
+    "@stylexjs/stylex": "^0.19.1",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
+    "framer-motion": "^13.5.0",
+    "lucide-react": "^1.49.0",
+    "next": "16.3.8",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.8",
+    "typescript": "^5"
+  }
+}
