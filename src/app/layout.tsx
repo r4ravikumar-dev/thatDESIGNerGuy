@@ -10,6 +10,13 @@ import {Analytics} from '@vercel/analytics/next';
 import {SpeedInsights} from '@vercel/speed-insights/next';
 import {Splash, splashSeenScript} from '@/components/navigation/Splash';
 
+/**
+ * Adds "motion-ok" to <html> before the first paint when scroll effects will
+ * run (JavaScript on, no reduced motion). globals.css uses it to keep
+ * [data-text-reveal] headlines hidden until SplitText has split them.
+ */
+const motionOkScript = `try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('motion-ok')}catch(e){}`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
@@ -70,6 +77,8 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
       <head>
         {/* Hide the first-visit splash before the first paint if this session has already seen it. */}
         <script dangerouslySetInnerHTML={{__html: splashSeenScript}} />
+        {/* Scroll effects will run: hide masked headlines until they are split (no flash). */}
+        <script dangerouslySetInnerHTML={{__html: motionOkScript}} />
         <noscript>
           <style>{'.splash{display:none}'}</style>
         </noscript>

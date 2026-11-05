@@ -98,6 +98,8 @@ export const aboutSection = {
   supporting: 'A little more about the guy behind the screens.',
   /** "*word*" sets the italic serif accent. */
   lead: 'I’m Ravi Kumar: a product designer, occasional *overthinker*, and someone who likes figuring out why things work the way they do.',
+  /** The way on to the About page. */
+  action: {label: 'Get to know me', href: '/about'},
   body: 'I found my way into design through that curiosity, and somewhere along the way it became what I do. Since then, I’ve worked across mobile apps, digital products, and design systems, picking up a few lessons, and a lot of screens, along the way.',
 };
 
@@ -105,6 +107,8 @@ export const aboutSection = {
 export const timeline = {
   label: 'How I got here',
   title: 'A few stops along the *way.*',
+  /** The sub-headline, pinned under the title with it. */
+  supporting: 'From writing code to designing what people use, one stop at a time.',
   stops: [
     {
       date: '2021–2025',
@@ -158,6 +162,37 @@ export type WorkProject = {
   meta: string[];
   /** `focus` is the CSS object-position kept in view when the panel crops it. */
   thumbnail?: {src: string; alt: string; focus?: string};
+  /** Where the project opens (its case study). Until there is one: the Work page. */
+  href?: string;
+};
+
+/** Icon keys for a discipline's "covers" row (mapped to icons in DisciplineDeck). */
+export type CoverIcon =
+  | 'search'
+  | 'idea'
+  | 'layers'
+  | 'route'
+  | 'network'
+  | 'check'
+  | 'palette'
+  | 'grid'
+  | 'phone'
+  | 'pointer'
+  | 'toggle'
+  | 'sparkles'
+  | 'scan'
+  | 'branch'
+  | 'workflow'
+  | 'shapes'
+  | 'component'
+  | 'book';
+
+export type Discipline = {
+  title: string;
+  description: string;
+  glyph: GlyphName;
+  /** Three short things the discipline covers, shown as an icon row. */
+  covers: {label: string; icon: CoverIcon}[];
 };
 
 export const manifesto = {
@@ -169,35 +204,70 @@ export const disciplines = {
   index: 1,
   label: 'What I do',
   title: 'I make the confusing feel *obvious.*',
+  /** Each discipline is a full-screen card in the pinned deck (DisciplineDeck). */
   items: [
     {
       title: 'Product Design',
       description: 'Shape a product around what people actually need.',
       glyph: 'product-digital',
+      covers: [
+        {label: 'User research', icon: 'search'},
+        {label: 'Product thinking', icon: 'idea'},
+        {label: 'Prototyping', icon: 'layers'},
+      ],
     },
-    {title: 'UX Design', description: 'Create journeys that are easier to follow.', glyph: 'steps'},
+    {
+      title: 'UX Design',
+      description: 'Create journeys that are easier to follow.',
+      glyph: 'steps',
+      covers: [
+        {label: 'User journeys', icon: 'route'},
+        {label: 'Information architecture', icon: 'network'},
+        {label: 'Usability testing', icon: 'check'},
+      ],
+    },
     {
       title: 'UI Design',
       description: 'Build interfaces that feel clear, consistent and intentional.',
       glyph: 'screen',
+      covers: [
+        {label: 'Visual design', icon: 'palette'},
+        {label: 'Layout & type', icon: 'grid'},
+        {label: 'Responsive screens', icon: 'phone'},
+      ],
     },
     {
       title: 'Interaction Design',
       description: 'Make actions, feedback and transitions easier to understand.',
       glyph: 'toggle',
+      covers: [
+        {label: 'Micro-interactions', icon: 'pointer'},
+        {label: 'Feedback & states', icon: 'toggle'},
+        {label: 'Motion', icon: 'sparkles'},
+      ],
     },
     {
       title: 'UX Flow Revamp',
       description: 'Find the parts of an experience that get in the way, then rethink them.',
       glyph: 'rethink',
+      covers: [
+        {label: 'Flow audits', icon: 'scan'},
+        {label: 'Friction mapping', icon: 'branch'},
+        {label: 'Simpler flows', icon: 'workflow'},
+      ],
     },
     {
       title: 'Design Systems',
       description:
         'Foundations, components and patterns that keep a product consistent as it grows.',
       glyph: 'system',
+      covers: [
+        {label: 'Foundations & tokens', icon: 'shapes'},
+        {label: 'Components', icon: 'component'},
+        {label: 'Documentation', icon: 'book'},
+      ],
     },
-  ] satisfies SequenceStep[],
+  ] satisfies Discipline[],
   /** The phrases that slide past under the rail as the page scrolls. */
   principles: [
     'Clarity before decoration',

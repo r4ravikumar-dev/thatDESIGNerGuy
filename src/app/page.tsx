@@ -2,6 +2,7 @@ import {VStack} from '@astryxdesign/core/Layout';
 import {Chapter} from '@/components/editorial/Chapter';
 import {ChapterHeader} from '@/components/editorial/ChapterHeader';
 import {SequenceRail} from '@/components/editorial/SequenceRail';
+import {DisciplineDeck} from '@/components/home/DisciplineDeck';
 import {Marquee} from '@/components/editorial/Marquee';
 import {BigStatement} from '@/components/editorial/BigStatement';
 import {PortfolioHero} from '@/components/home/PortfolioHero';
@@ -32,7 +33,8 @@ export default function HomePage() {
           label={disciplines.label}
           title={disciplines.title}
         />
-        <SequenceRail steps={disciplines.items} label="What I do, by discipline" isPinned />
+        {/* Full-screen cards, pinned, sliding in sideways one after another. */}
+        <DisciplineDeck items={disciplines.items} label="What I do, by discipline" />
         <Marquee items={disciplines.principles} />
       </Chapter>
 

@@ -2,6 +2,8 @@
 @import '@astryxdesign/core/astryx.css';
 /* theme: Astryx Stone (src/theme). */
 @import '../theme/portfolio.css';
+/* Lenis smooth scrolling (components/motion/SmoothScroll). */
+@import 'lenis/dist/lenis.css';
 
 html {
   scroll-behavior: smooth;
@@ -151,10 +153,28 @@ html {
   --lg-drop: 0 6px 16px -10px var(--glass-shadow);
 }
 
+/* The project cursor's tag (CustomCursor): the primary CTA's brand-blue glass. */
+.cursor-project-tag {
+  --lg-fill: light-dark(
+    color-mix(in srgb, var(--color-brand) 88%, transparent),
+    color-mix(in srgb, var(--color-brand) 84%, transparent)
+  );
+  --lg-fill-hover: var(--lg-fill);
+  --lg-fill-solid: var(--color-brand);
+  --lg-text: rgb(255 255 255);
+  --lg-light: light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.34));
+  --lg-sheen: light-dark(rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.12));
+  --lg-ring: rgb(255 255 255 / 0.2);
+  --lg-ring-hover: rgb(255 255 255 / 0.2);
+  --lg-glow: light-dark(rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.1));
+  --lg-drop: 0 10px 24px -10px color-mix(in srgb, var(--color-brand) 70%, transparent);
+}
+
 /* The material. */
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
-    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
+    .cursor-project-tag
   ):not(#\#):not(#\#):not(#\#):not(#\#) {
   position: relative;
   isolation: isolate;
@@ -183,11 +203,13 @@ html {
 }
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
-    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
+    .cursor-project-tag
   ):not(#\#):not(#\#):not(#\#):not(#\#)::before,
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
-    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
+    .cursor-project-tag
   ):not(#\#):not(#\#):not(#\#):not(#\#)::after {
   content: '';
   position: absolute;
@@ -201,7 +223,8 @@ html {
    so the glass stays clear. */
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
-    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
+    .cursor-project-tag
   ):not(#\#):not(#\#):not(#\#):not(#\#)::before {
   background:
     radial-gradient(90% 140% at 0% 0%, var(--lg-sheen) 0%, transparent 60%),
@@ -211,31 +234,36 @@ html {
 /* Splay: light spreading up from the bottom. */
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
-    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
+    .cursor-project-tag
   ):not(#\#):not(#\#):not(#\#):not(#\#)::after {
   background: radial-gradient(140% 110% at 50% 140%, var(--lg-glow) 0%, transparent 72%);
   opacity: 0.9;
 }
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
-    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
+    .cursor-project-tag
   ):not(#\#):not(#\#):not(#\#):not(#\#):hover {
   --lg-ring: var(--lg-ring-hover);
 }
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
-    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
+    .cursor-project-tag
   ):not(#\#):not(#\#):not(#\#):not(#\#):hover::before,
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
-    .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+    .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
+    .cursor-project-tag
   ):not(#\#):not(#\#):not(#\#):not(#\#):hover::after {
   opacity: 1;
 }
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   :is(
       .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
-      .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+      .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
+      .cursor-project-tag
     ):not(#\#):not(#\#):not(#\#):not(#\#) {
     background-color: var(--lg-fill);
     -webkit-backdrop-filter: blur(10px) saturate(180%) brightness(1.05);
@@ -243,7 +271,8 @@ html {
   }
   :is(
       .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
-      .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+      .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
+      .cursor-project-tag
     ):not(#\#):not(#\#):not(#\#):not(#\#):hover {
     background-color: var(--lg-fill-hover);
   }
@@ -251,11 +280,13 @@ html {
 @media (prefers-reduced-transparency: reduce) {
   :is(
       .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
-      .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+      .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
+      .cursor-project-tag
     ):not(#\#):not(#\#):not(#\#):not(#\#),
   :is(
       .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
-      .astryx-top-nav-item:is([aria-current='page'], :focus-visible)
+      .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
+      .cursor-project-tag
     ):not(#\#):not(#\#):not(#\#):not(#\#):hover {
     background-color: var(--lg-fill-solid);
     -webkit-backdrop-filter: none;
@@ -561,31 +592,50 @@ html {
 }
 
 /* SequenceRail: hairline columns like the question rail. Stacked on phones,
-   three columns on tablets and small laptops, one row from 1280px. */
+   three columns on tablets and small laptops, one row from 1280px. Each step
+   owns its share of the grid (.sequence-rail-line), so the lines can draw in
+   step by step with the cards: a line along its top and bottom, and a
+   divider down its left side wherever it has a neighbour in the row. */
 .sequence-rail {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   margin: 0;
   padding: 0;
   list-style: none;
-  border-block: 1px solid var(--color-border);
 }
 .sequence-rail-step {
+  position: relative;
   padding-block: var(--spacing-8);
 }
-.sequence-rail-step + .sequence-rail-step {
-  border-block-start: 1px solid var(--color-border);
-}
-.sequence-rail-progress {
+.sequence-rail-line {
   position: absolute;
-  inset-block-start: 0;
+  background-color: var(--color-border);
+  pointer-events: none;
+}
+/* The top and bottom lines draw left to right. The bottom one sits exactly
+   on the next row's top line, so the two read as one hairline. */
+.sequence-rail-line-top,
+.sequence-rail-line-bottom {
   inset-inline: 0;
-  z-index: 1;
-  display: block;
-  block-size: 2px;
-  margin-block-start: -0.5px;
-  background-color: var(--color-brand-text);
+  block-size: 1px;
   transform-origin: left center;
+}
+.sequence-rail-line-top {
+  inset-block-start: 0;
+}
+.sequence-rail-line-bottom {
+  inset-block-end: -1px;
+}
+/* Dividers drop from the top. None on phones (one column). */
+.sequence-rail-line-divider {
+  display: none;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: 1px;
+  transform-origin: top center;
+}
+.sequence-rail-art {
+  margin-block-end: var(--spacing-2);
 }
 @media (min-width: 768px) {
   .sequence-rail {
@@ -594,14 +644,9 @@ html {
   .sequence-rail-step {
     padding: var(--spacing-8) var(--spacing-6);
   }
-  .sequence-rail-step + .sequence-rail-step {
-    border-block-start: 0;
-  }
-  .sequence-rail-step:not(:nth-child(3n + 1)) {
-    border-inline-start: 1px solid var(--color-border);
-  }
-  .sequence-rail-step:nth-child(n + 4) {
-    border-block-start: 1px solid var(--color-border);
+  /* A divider on every step that has a neighbour to its left. */
+  .sequence-rail-step:not(:nth-child(3n + 1)) .sequence-rail-line-divider {
+    display: block;
   }
   /* Outer columns sit flush with the content edge; padding only between. */
   .sequence-rail-step:nth-child(3n + 1) {
@@ -611,108 +656,15 @@ html {
     padding-inline-end: 0;
   }
 }
-/* Pinned rail (SequenceRail isPinned): the track adds a third of a screen of
-   scroll per step; the stage sticks under the header with the rail centred
-   in the space below it. From 1280px the steps sit in one row; below that
-   they slide in sideways (.sequence-rail-sliding). */
-.sequence-pin {
-  block-size: calc(100svh + var(--steps) * 33svh);
-}
-.sequence-pin-stage {
-  position: sticky;
-  inset-block-start: var(--header-height);
-  min-block-size: calc(100svh - var(--header-height));
-  justify-content: center;
-  box-sizing: border-box;
-}
-/* The sliding row: one card per ~78% of the screen (max 320px), hairlines
-   between, so the next card peeks in from the right. Beats the stacked and
-   three-column borders above. */
-.sequence-rail.sequence-rail-sliding {
-  display: flex;
-  border-block: 0;
-}
-/* The hairlines above and below stay put while the row slides inside. */
-.sequence-rail-window {
-  border-block: 1px solid var(--color-border);
-}
-.sequence-rail-sliding .sequence-rail-step.sequence-rail-step {
-  flex: 0 0 min(78vw, 20rem);
-  box-sizing: border-box;
-  padding: var(--spacing-8) var(--spacing-6);
-  border-block-start: 0;
-}
-.sequence-rail-sliding .sequence-rail-step.sequence-rail-step:first-child {
-  padding-inline-start: 0;
-}
-.sequence-rail-sliding .sequence-rail-step + .sequence-rail-step {
-  border-inline-start: 1px solid var(--color-border);
-}
-/* Sliding cards are half the screen tall everywhere. Above 810px the card
-   turns sideways: illustration left, number, title and line right; cards
-   are 80% of the rail on tablets and half of it from 1024px. Astryx's
-   atomic stack classes carry :not(#\#)x3, so the direction needs x4. */
-.sequence-rail-sliding .sequence-rail-step.sequence-rail-step {
-  display: flex;
-  min-block-size: 50svh;
-}
-.sequence-rail-sliding .sequence-rail-card {
-  flex: 1;
-  justify-content: center;
-}
-.sequence-rail-art {
-  margin-block-end: var(--spacing-2);
-}
-/* Sliding cards size the illustration by the card's height (50svh): half of
-   it on phones, three quarters above 810px, never wider than the card allows. */
-.sequence-rail-sliding .sequence-rail-art {
-  max-inline-size: 100%;
-}
-.sequence-rail-sliding .sequence-rail-art .illustration {
-  block-size: calc(50svh * 0.5);
-  inline-size: auto;
-  max-inline-size: 100%;
-}
-@media (min-width: 811px) {
-  .sequence-rail-sliding .sequence-rail-step.sequence-rail-step {
-    flex-basis: 80%;
-    padding: var(--spacing-10);
-  }
-  .sequence-rail-sliding .sequence-rail-step.sequence-rail-step:first-child {
-    padding-inline-start: 0;
-  }
-  .sequence-rail-sliding .sequence-rail-card:not(#\#):not(#\#):not(#\#):not(#\#) {
-    flex-direction: row;
-    align-items: center;
-    gap: var(--spacing-8);
-  }
-  .sequence-rail-sliding .sequence-rail-art {
-    flex: 0 0 auto;
-    max-inline-size: 50%;
-    margin-block-end: 0;
-  }
-  .sequence-rail-sliding .sequence-rail-art .illustration {
-    block-size: calc(50svh * 0.75);
-  }
-  .sequence-rail-sliding .sequence-rail-text {
-    flex: 1;
-    min-inline-size: 0;
-  }
-}
-@media (min-width: 1024px) {
-  .sequence-rail-sliding .sequence-rail-step.sequence-rail-step {
-    flex-basis: 50%;
-  }
-}
 @media (min-width: 1280px) {
   .sequence-rail {
     grid-template-columns: repeat(var(--steps), minmax(0, 1fr));
   }
-  .sequence-rail-step:nth-child(n + 4) {
-    border-block-start: 0;
+  .sequence-rail-step:nth-child(3n + 1) .sequence-rail-line-divider {
+    display: block;
   }
-  .sequence-rail-step + .sequence-rail-step {
-    border-inline-start: 1px solid var(--color-border);
+  .sequence-rail-step:first-child .sequence-rail-line-divider {
+    display: none;
   }
   .sequence-rail-step.sequence-rail-step {
     padding-inline: var(--spacing-6);
@@ -1344,13 +1296,26 @@ html {
   animation: scroll-cue-nudge 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 @keyframes scroll-cue-nudge {
-  0% { transform: translateY(-3px); opacity: 0; }
-  25% { opacity: 1; }
-  70% { transform: translateY(6px); opacity: 1; }
-  100% { transform: translateY(9px); opacity: 0; }
+  0% {
+    transform: translateY(-3px);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(9px);
+    opacity: 0;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .portfolio-hero-scroll-arrow { animation: none; }
+  .portfolio-hero-scroll-arrow {
+    animation: none;
+  }
 }
 .portfolio-hero-dot {
   color: var(--color-text-secondary);
@@ -1399,6 +1364,92 @@ html {
   }
 }
 
+/* The design story (components/illustrations/DesignStory): a Lottie
+   animation on the dot grid. Its placeholder colours are mapped onto theme
+   tokens here, so it follows light and dark mode (see
+   scripts/lottie/design-story.py). Phones and tablets: inline above the
+   intro. From 1024px: in the pinned panel, cross-fading with the photo as
+   the intro arrives (.is-story). */
+.design-story-lottie {
+  inline-size: 100%;
+  aspect-ratio: 400 / 420;
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--color-text-secondary) 35%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
+  background-position: center;
+}
+.design-story-lottie svg {
+  display: block;
+}
+.design-story-lottie [stroke='rgb(1,2,3)'] {
+  stroke: var(--color-text-primary);
+}
+.design-story-lottie [fill='rgb(1,2,3)'] {
+  fill: var(--color-text-primary);
+}
+.design-story-lottie [stroke='rgb(4,5,6)'] {
+  stroke: var(--color-text-secondary);
+}
+.design-story-lottie [fill='rgb(4,5,6)'] {
+  fill: var(--color-text-secondary);
+}
+/* The cursor fill is the brand fill; its selection outline the accessible
+   brand text blue. */
+.design-story-lottie [fill='rgb(7,8,9)'] {
+  fill: var(--color-brand);
+}
+.design-story-lottie [stroke='rgb(7,8,9)'] {
+  stroke: var(--color-brand-text);
+}
+.design-story-lottie [fill='rgb(10,11,12)'] {
+  fill: var(--color-background-surface);
+}
+.hero-story-inline {
+  inline-size: 100%;
+  max-inline-size: 28rem;
+  margin-inline: auto;
+  margin-block-end: var(--space-block);
+}
+.hero-art-story {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .hero-story-inline {
+    display: none;
+  }
+  .portfolio-hero-photo .hero-art {
+    position: absolute;
+    inset: 0;
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .hero-art-story {
+    display: flex;
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  .hero-art-story .design-story-lottie {
+    inline-size: min(90%, (100svh - var(--header-height)) * 0.84 * 400 / 420);
+  }
+  .portfolio-hero-photo.is-story .hero-art-photo {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  .portfolio-hero-photo.is-story .hero-art-story {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-hero-photo .hero-art {
+    transition: opacity 200ms linear;
+    transform: none;
+  }
+}
+
 /* ---------- Work showcase (components/home/WorkShowcase) ---------- */
 /* Phones and tablets: headline, then each thumbnail with its text under it.
    From 1024px: a 30/70 split on the page frame; the left column pins under
@@ -1431,6 +1482,17 @@ html {
 .work-showcase-frame {
   block-size: 70svh;
   overflow: hidden;
+}
+/* The banner and the details card open the project (WorkShowcase). */
+.work-showcase-link {
+  display: block;
+  block-size: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+.work-showcase-link:focus-visible {
+  outline: 2px solid var(--color-brand-text);
+  outline-offset: -2px;
 }
 .work-showcase-image {
   display: block;
@@ -1508,63 +1570,245 @@ html {
 }
 .about-section-art {
   order: -1;
+  /* Phones and tablets: a comfortable size above the text. */
+  inline-size: 100%;
+  max-inline-size: 26rem;
+  margin-inline: auto;
 }
+.about-section-art .illustration {
+  inline-size: 100%;
+  block-size: auto;
+}
+/* From 1024px: half and half, the illustration filling its half (it grows
+   on to 720px at wide screens with --illustration-scale). */
 @media (min-width: 1024px) {
   .about-section {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: center;
   }
   .about-section-art {
     order: 0;
+    max-inline-size: none;
   }
 }
 
 /* ---------- Timeline (components/home/Timeline) ---------- */
-/* 810px and below: the line runs down the left, stops stacked beside it,
-   the blue progress scaling with --p (0 to 1, set from the scroll). Above
-   810px the timeline pins and slides sideways (.timeline-sliding). */
+/* The head (eyebrow, headline, sub-headline) sticks under the site header
+   while the stops scroll up beneath it. The line runs down the left below
+   1024px and down the centre from there, the stops alternating sides.
+   Sizes step with the screen: the node ring and the cropped numeral. */
 .timeline-section {
+  --node-size: 40px;
+  --numeral-size: var(--type-display-l-size);
+  /* How much of the numeral shows above its hairline. */
+  --numeral-crop: calc(var(--numeral-size) * 0.58);
+  /* Space between the node and the content beside it. */
+  --stop-gap: var(--spacing-6);
   display: flex;
   flex-direction: column;
   gap: var(--space-chapter-gap);
   padding-block: var(--space-section);
   border-block-start: 1px solid var(--color-border);
 }
-.timeline {
-  /* From the line to the card's text: the 12px dot, a 24px gap, then the
-     card's own 24px hover surface. */
-  --timeline-offset: calc(12px + 24px + var(--spacing-6));
-  position: relative;
-  display: grid;
-  gap: var(--space-block);
-  margin: 0;
-  padding: 0 0 0 var(--timeline-offset);
-  list-style: none;
+@media (min-width: 768px) {
+  .timeline-section {
+    --node-size: 48px;
+    --numeral-size: var(--type-display-xl-size);
+    --stop-gap: var(--spacing-8);
+  }
 }
-.timeline-track,
-.timeline-progress {
+@media (min-width: 1024px) {
+  .timeline-section {
+    --node-size: 56px;
+    --numeral-size: var(--type-display-xxl-size);
+    --stop-gap: var(--space-block);
+  }
+}
+
+/* The pinned head: the page surface behind it so the stops pass under it,
+   and a short fade below so they slip away rather than being cut off. */
+.timeline-head {
+  position: sticky;
+  inset-block-start: var(--header-height);
+  z-index: 3;
+  padding-block: var(--spacing-6);
+  background-color: var(--color-background-surface);
+}
+/* Phones: the pinned title steps down to Headline XL so the stops get the
+   screen. The heading reads its size from these, so overriding them here is
+   enough. */
+@media (max-width: 767px) {
+  .timeline-head {
+    --type-display-m-size: var(--type-headline-xl-size);
+    --type-display-m-leading: var(--type-headline-xl-leading);
+  }
+}
+.timeline-head::after {
+  content: '';
   position: absolute;
-  inset-block: 6px;
-  inset-inline-start: 5px;
+  inset-inline: 0;
+  inset-block-start: 100%;
+  block-size: var(--space-block);
+  background: linear-gradient(var(--color-background-surface), transparent);
+  pointer-events: none;
+}
+
+/* The line: from the first node's centre to the end of the last stop. */
+.timeline-body {
+  position: relative;
+}
+.timeline-spine {
+  position: absolute;
+  inset-block: calc(var(--node-offset, 0px) + var(--node-size) / 2) 0;
+  inset-inline-start: calc(var(--node-size) / 2 - 1px);
   inline-size: 2px;
   background-color: var(--color-border);
 }
-.timeline-progress {
+.timeline-spine-fill {
   background-color: var(--color-brand-text);
   transform-origin: top;
-  transform: scaleY(var(--p, 0));
 }
+.motion-ok .timeline-spine-fill {
+  transform: scaleY(0);
+}
+
+.timeline {
+  display: grid;
+  /* Every stop as tall as the tallest, so the rows match. */
+  grid-auto-rows: 1fr;
+  gap: var(--space-chapter-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Phones and tablets: the node on the line, the numeral and date, then the card. */
 .timeline-stop {
   position: relative;
+  display: grid;
+  grid-template-columns: var(--node-size) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    'node aside'
+    'node card';
+  column-gap: var(--stop-gap);
+  row-gap: var(--spacing-6);
+  /* The card stretches to the row's height. */
+  align-items: stretch;
 }
-.timeline-dot {
-  position: absolute;
-  inset-block-start: 4px;
-  inset-inline-start: calc(-1 * var(--timeline-offset));
-  inline-size: 12px;
-  block-size: 12px;
+/* The node's centre sits level with the numeral's hairline. */
+.timeline-section {
+  --node-offset: max(0px, calc(var(--numeral-crop) - var(--node-size) / 2));
+}
+
+/* The node: a ring on the line with a dot at its centre. */
+.timeline-node {
+  grid-area: node;
+  align-self: start;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  inline-size: var(--node-size);
+  block-size: var(--node-size);
+  margin-block-start: var(--node-offset);
+  box-sizing: border-box;
+  border: 1px solid var(--color-brand-text);
   border-radius: 50%;
-  box-shadow: 0 0 0 4px var(--color-background-body);
+  background-color: var(--color-background-surface);
+  /* A gap in the line around the ring. */
+  box-shadow: 0 0 0 6px var(--color-background-surface);
+  color: var(--color-text-primary);
+  transition:
+    border-color 400ms ease,
+    color 400ms ease;
+}
+.timeline-node-dot {
+  inline-size: 32%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: var(--color-brand-text);
+  transition: background-color 400ms ease;
+}
+/* The latest stop is where things are now: its ring keeps beeping. */
+.timeline-node[data-latest]::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 2px solid var(--color-brand-text);
+  animation: timeline-node-beep 2s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes timeline-node-beep {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* The aside: the numeral cropped by its hairline, then the date. */
+.timeline-aside {
+  grid-area: aside;
+  min-inline-size: 0;
+}
+.timeline-numeral {
+  display: block;
+  block-size: var(--numeral-crop);
+  overflow: clip;
+  font-family: var(--font-family-heading);
+  font-size: var(--numeral-size);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+  -webkit-text-stroke: 1px transparent;
+  transition:
+    color 500ms ease,
+    -webkit-text-stroke-color 500ms ease;
+}
+.timeline-numeral-digits {
+  display: block;
+}
+/* The illustration: the stop's glyph, large, straight on the page. A fixed
+   shape on phones and tablets; from 1024px it fills the rest of the row
+   beside the card, centred in it. */
+.timeline-art {
+  aspect-ratio: 3 / 2;
+  max-inline-size: 32rem;
+  margin-block-start: var(--spacing-3);
+  color: var(--color-text-primary);
+  transition: opacity 500ms ease;
+}
+.timeline-art .illustration {
+  inline-size: min(64%, 22.5rem);
+  block-size: auto;
+}
+/* The hairline runs from the node's edge under the numeral. */
+.timeline-rule {
+  display: block;
+  block-size: 1px;
+  inline-size: calc(100% + var(--stop-gap));
+  margin-block-start: calc(-1 * var(--spacing-3));
+  margin-inline-start: calc(-1 * var(--stop-gap));
+  background-color: var(--color-border-emphasized);
+  transform-origin: left center;
+}
+
+/* The card: no surface, just the content, centred in the row's height so
+   every stop's text sits in the middle of its (equal-height) row. */
+.timeline-card {
+  grid-area: card;
+  position: relative;
+  min-inline-size: 0;
+  box-sizing: border-box;
+}
+.timeline-card-rule {
+  display: none;
 }
 .timeline-list {
   display: grid;
@@ -1587,128 +1831,257 @@ html {
   border-radius: 50%;
   background-color: var(--color-brand-text);
 }
-.timeline-window {
+
+/* Focus (set by Timeline's scroll triggers): the stop crossing the middle
+   of the screen has a filled numeral and a lit ring; the others step back
+   to an outlined numeral, a quiet ring and softer text. */
+.timeline[data-focus] .timeline-stop:not(.is-active) .timeline-numeral {
+  color: transparent;
+  -webkit-text-stroke-color: var(--color-text-secondary);
+}
+.timeline[data-focus] .timeline-stop:not(.is-active) .timeline-node {
+  border-color: var(--color-border-emphasized);
+  color: var(--color-text-secondary);
+}
+.timeline[data-focus] .timeline-stop:not(.is-active) .timeline-node-dot {
+  background-color: var(--color-border-emphasized);
+}
+.timeline[data-focus] .timeline-stop:not(.is-active) .timeline-art {
+  opacity: 0.45;
+}
+.timeline[data-focus] .timeline-card {
+  transition: opacity 500ms ease;
+}
+.timeline[data-focus] .timeline-stop:not(.is-active) .timeline-card {
+  opacity: 0.45;
+}
+
+/* From 1024px: the line down the centre, the stops alternating either side.
+   data-side names where the card goes; the numeral takes the other side. */
+@media (min-width: 1024px) {
+  .timeline-spine {
+    inset-inline-start: calc(50% - 1px);
+  }
+  .timeline-stop {
+    grid-template-columns: minmax(0, 1fr) var(--node-size) minmax(0, 1fr);
+    grid-template-rows: 1fr;
+    grid-template-areas: 'aside node card';
+  }
+  .timeline-stop[data-side='start'] {
+    grid-template-areas: 'card node aside';
+  }
+  /* The card starts on the hairline, which carries on from the node right
+     across the card's side of the row; its content is centred below it. */
+  .timeline-card {
+    margin-block-start: var(--numeral-crop);
+    padding-block: var(--spacing-10);
+  }
+  .timeline-card-rule {
+    display: block;
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: calc(-1 * var(--stop-gap)) 0;
+    block-size: 1px;
+    background-color: var(--color-border-emphasized);
+    transform-origin: left center;
+  }
+  /* Card on the left: the hairline runs from the node out to the left. */
+  .timeline-stop[data-side='start'] .timeline-card-rule {
+    inset-inline: 0 calc(-1 * var(--stop-gap));
+    transform-origin: right center;
+  }
+  /* The panel fills the rest of the row, so it ends level with the card. */
+  .timeline-art {
+    flex: 1;
+    aspect-ratio: auto;
+    inline-size: 100%;
+    max-inline-size: none;
+    min-block-size: 15rem;
+  }
+  /* Numeral on the left: right-aligned against the line. */
+  .timeline-stop[data-side='end'] .timeline-aside.timeline-aside {
+    align-items: flex-end;
+    text-align: end;
+  }
+  .timeline-stop[data-side='end'] .timeline-rule {
+    margin-inline: 0 calc(-1 * var(--stop-gap));
+    transform-origin: right center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timeline-node[data-latest]::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* ---------- Discipline deck (components/home/DisciplineDeck) ---------- */
+/* Full-screen cards built like a spec sheet: the big numeral cropped by
+   the first hairline, the text, a second hairline, then the covers row; the illustration fills the other half. Stacked by default
+   (reduced motion, no JavaScript); with motion-ok the stage pins under the
+   header and the cards slide in sideways one after another. */
+.deck {
+  --deck-numeral: var(--type-display-l-size);
+  /* How much of the numeral shows above its hairline. */
+  --deck-crop: calc(var(--deck-numeral) * 0.58);
   position: relative;
+}
+@media (min-width: 768px) {
+  .deck {
+    --deck-numeral: var(--type-display-xl-size);
+  }
+}
+@media (min-width: 1024px) {
+  .deck {
+    --deck-numeral: var(--type-display-xxl-size);
+  }
+}
+
+.deck-stage {
+  position: relative;
+}
+.deck-track {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Phones and tablets: the illustration on top, the content under it. */
+.deck-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    'art'
+    'content';
+  gap: var(--spacing-8);
+  box-sizing: border-box;
+  padding-block: var(--space-block);
+}
+.deck-card + .deck-card {
+  border-block-start: 1px solid var(--color-border);
+}
+.deck-card-content {
+  grid-area: content;
+  position: relative;
+  min-inline-size: 0;
+}
+.deck-card-art {
+  grid-area: art;
+  min-block-size: 0;
+  color: var(--color-text-primary);
+}
+.deck-card-art .illustration {
+  inline-size: min(72%, 22rem);
+  block-size: auto;
+  max-block-size: 26svh;
+}
+
+.deck-numeral {
+  display: block;
+  block-size: var(--deck-crop);
+  overflow: clip;
+  font-family: var(--font-family-heading);
+  font-size: var(--deck-numeral);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+}
+.deck-numeral-digits {
+  display: block;
+}
+/* The two hairlines, across the content's full width. */
+.deck-rule {
+  display: block;
+  block-size: 1px;
+  background-color: var(--color-border-emphasized);
+  transform-origin: left center;
+}
+.deck-card-text {
+  padding-block: var(--spacing-6);
+}
+/* Covers: the label, then icon-over-label items. The label takes its own
+   line on phones. */
+.deck-covers {
+  flex-wrap: wrap;
+  padding-block-start: var(--spacing-6);
+}
+.deck-covers-label {
+  flex-basis: 100%;
+}
+.deck-covers-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.deck-covers-list li {
+  inline-size: 5.5rem;
+  color: var(--color-text-primary);
+}
+@media (min-width: 768px) {
+  .deck-covers {
+    flex-wrap: nowrap;
+  }
+  .deck-covers-label {
+    flex-basis: auto;
+    min-inline-size: 4.5rem;
+    padding-block-start: var(--spacing-1);
+  }
+  .deck-covers-list {
+    flex-wrap: nowrap;
+    gap: var(--spacing-5);
+  }
+  .deck-covers-list li {
+    inline-size: 6rem;
+  }
+}
+
+/* From 1024px: content on the left, the illustration large on the right. */
+@media (min-width: 1024px) {
+  .deck-card {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: 'content art';
+    gap: var(--space-block);
+  }
+  .deck-card-art .illustration {
+    inline-size: min(78%, 40rem);
+    max-block-size: 64svh;
+  }
+}
+
+/* The pinned deck (motion-ok): a track one screen tall per card, the stage
+   sticky under the header, the cards side by side, each the full stage. */
+.motion-ok .deck {
+  block-size: calc(var(--deck-count) * 100svh);
+}
+.motion-ok .deck-stage {
+  position: sticky;
+  inset-block-start: var(--header-height);
+  block-size: calc(100svh - var(--header-height));
   overflow: hidden;
 }
-.timeline-rail {
-  display: none;
+.motion-ok .deck-track {
+  display: flex;
+  block-size: 100%;
 }
-/* The card: a dark grey surface fills it on hover (mouse devices only), the
-   card lifting a little and its illustration rising with it. The padding
-   and transparent border are always there so nothing shifts on hover. */
-.timeline-card {
-  padding: var(--spacing-6);
-  margin: calc(-1 * var(--spacing-6));
-  border: 1px solid transparent;
-  border-radius: var(--radius-element);
-  transition:
-    background-color 240ms ease,
-    border-color 240ms ease,
-    box-shadow 240ms ease,
-    transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+.motion-ok .deck-card {
+  flex: 0 0 100%;
+  block-size: 100%;
+  border-block-start: 0;
 }
-.timeline-card-art {
-  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-/* 810px and below the card fills the timeline's width, so its hover surface
-   stays inside the frame on the right instead of being cut off there. */
-@media (max-width: 810px) {
-  .timeline-card {
-    margin-inline-end: 1px;
-    padding-inline-end: var(--spacing-4);
+/* Short screens: the illustration gives way so the card still fits. */
+@media (max-height: 700px) and (max-width: 1023px) {
+  .deck-card-art .illustration {
+    max-block-size: 18svh;
   }
-}
-@media (hover: hover) {
-  .timeline-card:hover {
-    transform: translateY(-4px);
-    background-color: var(--color-background-muted);
-    border-color: var(--color-border);
-  }
-  .timeline-card:hover .timeline-card-art {
-    transform: translateY(-3px);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .timeline-card,
-  .timeline-card-art {
-    transition: background-color 240ms ease, border-color 240ms ease;
-  }
-  .timeline-card:hover,
-  .timeline-card:hover .timeline-card-art {
-    transform: none;
-  }
-}
-/* The current dot beeps: a ring that keeps pulsing out from it. */
-.timeline-dot-ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-}
-.timeline-dot-ring::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 2px solid var(--color-brand-text);
-  animation: timeline-beep 1.6s ease-out infinite;
-}
-@keyframes timeline-beep {
-  0% { transform: scale(1); opacity: 0.9; }
-  100% { transform: scale(2.8); opacity: 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .timeline-dot-ring::after { animation: none; opacity: 0; }
-}
-/* Each stop's own stretch of line: only used when sliding. */
-.timeline-seg {
-  display: none;
-}
-/* Above 810px (Timeline pins it): one sideways row, each card 60% of the
-   width, the line drawn per card along the top so it moves with the row. */
-@media (min-width: 811px) {
-  /* Room above for the current dot's beep ring, below for a hovered card. */
-  .timeline-window[data-direction='across'] {
-    padding-block: var(--spacing-6) var(--spacing-10);
-  }
-  .timeline-window[data-direction='across'] .timeline-rail {
-    display: block;
-    position: absolute;
-    inset-block-start: calc(var(--spacing-6) + 5px);
-    inset-inline: 0;
-    block-size: 2px;
-    background-color: var(--color-border);
-  }
-  .timeline.timeline-sliding {
-    display: flex;
-    gap: 0;
-    padding: var(--timeline-offset) 0 0;
-  }
-  .timeline-sliding .timeline-track,
-  .timeline-sliding .timeline-progress {
-    display: none;
-  }
-  .timeline-sliding .timeline-stop {
-    flex: 0 0 60%;
-    box-sizing: border-box;
-    padding-inline-end: var(--spacing-10);
-  }
-  .timeline-sliding .timeline-seg {
-    display: block;
-    position: absolute;
-    inset-block-start: calc(-1 * var(--timeline-offset) + 5px);
-    inset-inline: 0;
-    block-size: 2px;
-    background-color: var(--color-border);
-  }
-  .timeline-sliding .timeline-seg-fill {
-    background-color: var(--color-brand-text);
-    transform-origin: left;
-  }
-  .timeline-sliding .timeline-dot {
-    z-index: 1;
-    inset-block-start: calc(-1 * var(--timeline-offset));
-    inset-inline-start: 0;
+  .deck-card-text {
+    padding-block: var(--spacing-4);
   }
 }
 
@@ -1908,10 +2281,98 @@ html.has-custom-cursor :is(a, button, [role='button'], [role='tab'], summary, la
     scale: none;
   }
 }
+/* The project pointer (Figma style): the arrow's tip on the pointer (the
+   centre of .cursor-squircle), the glass tag below and to its right. */
+.cursor-project {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  display: block;
+  transform-origin: 0 0;
+}
+.cursor-project-arrow {
+  position: absolute;
+  inset-block-start: -2px;
+  inset-inline-start: -2px;
+  inline-size: 24px;
+  block-size: 24px;
+  overflow: visible;
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.28));
+}
+.cursor-project-arrow path {
+  fill: var(--color-brand);
+  stroke: rgb(255 255 255);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+/* The glass material positions the tag itself (relative), so a wrapper places it. */
+.cursor-project-tag-anchor {
+  position: absolute;
+  inset-block-start: 22px;
+  inset-inline-start: 18px;
+}
+.cursor-project-tag {
+  display: block;
+  padding: var(--spacing-1) var(--spacing-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-element);
+  font-family: var(--font-family-body);
+  font-size: var(--text-supporting-size);
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
 /* Without backdrop filters: the original inverting squircle. White in
    "difference" mode inverts whatever is underneath. */
 @supports not ((backdrop-filter: invert(1)) or (-webkit-backdrop-filter: invert(1))) {
   .cursor-squircle {
     mix-blend-mode: difference;
   }
+}
+
+/* ---------- Scroll effects (motion/scroll.ts, components/motion) ---------- */
+/* While Lenis runs it does the smoothing; the native smooth behaviour would
+   fight it on anchor jumps. */
+html.lenis {
+  scroll-behavior: auto;
+}
+
+/* Reading progress: a brand-blue hairline across the top, above the header. */
+.scroll-progress {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 70;
+  block-size: 2px;
+  background-color: var(--color-brand-text);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+/* Masked line reveal (useTextReveal): hidden until split so it never
+   flashes; shown regardless after 3s in case the script never runs. */
+.motion-ok [data-text-reveal]:not([data-split]) {
+  visibility: hidden;
+  animation: text-reveal-failsafe 0s 3s forwards;
+}
+@keyframes text-reveal-failsafe {
+  to {
+    visibility: visible;
+  }
+}
+/* Each line's mask: a little room below for descenders and beside for the
+   italic serif's overhang, given back with negative margins so the layout
+   doesn't move. */
+.text-reveal-line-mask {
+  padding-block-end: 0.14em;
+  margin-block-end: -0.14em;
+  padding-inline: 0.08em;
+  margin-inline: -0.08em;
+}
+
+/* Footer wordmark rise (useScrubRise): the footer clips it as it climbs. */
+.footer-wordmark-rise {
+  overflow: clip;
 }

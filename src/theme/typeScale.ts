@@ -26,6 +26,7 @@ export type TypeRole =
   | 'headline-l'
   | 'headline-m'
   | 'headline-s'
+  | 'label-xl'
   | 'label-l'
   | 'label-m'
   | 'label-s'
@@ -85,11 +86,15 @@ export const typeScale: Record<TypeRole, RoleSpec> = {
   'headline-l': display(33, 32, 30, 28, LINE_HEIGHT.headline),
   'headline-m': display(29, 28, 26, 24, LINE_HEIGHT.headline),
   'headline-s': display(25, 24, 22, 20, LINE_HEIGHT.headline),
+  // Large single-line phrases (the principles marquee): 20px on the web, 17px on tablets and phones.
+  'label-xl': text(20, 20, 17, 17, LINE_HEIGHT.label),
   'label-l': text(18, 18, 17, 16, LINE_HEIGHT.label),
   'label-m': text(16, 16, 15, 14, LINE_HEIGHT.label),
   'label-s': text(14, 14, 14, 14, LINE_HEIGHT.label),
-  'body-l': text(20, 20, 18, 18, LINE_HEIGHT.body),
-  'body-m': text(16, 16, 16, 14, LINE_HEIGHT.body),
+  // Sub-headlines (Astryx 'large'): 17px on the web, 14px on tablets and phones.
+  'body-l': text(17, 17, 14, 14, LINE_HEIGHT.body),
+  // Body text (Astryx 'body'): 15px on the web, 14px on tablets and phones.
+  'body-m': text(15, 15, 14, 14, LINE_HEIGHT.body),
   'body-s': text(14, 14, 14, 14, LINE_HEIGHT.smallBody),
   'caption-l': text(14, 14, 13, 13, LINE_HEIGHT.caption),
   'caption-m': text(13, 13, 12, 12, LINE_HEIGHT.caption),

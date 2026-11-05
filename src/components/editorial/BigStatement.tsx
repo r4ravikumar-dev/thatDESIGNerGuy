@@ -6,6 +6,8 @@ import {Text} from '@astryxdesign/core/Text';
 import {Link} from '@astryxdesign/core/Link';
 import {Grid} from '@astryxdesign/core/Grid';
 import {Reveal} from '@/components/motion/Reveal';
+import {Parallax} from '@/components/motion/Parallax';
+import {useTextReveal} from '@/motion/scroll';
 import {CtaButton} from '@/components/navigation/CtaButton';
 import {Lines} from '@/components/storytelling/Lines';
 import {LetsTalk} from '@/components/illustrations/scenes';
@@ -41,34 +43,39 @@ export function BigStatement({
   note,
   hasProjectAction = true,
 }: BigStatementProps) {
+  const titleRef = useTextReveal({delay: 0.05});
   return (
     <Chapter id="contact" label={label} isFullHeight>
       <Grid columns={1} gap={8} className="big-statement-grid">
         <Reveal className="big-statement-label">
           <IndexLabel>{label}</IndexLabel>
         </Reveal>
-        <Reveal delay={0.05} distance={32} className="big-statement-title">
+        <VStack gap={0} className="big-statement-title">
+          {/* The title rises line by line out of its masks (useTextReveal). */}
           <Heading
+            ref={titleRef}
+            data-text-reveal
             level={2}
             textWrap="balance"
             style={{...typeRole('display-xl'), letterSpacing: '-0.03em', maxInlineSize: '16ch'}}>
             <Lines text={title} />
           </Heading>
           {intro && (
-            <Text
-              type="large"
-              color="secondary"
-              textWrap="pretty"
-              style={{
-                maxInlineSize: '40ch',
-                fontWeight: 400,
-                marginBlockStart: 'var(--spacing-6)',
-                display: 'block',
-              }}>
-              {intro}
-            </Text>
+            <Reveal delay={0.2}>
+              <Text
+                type="large"
+                color="secondary"
+                textWrap="pretty"
+                style={{
+                  maxInlineSize: '40ch',
+                  marginBlockStart: 'var(--spacing-6)',
+                  display: 'block',
+                }}>
+                {intro}
+              </Text>
+            </Reveal>
           )}
-        </Reveal>
+        </VStack>
         <VStack gap={8} className="big-statement-text">
           <Reveal delay={0.12}>
             <Link
@@ -97,7 +104,12 @@ export function BigStatement({
         </VStack>
         {/* A conversation starting: first on phones and tablets, beside the email on desktop. */}
         <Reveal delay={0.1} className="big-statement-art">
-          <LetsTalk label="Two speech bubbles: a message, and a reply being typed" maxWidth={340} />
+          <Parallax amount={12}>
+            <LetsTalk
+              label="Two speech bubbles: a message, and a reply being typed"
+              maxWidth={340}
+            />
+          </Parallax>
         </Reveal>
       </Grid>
     </Chapter>

@@ -6,6 +6,8 @@ import {Heading} from '@astryxdesign/core/Heading';
 import {Text} from '@astryxdesign/core/Text';
 import {Grid} from '@astryxdesign/core/Grid';
 import {Reveal} from '@/components/motion/Reveal';
+import {Parallax} from '@/components/motion/Parallax';
+import {useTextReveal} from '@/motion/scroll';
 import {CtaButton} from '@/components/navigation/CtaButton';
 import {Lines} from '@/components/storytelling/Lines';
 import {Container} from '@/components/layout/Container';
@@ -48,6 +50,7 @@ export function EditorialHero({
   size = 'display-xl',
   isFullHeight = false,
 }: EditorialHeroProps) {
+  const titleRef = useTextReveal({delay: 0.1});
   return (
     <VStack
       as="header"
@@ -71,14 +74,15 @@ export function EditorialHero({
                 <IndexLabel>{label}</IndexLabel>
               </Reveal>
             )}
-            <Reveal delay={0.05} distance={40}>
-              <Heading
-                level={1}
-                textWrap="balance"
-                style={{...typeRole(size), letterSpacing: '-0.04em', maxInlineSize: '14ch'}}>
-                <Lines text={title} />
-              </Heading>
-            </Reveal>
+            {/* The title rises line by line out of its masks (useTextReveal). */}
+            <Heading
+              ref={titleRef}
+              data-text-reveal
+              level={1}
+              textWrap="balance"
+              style={{...typeRole(size), letterSpacing: '-0.04em', maxInlineSize: '14ch'}}>
+              <Lines text={title} />
+            </Heading>
             {(description || action) && (
               <VStack gap={6}>
                 {description && (
@@ -104,7 +108,7 @@ export function EditorialHero({
           </VStack>
           {illustration && (
             <Reveal delay={0.1} hAlign="end">
-              {illustration}
+              <Parallax amount={10}>{illustration}</Parallax>
             </Reveal>
           )}
         </Grid>

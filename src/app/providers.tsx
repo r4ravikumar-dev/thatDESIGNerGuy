@@ -7,6 +7,7 @@ import {LinkProvider} from '@astryxdesign/core/Link';
 import {portfolioTheme} from '@/theme/portfolio';
 import {springs} from '@/motion/springs';
 import {ScrollManager} from '@/components/navigation/ScrollManager';
+import {SmoothScroll} from '@/components/motion/SmoothScroll';
 
 export function Providers({children}: {children: React.ReactNode}) {
   return (
@@ -14,6 +15,8 @@ export function Providers({children}: {children: React.ReactNode}) {
     <Theme theme={portfolioTheme} mode="system">
       <LinkProvider component={Link}>
         <MotionConfig reducedMotion="user" transition={springs.spatial.default}>
+          {/* Lenis smooth scrolling on GSAP's ticker (off with reduced motion). */}
+          <SmoothScroll />
           <ScrollManager />
           {children}
         </MotionConfig>

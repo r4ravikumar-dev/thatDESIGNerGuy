@@ -33,6 +33,35 @@ const BODY_FONT = `"IBM Plex Sans", ${SYSTEM_SANS}`;
 const EYEBROW_FONT = '"IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace';
 
 /**
+ * Everything the site's text styles depend on: sizes and line heights from
+ * the type scale, the weights, and the IBM Plex families. Applied at the
+ * root, and again on touch screens below 1024px, where Stone's "Mobile
+ * Type" rule would otherwise swap in its own sizes, weights and fonts
+ * (Figtree, Montserrat).
+ */
+const TEXT_TOKENS = {
+  ...mappedTextTokens,
+  '--font-family-body': BODY_FONT,
+  '--font-family-heading': BODY_FONT,
+  '--font-family-code': EYEBROW_FONT,
+  // Body text and sub-headlines are set in medium (500).
+  '--text-body-weight': 'var(--font-weight-medium)',
+  '--text-large-weight': 'var(--font-weight-medium)',
+  '--text-heading-1-weight': 'var(--font-weight-semibold)',
+  '--text-heading-2-weight': 'var(--font-weight-semibold)',
+  '--text-heading-3-weight': 'var(--font-weight-bold)',
+  '--text-heading-4-weight': 'var(--font-weight-bold)',
+  '--text-heading-5-weight': 'var(--font-weight-semibold)',
+  '--text-heading-6-weight': 'var(--font-weight-semibold)',
+  '--text-label-weight': 'var(--font-weight-medium)',
+  '--text-code-weight': 'var(--font-weight-normal)',
+  '--text-supporting-weight': 'var(--font-weight-normal)',
+  '--text-display-1-weight': 'var(--font-weight-normal)',
+  '--text-display-2-weight': 'var(--font-weight-normal)',
+  '--text-display-3-weight': 'var(--font-weight-normal)',
+};
+
+/**
  * The theme: Astryx Stone (warm stone and slate) with IBM Plex Sans
  * for headings and body text, IBM Plex Mono for eyebrows, and:
  * - type scale (v1 plus the v2 expressive tier, typeScale.ts)
@@ -72,12 +101,11 @@ export const portfolioTheme = defineTheme({
     '--glass-shadow': ['rgb(15 15 30 / 0.12)', 'rgb(0 0 0 / 0.45)'],
   },
   tokens: {
-    ...mappedTextTokens,
+    ...TEXT_TOKENS,
     // Control heights on desktop: inputs and buttons both 36px.
     '--size-element-md': '36px',
     '--size-element-lg': '36px',
-    '--font-family-body': BODY_FONT,
-    '--font-family-heading': BODY_FONT,
+
     // Errors: a true red (Stone's default is a muted brown). Text and icons
     // meet 4.5:1 on the page and on the muted form panel in both modes.
     '--color-error': ['hsl(0 72% 44%)', 'hsl(0 85% 72%)'],
@@ -87,7 +115,6 @@ export const portfolioTheme = defineTheme({
     '--color-error-muted': ['hsl(0 86% 96%)', 'hsl(0 42% 18%)'],
     '--color-background-red': ['hsl(0 86% 96%)', 'hsl(0 42% 18%)'],
     '--color-border-red': ['hsl(0 70% 85%)', 'hsl(0 45% 32%)'],
-    '--font-family-code': EYEBROW_FONT,
   },
   components: {
     // Stone gives each form field its own muted-brown error colour; point
@@ -113,6 +140,13 @@ export const portfolioTheme = defineTheme({
     widthBreakpoints: BREAKPOINTS,
     // Later rules win, so each narrower tier refines the one above it.
     rules: [
+      // Touch screens below 1024px: undo Stone's Mobile Type rule so phones
+      // and tablets keep the site's own type (sizes still step with the
+      // width rules below).
+      {
+        when: {pointer: 'coarse', width: {below: 'lg'}},
+        value: {tokens: TEXT_TOKENS},
+      },
       // desktop-sm and below: fluid from the mobile to the desktop sizes.
       {
         when: {width: {below: 'xl'}},
