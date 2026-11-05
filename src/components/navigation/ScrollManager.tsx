@@ -2,21 +2,23 @@
 
 import {useEffect, useLayoutEffect, useRef} from 'react';
 import {usePathname} from 'next/navigation';
+import {jumpTo} from '@/components/motion/SmoothScroll';
 
 /** Waits two frames so it runs after Next.js has finished its own scroll handling. */
 function afterNextScroll(callback: () => void) {
   requestAnimationFrame(() => requestAnimationFrame(callback));
 }
 
+/** Instant, and cancels any Lenis smooth scroll still running from the last page. */
 function scrollInstantly(top: number) {
-  window.scrollTo({top, left: 0, behavior: 'instant'});
+  jumpTo(top);
 }
 
 /** Scrolls to the element named by the URL hash. Returns false if there is none. */
 function scrollToHash(): boolean {
   if (!window.location.hash) return false;
   const target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
-  target?.scrollIntoView({block: 'start', behavior: 'instant'});
+  if (target) jumpTo(target);
   return target !== null;
 }
 

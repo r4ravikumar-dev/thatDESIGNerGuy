@@ -5,6 +5,7 @@ import {Heading} from '@astryxdesign/core/Heading';
 import {Text} from '@astryxdesign/core/Text';
 import {Reveal} from '@/components/motion/Reveal';
 import {Lines} from '@/components/storytelling/Lines';
+import {useTextReveal} from '@/motion/scroll';
 import {typeRole, type TypeRole} from '@/theme/typeScale';
 import {IndexLabel} from './IndexLabel';
 
@@ -33,6 +34,7 @@ export function ChapterHeader({
   level = 2,
   size = 'display-xl',
 }: ChapterHeaderProps) {
+  const titleRef = useTextReveal({delay: 0.05});
   return (
     <VStack gap={6}>
       {label && (
@@ -40,14 +42,15 @@ export function ChapterHeader({
           <IndexLabel index={index}>{label}</IndexLabel>
         </Reveal>
       )}
-      <Reveal delay={0.05} distance={32}>
-        <Heading
-          level={level}
-          textWrap="balance"
-          style={{...typeRole(size), letterSpacing: '-0.03em', maxInlineSize: '18ch'}}>
-          <Lines text={title} />
-        </Heading>
-      </Reveal>
+      {/* The title rises line by line out of its masks (useTextReveal). */}
+      <Heading
+        ref={titleRef}
+        data-text-reveal
+        level={level}
+        textWrap="balance"
+        style={{...typeRole(size), letterSpacing: '-0.03em', maxInlineSize: '18ch'}}>
+        <Lines text={title} />
+      </Heading>
       {intro && (
         <HStack justify="end">
           <Reveal delay={0.12} maxWidth={520}>

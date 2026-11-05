@@ -26,7 +26,18 @@ const INTERACTIVE =
 const TEXT_FIELD =
   'input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]), textarea, [contenteditable="true"]';
 
-type Mode = 'default' | 'interactive' | 'text' | 'hidden';
+type Mode = 'default' | 'interactive' | 'text' | 'project' | 'hidden';
+
+/**
+ * Areas that open a project (the Work showcase's banners and details card):
+ * the lens gives way to a Figma-style pointer whose tag reads the area's
+ * data-cursor-label ("Open project" by default).
+ */
+const PROJECT = '[data-cursor="project"]';
+const PROJECT_LABEL = 'Open project';
+
+/** The pointer: a multiplayer cursor arrow, its tip at (0, 0), in a 24 × 24 box. */
+const POINTER = 'M2 2 L20.5 9 L11.6 11.6 L9 20.5 Z';
 
 /** Only the calls to action (primary and secondary buttons) grow under the lens. */
 const MAGNIFY = '.astryx-button[data-variant="primary"], .astryx-button[data-variant="secondary"]';
@@ -45,12 +56,18 @@ const SQUIRCLE = 'M50 0C88 0 100 12 100 50C100 88 88 100 50 100C12 100 0 88 0 50
  * beneath it grows, to 1.1×. Nothing else scales. Over text fields it
  * steps aside for the native text cursor. Pointer events pass straight through,
  * keyboard use is untouched, and touch devices never see it.
+ *
+ * Over a project (PROJECT) the lens steps aside for a Figma-style pointer:
+ * a brand-blue arrow with a white edge, its tip on the pointer, and a tag
+ * below and to the right in the primary CTA's liquid glass, reading
+ * "Open project".
  */
 export function CustomCursor() {
   const isFinePointer = useFinePointer();
   const reduceMotion = useReducedMotion();
   const [mode, setMode] = useState<Mode>('hidden');
   const [isPressed, setIsPressed] = useState(false);
+  const [label, setLabel] = useState(PROJECT_LABEL);
 
   const x = useMotionValue(-100);
   const y = useMotionValue(-100);
@@ -79,6 +96,13 @@ export function CustomCursor() {
       x.set(event.clientX);
       y.set(event.clientY);
       const target = event.target as Element | null;
+      const project = target?.closest(PROJECT);
+      if (project) {
+        magnify(null);
+        setLabel(project.getAttribute('data-cursor-label') || PROJECT_LABEL);
+        setMode('project');
+        return;
+      }
       const control = target?.closest(TEXT_FIELD) ? null : (target?.closest(INTERACTIVE) ?? null);
       magnify(control);
       setMode(target?.closest(TEXT_FIELD) ? 'text' : control ? 'interactive' : 'default');
@@ -106,7 +130,8 @@ export function CustomCursor() {
 
   if (!isFinePointer) return null;
 
-  const isVisible = mode !== 'hidden' && mode !== 'text';
+  const isProject = mode === 'project';
+  const isVisible = mode !== 'hidden' && mode !== 'text' && !isProject;
   // The lens keeps its size over controls (only the CTA under it grows).
   const scale = !isVisible ? 0.4 : isPressed ? 0.8 : 1;
 
@@ -122,6 +147,19 @@ export function CustomCursor() {
         <svg viewBox="0 0 100 100">
           <path d={SQUIRCLE} />
         </svg>
+      </motion.span>
+      {/* The project pointer: arrow and glass tag, growing out from the tip. */}
+      <motion.span
+        className="cursor-project"
+        initial={false}
+        animate={{scale: isProject ? (isPressed ? 0.92 : 1) : 0.5, opacity: isProject ? 1 : 0}}
+        transition={springs.spatial.fast}>
+        <svg className="cursor-project-arrow" viewBox="0 0 24 24">
+          <path d={POINTER} />
+        </svg>
+        <span className="cursor-project-tag-anchor">
+          <span className="cursor-project-tag">{label}</span>
+        </span>
       </motion.span>
     </motion.span>
   );

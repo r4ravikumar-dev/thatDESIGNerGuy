@@ -4,6 +4,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {usePathname} from 'next/navigation';
 import {AnimatePresence, motion, useReducedMotion} from 'framer-motion';
 import {VisuallyHidden} from '@astryxdesign/core/VisuallyHidden';
+import {setCovered} from '@/motion/gsap';
 
 /** How long the loader plays on every page change. */
 const DURATION_MS = 1400;
@@ -97,6 +98,11 @@ export function PageTransition() {
       clearTimers();
     };
   }, [start]);
+
+  // Scroll reveals already on screen wait until the loader has gone (motion/gsap).
+  useEffect(() => {
+    setCovered('data-page-transition', isVisible);
+  }, [isVisible]);
 
   // The new page has arrived: hide once the full 1.4s has played.
   useEffect(() => {

@@ -1,14 +1,6 @@
 'use client';
 
-import {useLayoutEffect, useRef, useState, useSyncExternalStore, type CSSProperties} from 'react';
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-  type MotionStyle,
-  type MotionValue,
-} from 'framer-motion';
+import {useRef} from 'react';
 import {VStack} from '@astryxdesign/core/Layout';
 import {Heading} from '@astryxdesign/core/Heading';
 import {Text} from '@astryxdesign/core/Text';
@@ -17,273 +9,245 @@ import {Reveal} from '@/components/motion/Reveal';
 import {IndexLabel} from '@/components/editorial/IndexLabel';
 import {Lines} from '@/components/storytelling/Lines';
 import {Glyph} from '@/components/illustrations/glyphs';
+import {EASE, gsap, ScrollTrigger, useGSAP} from '@/motion/gsap';
+import {useTextReveal} from '@/motion/scroll';
 import {typeRole} from '@/theme/typeScale';
 import {EYEBROW_STYLE} from '@/theme/eyebrow';
 import {timeline} from '@/content/home';
 
 type Stop = (typeof timeline.stops)[number];
 
-/** Above this width the timeline pins and slides sideways (.timeline-sliding). */
-
-const SLIDING = '(min-width: 811px)';
-
-function useMediaQuery(query: string, serverValue: boolean) {
-  return useSyncExternalStore(
-    onChange => {
-      const list = window.matchMedia(query);
-      list.addEventListener('change', onChange);
-      return () => list.removeEventListener('change', onChange);
-    },
-    () => window.matchMedia(query).matches,
-    () => serverValue,
-  );
-}
+/** Where the layout changes from the left-hand line to the centred, alternating one. */
+const DESKTOP = '(min-width: 1024px)';
+const MOTION_OK = '(prefers-reduced-motion: no-preference)';
 
 /**
- * The pinned scroll is split into equal beats: card 0 holds in the centre,
- * the row moves, card 1 holds in the centre, and so on. Card `index` is
- * centred from `hold[0]` to `hold[1]`; `beat` is one beat's share.
+ * One stop on the line. Three parts, placed by grid areas
+ * (.timeline-stop in globals.css):
+ * - the node: a ring on the line with a dot at its centre; the latest
+ *   stop's ring beeps, since it is where things are now
+ * - the aside: the big cropped numeral sitting on a hairline, the date,
+ *   then the stop's illustration, large, filling the rest of the row
+ * - the card: title, story and the short list, centred in the row's height
+ * Every stop is as tall as the tallest one (grid-auto-rows: 1fr), with the
+ * panel and the card stretching to fill it, so the rows match.
+ * Phones and tablets: node on the left-hand line; numeral, date, panel and
+ * card stacked beside it. From 1024px: aside | node | card, swapping sides
+ * on every other stop.
  */
-function beats(index: number, count: number) {
-  const beat = 1 / (2 * count - 1);
-  return {beat, hold: [2 * index * beat, (2 * index + 1) * beat] as const};
-}
-
-/** The card's contents: its glyph, date, title, story, then its short list. */
-function StopText({stop}: {stop: Stop}) {
+function TimelineStop({stop, index, isLatest}: {stop: Stop; index: number; isLatest: boolean}) {
+  const number = String(index + 1).padStart(2, '0');
   return (
-    <VStack gap={3} className="timeline-card">
-      <VStack
-        hAlign="start"
-        className="timeline-card-art"
-        style={{marginBlockEnd: 'var(--spacing-3)'}}>
-        <Glyph name={stop.glyph} size={112} />
+    <li className="timeline-stop" data-side={index % 2 === 0 ? 'end' : 'start'}>
+      <span aria-hidden className="timeline-node" data-latest={isLatest || undefined}>
+        <span className="timeline-node-dot" />
+      </span>
+
+      <VStack gap={3} className="timeline-aside">
+        {/* Only the top of the numeral shows above its hairline. */}
+        <span aria-hidden className="timeline-numeral">
+          <span className="timeline-numeral-digits">{number}</span>
+        </span>
+        <span aria-hidden className="timeline-rule" />
+        <Text type="supporting" style={EYEBROW_STYLE} data-appear>
+          {stop.date}
+        </Text>
+        {/* The stop's illustration, large, in the space beside the card. */}
+        <VStack className="timeline-art" hAlign="center" vAlign="center">
+          <Glyph name={stop.glyph} size={null} />
+        </VStack>
       </VStack>
-      <Text type="supporting" style={EYEBROW_STYLE}>
-        {stop.date}
-      </Text>
-      <Heading
-        level={3}
-        textWrap="balance"
-        style={{...typeRole('headline-m'), letterSpacing: '-0.01em'}}>
-        {stop.title}
-      </Heading>
-      <Text
-        type="large"
-        color="secondary"
-        textWrap="pretty"
-        style={{fontWeight: 400, maxInlineSize: '36ch'}}>
-        {stop.story}
-      </Text>
-      <Text type="supporting" style={{...EYEBROW_STYLE, marginBlockStart: 'var(--spacing-4)'}}>
-        {stop.listLabel}
-      </Text>
-      <ul className="timeline-list">
-        {stop.items.map(item => (
-          <li key={item}>
-            <Text color="secondary">{item}</Text>
-          </li>
-        ))}
-      </ul>
-    </VStack>
-  );
-}
 
-/**
- * One stop. Stacked (phones): its dot sits on the shared line down the left
- * and the card fades in as it scrolls into view. Sliding: it draws its own
- * stretch of line along the top, which fills in brand blue as the next card
- * arrives, and the card fades in during its share of the pinned scroll.
- */
-function TimelineStop({
-  stop,
-  index,
-  count,
-  progress,
-  isSliding,
-}: {
-  stop: Stop;
-  index: number;
-  count: number;
-  progress: MotionValue<number>;
-  isSliding: boolean;
-}) {
-  const {beat, hold} = beats(index, count);
-  // Computed straight from the scroll (no keyframes), so the first card's
-  // windows can start before 0 without upsetting the animation engine.
-  const clamp01 = (value: number) => Math.min(1, Math.max(0, value));
-  // Only the current card shows: it fades in as it moves to the centre and
-  // out as it moves on.
-  const opacity = useTransform(progress, p => {
-    if (!isSliding) return 1;
-    if (p < hold[0]) return clamp01(1 - (hold[0] - p) / beat);
-    if (p > hold[1]) return clamp01(1 - (p - hold[1]) / beat);
-    return 1;
-  });
-  const y = useTransform(progress, p => (isSliding ? 16 * clamp01((hold[0] - p) / beat) : 0));
-  // This card's stretch of line fills while the row moves on to the next card.
-  const segment = useTransform(progress, p => clamp01((p - hold[1]) / beat));
-  // The dot lights as its card arrives (the first is lit from the start).
-  const lit = isSliding ? hold[0] - beat / 2 : index / count;
-  const dotColor = useTransform(progress, p =>
-    index === 0 || p >= lit ? 'var(--color-brand-text)' : 'var(--color-border-emphasized)',
-  );
-
-  // The current stop's dot beeps: a ring pulses out from it while its card holds.
-  const ring = useTransform(progress, p =>
-    isSliding && p >= hold[0] - beat / 2 && p <= hold[1] + beat / 2 ? 1 : 0,
-  );
-
-  return (
-    <li className="timeline-stop">
-      <span aria-hidden className="timeline-seg" />
-      <motion.span
-        aria-hidden
-        className="timeline-seg timeline-seg-fill"
-        style={{scaleX: segment}}
-      />
-      <motion.span aria-hidden className="timeline-dot" style={{backgroundColor: dotColor}}>
-        <motion.span className="timeline-dot-ring" style={{opacity: ring}} />
-      </motion.span>
-      {isSliding ? (
-        <motion.div style={{opacity, y}}>
-          <StopText stop={stop} />
-        </motion.div>
-      ) : (
-        <Reveal distance={24}>
-          <StopText stop={stop} />
-        </Reveal>
-      )}
+      <VStack gap={3} justify="center" className="timeline-card">
+        <span aria-hidden className="timeline-card-rule" />
+        <Heading
+          level={3}
+          textWrap="balance"
+          data-appear
+          style={{...typeRole('headline-m'), letterSpacing: '-0.01em'}}>
+          {stop.title}
+        </Heading>
+        <Text
+          type="large"
+          color="secondary"
+          textWrap="pretty"
+          data-appear
+          style={{maxInlineSize: '36ch'}}>
+          {stop.story}
+        </Text>
+        <Text
+          type="supporting"
+          data-appear
+          style={{...EYEBROW_STYLE, marginBlockStart: 'var(--spacing-4)'}}>
+          {stop.listLabel}
+        </Text>
+        <ul className="timeline-list">
+          {stop.items.map(item => (
+            <li key={item} data-appear>
+              <Text color="secondary">{item}</Text>
+            </li>
+          ))}
+        </ul>
+      </VStack>
     </li>
   );
 }
 
 /**
- * How I got here, after About. On every screen the timeline pins under the
- * header and moves one card at a time into the centre: above 810px
- * header and slides sideways: each card is 60% of the width and holds in
- * the centre while it's current (the others hidden); then the
- * row slides the next one into the centre, the line between them filling in
- * blue and the new dot lighting up. At 810px and below it is a
- * vertical timeline with the line down the left, filling as the page
- * scrolls. Reduced motion shows everything at once.
+ * How I got here. The eyebrow, headline and sub-headline stay pinned under
+ * the site header while the stops scroll up beneath them (.timeline-head is
+ * sticky within the section, so it leaves with the section).
+ *
+ * The line runs down the left on phones and tablets, and down the centre
+ * from 1024px with the stops alternating either side of it.
+ *
+ * Scroll choreography (GSAP, motion-ok only):
+ * - the line fills in brand blue as the page scrolls past it
+ * - each stop appears as it arrives, in order: the node pops onto the
+ *   line, the numeral rises out of its hairline, the hairlines draw out from
+ *   the node, the illustration panel wipes open and the card rises, then the
+ *   date, title, story and list rise in one after another
+ * - the stop crossing the middle of the screen is in focus (filled numeral,
+ *   lit node); the others step back a little
+ * With reduced motion or without JavaScript everything is simply shown.
  */
 export function Timeline() {
-  const {label, title, stops} = timeline;
-  const trackRef = useRef<HTMLDivElement>(null);
-  const windowRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLOListElement>(null);
-  const reduceMotion = useReducedMotion();
-  // Desktop and tablets (above 810px) pin and slide sideways; phones scroll
-  // normally.
-  const isSliding = useMediaQuery(SLIDING, true) && !reduceMotion;
-  const isPinned = isSliding;
+  const {label, title, supporting, stops} = timeline;
+  const sectionRef = useRef<HTMLElement>(null);
+  const titleRef = useTextReveal({delay: 0.05});
 
-  // Reduced motion: 0 when the list's top nears the bottom of the screen, 1 when its end passes the middle.
-  const {scrollYProgress: inView} = useScroll({target: listRef, offset: ['start 80%', 'end 60%']});
-  // Pinned: 0 when the stage pins, 1 when it lets go.
-  const {scrollYProgress: pinned} = useScroll({
-    target: trackRef,
-    offset: ['start start', 'end end'],
-  });
-  const full = useTransform(inView, () => 1);
-  const progress = isPinned ? pinned : reduceMotion ? full : inView;
+  useGSAP(
+    () => {
+      const section = sectionRef.current;
+      if (!section) return;
+      const mm = gsap.matchMedia();
 
-  // Where the row sits for each card: that card centred in the window while it holds.
-  const [positions, setPositions] = useState<number[]>(stops.map(() => 0));
-  useLayoutEffect(() => {
-    const list = listRef.current;
-    const frame = windowRef.current;
-    if (!isPinned || !list || !frame) return;
-    const measure = () => {
-      const cards = [...list.querySelectorAll<HTMLElement>('.timeline-stop')];
-      setPositions(cards.map(card => (frame.clientWidth - card.offsetWidth) / 2 - card.offsetLeft));
-    };
-    measure();
-    // Re-measure whenever a card changes size (text wrapping on resize), and
-    // once the web fonts have loaded, since they change every card's height.
-    const observer = new ResizeObserver(measure);
-    observer.observe(list);
-    observer.observe(frame);
-    list.querySelectorAll('.timeline-stop').forEach(card => observer.observe(card));
-    let isCurrent = true;
-    document.fonts?.ready.then(() => {
-      if (isCurrent) measure();
-    });
-    window.addEventListener('resize', measure);
-    return () => {
-      isCurrent = false;
-      observer.disconnect();
-      window.removeEventListener('resize', measure);
-    };
-  }, [isPinned, isSliding]);
-  const inputs: number[] = [];
-  const outputs: number[] = [];
-  stops.forEach((_, index) => {
-    const {hold} = beats(index, stops.length);
-    inputs.push(hold[0], hold[1]);
-    outputs.push(positions[index] ?? 0, positions[index] ?? 0);
-  });
-  const offset = useTransform(pinned, inputs, outputs);
+      mm.add({isDesktop: DESKTOP, isMotionOk: MOTION_OK}, context => {
+        const {isDesktop, isMotionOk} = context.conditions as {
+          isDesktop: boolean;
+          isMotionOk: boolean;
+        };
+        if (!isMotionOk) return;
 
-  const list = (
-    <ol
-      ref={listRef}
-      className={isSliding ? 'timeline timeline-sliding' : 'timeline'}
-      style={{'--stops': stops.length} as CSSProperties}>
-      <span aria-hidden className="timeline-track" />
-      <motion.span
-        aria-hidden
-        className="timeline-progress"
-        style={{'--p': progress} as MotionStyle}
-      />
-      {stops.map((stop, index) => (
-        <TimelineStop
-          key={stop.date}
-          stop={stop}
-          index={index}
-          count={stops.length}
-          progress={progress}
-          isSliding={isSliding}
-        />
-      ))}
-    </ol>
+        const list = section.querySelector<HTMLElement>('.timeline');
+        const fill = section.querySelector('.timeline-spine-fill');
+        if (!list) return;
+        list.setAttribute('data-focus', '');
+
+        // The line fills as the stops pass the middle of the screen.
+        gsap.fromTo(
+          fill,
+          {scaleY: 0},
+          {
+            scaleY: 1,
+            ease: 'none',
+            scrollTrigger: {trigger: list, start: 'top 55%', end: 'bottom 55%', scrub: 0.4},
+          },
+        );
+
+        gsap.utils.toArray<HTMLElement>('.timeline-stop', section).forEach(stop => {
+          const q = gsap.utils.selector(stop);
+          // Content slides in from the side it sits on (always from the right on phones).
+          const fromSide = isDesktop && stop.dataset.side === 'start' ? -1 : 1;
+
+          gsap
+            .timeline({
+              defaults: {ease: EASE.arrive},
+              scrollTrigger: {trigger: stop, start: 'top 80%', once: true},
+            })
+            .from(q('.timeline-node'), {
+              scale: 0.4,
+              opacity: 0,
+              duration: 0.9,
+              ease: 'back.out(1.7)',
+            })
+            .from(q('.timeline-numeral-digits'), {yPercent: 105, duration: 1.2}, 0.1)
+            .from(
+              q('.timeline-rule, .timeline-card-rule'),
+              {scaleX: 0, duration: 1.2, ease: EASE.wipe},
+              0.15,
+            )
+            // The illustration wipes open downwards from the hairline; the card
+            // rises into place under it.
+            .fromTo(
+              q('.timeline-art'),
+              {clipPath: 'inset(0% 0% 100% 0%)'},
+              {clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: EASE.wipe},
+              0.25,
+            )
+            // Clip, not opacity: the focus state transitions the card's opacity in CSS.
+            .fromTo(
+              q('.timeline-card'),
+              {clipPath: 'inset(0% 0% 100% 0%)', y: 40},
+              {
+                clipPath: 'inset(0% 0% 0% 0%)',
+                y: 0,
+                duration: 1.2,
+                ease: EASE.wipe,
+                // Cleared after, or the clip would hide the connector outside the card's edge.
+                clearProps: 'clipPath',
+              },
+              0.2,
+            )
+            .from(
+              q('[data-appear]'),
+              {opacity: 0, y: 28, x: 24 * fromSide, duration: 1, stagger: 0.07},
+              0.3,
+            );
+
+          // In focus while it crosses the middle of the screen.
+          ScrollTrigger.create({
+            trigger: stop,
+            start: 'top 60%',
+            end: 'bottom 45%',
+            toggleClass: {targets: stop, className: 'is-active'},
+          });
+        });
+
+        return () => list.removeAttribute('data-focus');
+      });
+    },
+    {scope: sectionRef},
   );
 
   return (
     <Container gap={0}>
-      <section aria-label={label} id="journey" className="timeline-section">
-        <VStack gap={6}>
+      <section ref={sectionRef} aria-label={label} id="journey" className="timeline-section">
+        <VStack gap={4} className="timeline-head">
           <Reveal>
             <IndexLabel>{label}</IndexLabel>
           </Reveal>
-          <Reveal delay={0.05} distance={32}>
-            <Heading
-              level={2}
-              textWrap="balance"
-              style={{...typeRole('display-l'), letterSpacing: '-0.03em'}}>
-              <Lines text={title} />
-            </Heading>
+          {/* The title rises line by line out of its masks (useTextReveal). */}
+          <Heading
+            ref={titleRef}
+            data-text-reveal
+            level={2}
+            textWrap="balance"
+            style={{...typeRole('display-m'), letterSpacing: '-0.03em'}}>
+            <Lines text={title} />
+          </Heading>
+          <Reveal delay={0.15}>
+            <Text type="large" color="secondary" textWrap="pretty" style={{maxInlineSize: '44ch'}}>
+              {supporting}
+            </Text>
           </Reveal>
         </VStack>
-        {isPinned ? (
-          // The track is taller than the screen; the stage sticks under the
-          // header while the track scrolls by, moving each card to the centre.
-          <div
-            ref={trackRef}
-            className="sequence-pin"
-            style={{'--steps': stops.length} as CSSProperties}>
-            <VStack gap={0} className="sequence-pin-stage">
-              <div ref={windowRef} data-direction="across" className="timeline-window">
-                {/* The line runs the full width behind the cards; it stays put while they slide. */}
-                <span aria-hidden className="timeline-rail" />
-                <motion.div style={{x: offset}}>{list}</motion.div>
-              </div>
-            </VStack>
-          </div>
-        ) : (
-          <div ref={trackRef}>{list}</div>
-        )}
+
+        <VStack gap={0} className="timeline-body">
+          {/* The line: a quiet track, and the blue fill that follows the scroll. */}
+          <span aria-hidden className="timeline-spine" />
+          <span aria-hidden className="timeline-spine timeline-spine-fill" />
+          <ol className="timeline">
+            {stops.map((stop, index) => (
+              <TimelineStop
+                key={stop.title}
+                stop={stop}
+                index={index}
+                isLatest={index === stops.length - 1}
+              />
+            ))}
+          </ol>
+        </VStack>
       </section>
     </Container>
   );

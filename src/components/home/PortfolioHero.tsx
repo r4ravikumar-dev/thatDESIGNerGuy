@@ -1,6 +1,6 @@
 'use client';
 
-import {Fragment} from 'react';
+import {Fragment, useRef, useState} from 'react';
 import {HStack, VStack} from '@astryxdesign/core/Layout';
 import {Icon} from '@astryxdesign/core/Icon';
 import {ArrowDown} from 'lucide-react';
@@ -9,12 +9,15 @@ import {Text} from '@astryxdesign/core/Text';
 import {Container} from '@/components/layout/Container';
 import {Reveal} from '@/components/motion/Reveal';
 import {Portrait} from '@/components/illustrations/scenes';
+import {DesignStory} from '@/components/illustrations/DesignStory';
+import {gsap, ScrollTrigger, useGSAP} from '@/motion/gsap';
 import {Lines} from '@/components/storytelling/Lines';
 import {Manifesto} from '@/components/editorial/Manifesto';
 import {IndexLabel} from '@/components/editorial/IndexLabel';
 import {EYEBROW_STYLE} from '@/theme/eyebrow';
 import {hero} from '@/content/home';
 import {typeRole} from '@/theme/typeScale';
+import {useTextReveal} from '@/motion/scroll';
 
 /**
  * The portfolio hero, on the page frame. Left: three blocks, each a full
@@ -22,17 +25,53 @@ import {typeRole} from '@/theme/typeScale';
  * an eyebrow label (no number), one headline on the type scale (one serif accent), then
  * supporting text. 01 the name in three scripts, 02 the one-line intro
  * (its words light up as it scrolls),
- * 03 the story. Right: Ravi's photo in the brand duotone,
- * pinned while the three blocks scroll past, then the hero scrolls away.
- * Below 1024px the photo leads and the blocks stack (.portfolio-hero in
- * globals.css).
+ * 03 the story. Right, pinned while the three blocks scroll past: Ravi's
+ * photo in the brand duotone for the first fold; as the intro scrolls in it
+ * cross-fades to the design story (DesignStory, a Lottie animation of
+ * Ravi's cursor turning scattered ideas into a finished screen), which then
+ * plays on its own from the start and loops; scrolling back up brings the
+ * photo back.
+ *
+ * Below 1024px the photo leads, the blocks stack and the design story sits
+ * above the intro, playing while it is on screen (.portfolio-hero in
+ * globals.css). With reduced motion the story holds its finished screen.
  */
+const DESKTOP = '(min-width: 1024px)';
+const STORY_LABEL =
+  "Ravi's cursor arrives on a design canvas, gathers scattered ideas into a structured row, then builds a finished screen from them";
+
 export function PortfolioHero() {
   const {hello, intro, story} = hero;
+  const storyTitleRef = useTextReveal({delay: 0.05});
+  const heroRef = useRef<HTMLElement>(null);
+
+  // Desktop: the panel shows the photo for the first fold, then the design
+  // story once the intro scrolls in (and the photo again on the way back).
+  // The scroll only makes the swap; the story then plays on its own.
+  const [isStory, setIsStory] = useState(false);
+
+  useGSAP(
+    () => {
+      const section = heroRef.current;
+      const intro = section?.querySelector('[data-hero-block="intro"]');
+      if (!intro) return;
+      const mm = gsap.matchMedia();
+      mm.add(DESKTOP, () => {
+        ScrollTrigger.create({
+          trigger: intro,
+          start: 'top 60%',
+          onEnter: () => setIsStory(true),
+          onLeaveBack: () => setIsStory(false),
+        });
+        return () => setIsStory(false);
+      });
+    },
+    {scope: heroRef},
+  );
 
   return (
     <Container gap={0}>
-      <section className="portfolio-hero" aria-label="Introduction">
+      <section ref={heroRef} className="portfolio-hero" aria-label="Introduction">
         <VStack gap={0} className="portfolio-hero-text">
           {/* 01 Hello: the name in three scripts, the role and a scroll cue. */}
           <VStack className="portfolio-hero-block" vAlign="center">
@@ -99,8 +138,12 @@ export function PortfolioHero() {
             </VStack>
           </VStack>
 
-          {/* 02 In short: one display line, its accent in the serif. */}
-          <VStack className="portfolio-hero-block" vAlign="center">
+          {/* 02 In short: one display line, its accent in the serif. Phones
+            and tablets: the design story leads it. */}
+          <VStack className="portfolio-hero-block" vAlign="center" data-hero-block="intro">
+            <VStack className="hero-story-inline" hAlign="center">
+              <DesignStory label={STORY_LABEL} />
+            </VStack>
             <VStack gap={6}>
               <Reveal>
                 <IndexLabel>{intro.label}</IndexLabel>
@@ -110,23 +153,24 @@ export function PortfolioHero() {
           </VStack>
 
           {/* 03 So far: a headline, then the story. */}
-          <VStack className="portfolio-hero-block" vAlign="center">
+          <VStack className="portfolio-hero-block" vAlign="center" data-hero-block="story">
             <VStack gap={6}>
               <Reveal>
                 <IndexLabel>{story.label}</IndexLabel>
               </Reveal>
-              <Reveal delay={0.05} distance={32}>
-                <Heading
-                  level={2}
-                  textWrap="balance"
-                  style={{
-                    ...typeRole('headline-xl'),
-                    letterSpacing: '-0.02em',
-                    maxInlineSize: '18ch',
-                  }}>
-                  <Lines text={story.title} />
-                </Heading>
-              </Reveal>
+              {/* The title rises line by line out of its masks (useTextReveal). */}
+              <Heading
+                ref={storyTitleRef}
+                data-text-reveal
+                level={2}
+                textWrap="balance"
+                style={{
+                  ...typeRole('headline-xl'),
+                  letterSpacing: '-0.02em',
+                  maxInlineSize: '18ch',
+                }}>
+                <Lines text={story.title} />
+              </Heading>
               <Reveal delay={0.1}>
                 <VStack gap={4} style={{maxInlineSize: '44ch'}}>
                   {story.paragraphs.map(paragraph => (
@@ -139,8 +183,17 @@ export function PortfolioHero() {
             </VStack>
           </VStack>
         </VStack>
-        <VStack className="portfolio-hero-photo" hAlign="center" vAlign="center">
-          <Portrait label="Portrait of Ravi Kumar" maxWidth={720} />
+        {/* The pinned panel: the photo, then (from 1024px) the design story in its place. */}
+        <VStack
+          className={isStory ? 'portfolio-hero-photo is-story' : 'portfolio-hero-photo'}
+          hAlign="center"
+          vAlign="center">
+          <VStack className="hero-art hero-art-photo" hAlign="center" vAlign="center">
+            <Portrait label="Portrait of Ravi Kumar" maxWidth={720} />
+          </VStack>
+          <VStack className="hero-art hero-art-story" hAlign="center" vAlign="center">
+            <DesignStory label={STORY_LABEL} isShown={isStory} />
+          </VStack>
         </VStack>
       </section>
     </Container>

@@ -1,6 +1,7 @@
 'use client';
 
 import {Fragment, useEffect, useRef, useState} from 'react';
+import NextLink from 'next/link';
 import {AnimatePresence, motion, useReducedMotion} from 'framer-motion';
 import {VStack} from '@astryxdesign/core/Layout';
 import {Heading} from '@astryxdesign/core/Heading';
@@ -13,6 +14,7 @@ import {accentStyle} from '@/components/storytelling/Lines';
 import {typeRole} from '@/theme/typeScale';
 import {EYEBROW_STYLE} from '@/theme/eyebrow';
 import {workShowcase, type WorkProject} from '@/content/home';
+import {useMediaReveal} from '@/motion/scroll';
 
 /** A project: numbered eyebrow, title (the italic serif, in brand blue), description and meta. */
 function ProjectText({project, index}: {project: WorkProject; index: number}) {
@@ -27,11 +29,7 @@ function ProjectText({project, index}: {project: WorkProject; index: number}) {
         style={{...typeRole('headline-xl'), ...accentStyle, letterSpacing: '-0.01em'}}>
         {project.title}
       </Heading>
-      <Text
-        type="large"
-        color="secondary"
-        textWrap="pretty"
-        style={{maxInlineSize: '36ch', fontWeight: 400}}>
+      <Text type="large" color="secondary" textWrap="pretty" style={{maxInlineSize: '36ch'}}>
         {project.description}
       </Text>
       <Text type="supporting" style={{...EYEBROW_STYLE, marginBlockStart: 'var(--spacing-2)'}}>
@@ -71,6 +69,31 @@ function Thumbnail({project, index}: {project: WorkProject; index: number}) {
       <Text type="supporting" color="secondary" style={EYEBROW_STYLE}>
         Project thumbnail {String(index + 1).padStart(2, '0')}
       </Text>
+    </VStack>
+  );
+}
+
+/** Where a project opens: its case study once there is one, the Work page until then. */
+const projectHref = (project: WorkProject) => project.href ?? '/work';
+
+/**
+ * The thumbnail's frame: it wipes open from the bottom as it scrolls in, the
+ * picture settling from a zoom, then drifting inside the frame (useMediaReveal).
+ * The whole banner opens the project; over it the cursor becomes the
+ * Figma-style "Open project" pointer (data-cursor, CustomCursor).
+ */
+function ThumbnailFrame({project, children}: {project: WorkProject; children: React.ReactNode}) {
+  const ref = useMediaReveal<HTMLDivElement>();
+  return (
+    <VStack ref={ref} className="work-showcase-frame">
+      <NextLink
+        href={projectHref(project)}
+        className="work-showcase-link"
+        aria-label={`Open project: ${project.label}`}
+        data-cursor="project"
+        data-cursor-label="Open project">
+        {children}
+      </NextLink>
     </VStack>
   );
 }
@@ -132,7 +155,7 @@ export function WorkShowcase() {
                   type="large"
                   color="secondary"
                   textWrap="pretty"
-                  style={{maxInlineSize: '36ch', fontWeight: 400}}>
+                  style={{maxInlineSize: '36ch'}}>
                   {supporting}
                 </Text>
               </Reveal>
@@ -140,16 +163,25 @@ export function WorkShowcase() {
             {/* Desktop: the current project, swapping as the thumbnails pass.
               Screen readers get every project in order from the list instead. */}
             <VStack className="work-showcase-current" aria-hidden>
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={active}
-                  initial={reduceMotion ? false : {opacity: 0, y: 16}}
-                  animate={{opacity: 1, y: 0}}
-                  exit={reduceMotion ? undefined : {opacity: 0, y: -16}}
-                  transition={{duration: 0.35, ease: [0.22, 1, 0.36, 1]}}>
-                  <ProjectText project={current} index={active} />
-                </motion.div>
-              </AnimatePresence>
+              {/* The details card opens the current project too (a pointer
+                target only: keyboard and screen readers use the banners). */}
+              <NextLink
+                href={projectHref(current)}
+                tabIndex={-1}
+                className="work-showcase-link"
+                data-cursor="project"
+                data-cursor-label="Open project">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={active}
+                    initial={reduceMotion ? false : {opacity: 0, y: 16}}
+                    animate={{opacity: 1, y: 0}}
+                    exit={reduceMotion ? undefined : {opacity: 0, y: -16}}
+                    transition={{duration: 0.35, ease: [0.22, 1, 0.36, 1]}}>
+                    <ProjectText project={current} index={active} />
+                  </motion.div>
+                </AnimatePresence>
+              </NextLink>
             </VStack>
           </VStack>
 
@@ -162,9 +194,9 @@ export function WorkShowcase() {
                 }}
                 data-index={index}
                 className="work-showcase-item">
-                <Reveal distance={40} className="work-showcase-frame">
+                <ThumbnailFrame project={project}>
                   <Thumbnail project={project} index={index} />
-                </Reveal>
+                </ThumbnailFrame>
                 {/* Phones and tablets: the text sits under its thumbnail. On
                   desktop it is visually hidden (the pinned column shows it). */}
                 <VStack className="work-showcase-item-text">

@@ -6,6 +6,7 @@ import {Text} from '@astryxdesign/core/Text';
 import {VisuallyHidden} from '@astryxdesign/core/VisuallyHidden';
 import {Lines} from '@/components/storytelling/Lines';
 import {LOGO_VIEWBOX, LOGO_WIDTH, LogoText} from './Logo';
+import {setCovered} from '@/motion/gsap';
 import {site} from '@/content/site';
 
 /** Remembered for the browsing session, so the splash plays once per visit. */
@@ -69,6 +70,11 @@ export function Splash() {
       isCancelled = true;
     };
   }, []);
+
+  // Scroll reveals already on screen wait until the splash has gone (motion/gsap).
+  useEffect(() => {
+    setCovered('data-splash', isShown);
+  }, [isShown]);
 
   const fill = reduceMotion
     ? {initial: false as const}

@@ -6,6 +6,7 @@ import {PortfolioHeader} from '@/components/navigation/PortfolioHeader';
 import {MobileMenu} from '@/components/navigation/MobileMenu';
 import {PageTransition} from '@/components/navigation/PageTransition';
 import {CustomCursor} from '@/components/navigation/CustomCursor';
+import {ScrollProgress} from '@/components/motion/ScrollProgress';
 import {Footer} from './Footer';
 
 /**
@@ -31,6 +32,7 @@ export function SiteShell({children}: {children: React.ReactNode}) {
       </AppShell>
       {/* The page frame: two hairlines along the content column's edges. */}
       <span aria-hidden className="page-frame" />
+      <ScrollProgress />
       <PageTransition />
       <CustomCursor />
     </>

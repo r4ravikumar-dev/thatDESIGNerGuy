@@ -19,6 +19,7 @@ import {footer} from '@/content/footer';
 import {site} from '@/content/site';
 import {typeRole} from '@/theme/typeScale';
 import {EYEBROW_STYLE} from '@/theme/eyebrow';
+import {useScrubRise} from '@/motion/scroll';
 
 const labelStyle = EYEBROW_STYLE;
 
@@ -56,6 +57,7 @@ function BarCell({label, value, icon}: {label: string; value: string; icon: Reac
 export function Footer() {
   const year = new Date().getFullYear();
   const reduceMotion = useReducedMotion();
+  const wordmarkRef = useScrubRise<HTMLDivElement>(45);
   const {email, linkedin, project, top} = footer.contact;
   const arrowOut = <Icon icon={ArrowUpRight} size="md" color="inherit" />;
 
@@ -152,8 +154,11 @@ export function Footer() {
         gap={0}
         aria-hidden
         style={{marginBlockStart: 'var(--space-block)', paddingBlockEnd: 'var(--space-block)'}}>
-        <VStack className="footer-wordmark-fade">
-          <Logo isFluid />
+        {/* The sign-off climbs into place as the page ends (useScrubRise). */}
+        <VStack className="footer-wordmark-rise">
+          <VStack ref={wordmarkRef} className="footer-wordmark-fade">
+            <Logo isFluid />
+          </VStack>
         </VStack>
       </Container>
     </VStack>
