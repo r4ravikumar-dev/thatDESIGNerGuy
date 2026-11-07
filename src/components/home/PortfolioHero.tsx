@@ -117,10 +117,28 @@ export function PortfolioHero() {
                   ))}
                 </Heading>
               </Reveal>
+              {/* The signature line and what Ravi works on. */}
               <Reveal delay={0.1}>
-                <Text type="large" color="secondary">
-                  {hello.role}
-                </Text>
+                <VStack gap={3}>
+                  <Text
+                    as="p"
+                    textWrap="balance"
+                    style={{
+                      ...typeRole('headline-m'),
+                      fontWeight: 500,
+                      letterSpacing: '-0.01em',
+                      maxInlineSize: '22ch',
+                    }}>
+                    <Lines text={hello.headline} />
+                  </Text>
+                  <Text
+                    type="large"
+                    color="secondary"
+                    textWrap="pretty"
+                    style={{maxInlineSize: '40ch'}}>
+                    {hello.supporting}
+                  </Text>
+                </VStack>
               </Reveal>
               <Reveal delay={0.2}>
                 <HStack vAlign="center" className="portfolio-hero-scroll" aria-hidden>

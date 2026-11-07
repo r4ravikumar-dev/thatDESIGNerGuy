@@ -6,7 +6,6 @@ import {Heading} from '@astryxdesign/core/Heading';
 import {Text} from '@astryxdesign/core/Text';
 import {VisuallyHidden} from '@astryxdesign/core/VisuallyHidden';
 import {Reveal} from '@/components/motion/Reveal';
-import {Portrait} from '@/components/illustrations/scenes';
 import {CtaButton} from '@/components/navigation/CtaButton';
 import {IndexLabel} from '@/components/editorial/IndexLabel';
 import {Lines, accentStyle} from '@/components/storytelling/Lines';
@@ -27,10 +26,11 @@ type ProfileNoteProps = {
 };
 
 /**
- * A profile, editorial style: a large pull quote on the left; on the right
- * Ravi's photo in the brand duotone, then name, role and a short bio. When
- * stacked below 1024px the photo leads, then the quote, then the bio
- * (.profile-grid in globals.css).
+ * A profile, editorial style. From 1024px: the text on the left (a large
+ * pull quote, then name, role and a short bio beneath it) and Ravi's
+ * portrait on the right, centred against it. Stacked below 1024px: the
+ * portrait leads, then the quote, then the bio (.profile-grid in
+ * globals.css).
  */
 export function ProfileNote({
   index,
@@ -54,7 +54,11 @@ export function ProfileNote({
               <Heading
                 level={2}
                 textWrap="balance"
-                style={{...typeRole('display-m'), letterSpacing: '-0.02em'}}>
+                style={{
+                  ...typeRole('display-m'),
+                  letterSpacing: '-0.02em',
+                  maxInlineSize: '18ch',
+                }}>
                 <span aria-hidden style={accentStyle}>
                   “
                 </span>
@@ -73,8 +77,18 @@ export function ProfileNote({
         </Reveal>
       </VStack>
       <Reveal delay={0.08} className="profile-art">
-        <VStack hAlign="start">
-          <Portrait label={`Portrait of ${name}`} maxWidth={360} />
+        <VStack hAlign="center">
+          {/* The same portrait as the hero, blended into the page (.hero-portrait). */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="hero-portrait profile-portrait"
+            src="/ravi-portrait-hero.webp"
+            alt={`Portrait of ${name}`}
+            width={1309}
+            height={1201}
+            loading="lazy"
+            decoding="async"
+          />
         </VStack>
       </Reveal>
       <Reveal delay={0.12} className="profile-bio">

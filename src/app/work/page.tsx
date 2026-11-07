@@ -1,10 +1,8 @@
 import type {Metadata} from 'next';
 import {VStack} from '@astryxdesign/core/Layout';
-import {Chapter} from '@/components/editorial/Chapter';
 import {EditorialHero} from '@/components/editorial/EditorialHero';
 import {BigStatement} from '@/components/editorial/BigStatement';
-import {WorkList} from '@/components/editorial/WorkList';
-import {JourneyScreens} from '@/components/illustrations/scenes';
+import {WorkFeatures} from '@/components/work/WorkFeatures';
 import {workPage} from '@/content/work';
 
 export const metadata: Metadata = {
@@ -13,13 +11,16 @@ export const metadata: Metadata = {
   alternates: {canonical: '/work'},
 };
 
+/**
+ * Work (V2): a short introduction, the three featured projects (each in its
+ * own composition) and an invitation to talk through the work. Visually
+ * bold, textually restrained: the product pictures carry the page.
+ */
 export default function WorkPage() {
   return (
     <VStack gap={0}>
-      <EditorialHero {...workPage.hero} illustration={<JourneyScreens />} />
-      <Chapter label="Selected work">
-        <WorkList />
-      </Chapter>
+      <EditorialHero {...workPage.hero} align="center" />
+      <WorkFeatures />
       <BigStatement {...workPage.closing} />
     </VStack>
   );
