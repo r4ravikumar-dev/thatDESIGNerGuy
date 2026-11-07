@@ -2085,99 +2085,271 @@ html {
   }
 }
 
-/* ---------- First-visit splash (components/navigation/Splash) ---------- */
-/* Covers the page on the first load of a session: the outlined logo fills
-   from the bottom up, then the tagline rises in. Hidden before the first
-   paint once the session has seen it (html.splash-seen) and without JS. */
+/* ---------- ID card (components/illustrations/IdCard) ---------- */
+/* Line art: the text colour for the card, a muted lanyard, the brand blue
+   for the avatar and the name. The card's own outlines keep their weight at
+   any size; lines that draw themselves in (lanyard, avatar, divider) scale
+   with the card instead, because a fixed on-screen weight breaks their
+   drawing (pathLength). */
+.id-card {
+  display: block;
+  block-size: auto;
+  overflow: visible;
+}
+.id-card :is(path, rect, circle) {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.id-card :is(.id-card-clip, .id-card-body, .id-card-slot, .id-card-spinner) {
+  vector-effect: non-scaling-stroke;
+}
+.id-card-strap {
+  stroke: var(--color-text-secondary);
+  stroke-width: 1.5;
+}
+.id-card .id-card-clip {
+  fill: var(--color-background-surface);
+  stroke: var(--color-text-primary);
+  stroke-width: 1.75px;
+}
+.id-card .id-card-body {
+  fill: color-mix(in srgb, var(--color-text-primary) 4%, var(--color-background-surface));
+  stroke: var(--color-text-primary);
+  stroke-width: 2.5px;
+}
+.id-card-slot {
+  stroke: var(--color-text-secondary);
+  stroke-width: 2.5px;
+}
+.id-card-accent {
+  stroke: var(--color-brand-text);
+  stroke-width: 1.5;
+}
+.id-card-fine {
+  stroke: var(--color-text-secondary);
+  stroke-width: 0.75;
+}
+/* The loader's card is small: its lines get a little heavier to stay crisp. */
+.id-card-loading :is(.id-card-strap, .id-card-accent) {
+  stroke-width: 2.5;
+}
+.id-card-loading .id-card-fine {
+  stroke-width: 1.25;
+}
+.id-card text {
+  fill: var(--color-text-primary);
+}
+.id-card .id-card-name {
+  font-family: var(--font-family-accent);
+  font-style: italic;
+  font-size: 26px;
+  fill: var(--color-brand-text);
+}
+.id-card .id-card-role {
+  font-family: var(--font-family-body);
+  font-size: 12px;
+  font-weight: 600;
+}
+.id-card .id-card-eyebrow {
+  font-family: var(--font-family-eyebrow);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  fill: var(--color-brand-text);
+}
+.id-card .id-card-current {
+  font-family: var(--font-family-body);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Loading: placeholders shimmering in turn, a blue arc circling the avatar,
+   and the card swinging gently from the top of its lanyard. */
+.id-card-skeleton rect {
+  fill: color-mix(in srgb, var(--color-text-primary) 14%, transparent);
+  stroke: none;
+  animation: id-card-shimmer 1.4s ease-in-out infinite;
+}
+.id-card-skeleton rect:nth-of-type(2) {
+  animation-delay: 0.15s;
+}
+.id-card-skeleton rect:nth-of-type(3) {
+  animation-delay: 0.3s;
+}
+.id-card-skeleton rect:nth-of-type(4) {
+  animation-delay: 0.45s;
+}
+@keyframes id-card-shimmer {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.id-card .id-card-spinner {
+  stroke: var(--color-brand-text);
+  stroke-width: 2px;
+  stroke-dasharray: 22 78;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: id-card-spin 1.2s linear infinite;
+}
+@keyframes id-card-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.id-card-loading .id-card-swing {
+  transform-box: view-box;
+  transform-origin: 120px 0;
+  animation: id-card-swing 2.4s ease-in-out infinite;
+}
+@keyframes id-card-swing {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .id-card-skeleton rect,
+  .id-card .id-card-spinner,
+  .id-card-loading .id-card-swing {
+    animation: none;
+  }
+}
+
+/* ---------- First-visit welcome (components/navigation/Splash) ---------- */
+/* Covers the page on the first load of a session: the ID card fills in,
+   then "Get to know Ravi" leads in. Hidden before the first paint once the
+   session has seen it (html.splash-seen) and without JS. */
 .splash {
   position: fixed;
   inset: 0;
   z-index: 1100;
   display: grid;
   place-items: center;
+  padding: var(--space-gutter);
   background-color: var(--color-background-surface);
 }
-html.splash-seen .splash {
-  display: none;
-}
-html:not(.splash-seen):has(.splash) {
-  overflow: hidden;
+/* The dot grid (SplashGrid): a canvas filling the welcome, behind the card. */
+.splash-grid {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  pointer-events: none;
 }
 .splash-mark {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-5);
+  gap: var(--space-block);
 }
-.splash-logo {
-  inline-size: min(60vw, 260px);
-  block-size: auto;
-  overflow: visible;
+/* The card fills most of the height on any screen, never too wide. Once it
+   has dropped in and settled (about 1.8s), it keeps a gentle sway from the
+   top of its lanyard (.splash-flip); hovering it (or a tap, data-flipped)
+   turns it over to Ravi's photo (.splash-face-back). */
+.splash-flip {
+  inline-size: min(84vw, 440px, (100svh - 9rem) * 240 / 330);
+  aspect-ratio: 240 / 330;
+  transform-origin: 50% 0;
+  perspective: 1400px;
+  animation: id-card-sway 4s ease-in-out 1.8s infinite;
 }
-.splash-outline path {
-  stroke-width: 0.6;
-  stroke-linejoin: round;
+.splash-flip-inner {
+  position: relative;
+  inline-size: 100%;
+  block-size: 100%;
+  transform-style: preserve-3d;
+  transition: transform 800ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-.splash-tagline {
-  text-align: center;
+@media (hover: hover) {
+  .splash-flip:hover .splash-flip-inner {
+    transform: rotateY(180deg);
+  }
+}
+.splash-flip[data-flipped] .splash-flip-inner {
+  transform: rotateY(180deg);
+}
+.splash-face {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.splash-face-back {
+  transform: rotateY(180deg);
+}
+@keyframes id-card-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(2.5deg);
+  }
+  75% {
+    transform: rotate(-2.5deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .splash-flip {
+    animation: none;
+  }
+  .splash-flip-inner {
+    transition: none;
+  }
+}
+/* The back: the photo fills the card, the name on a strip along the bottom. */
+.id-card .id-card-frame {
+  fill: none;
+}
+.id-card .id-card-photo-strip {
+  fill: color-mix(in srgb, var(--color-background-surface) 88%, transparent);
+  stroke: none;
+}
+/* The welcome card is drawn bold: heavier outlines and lines. */
+.splash-face .id-card-body {
+  stroke-width: 4px;
+}
+.splash-face :is(.id-card-clip, .id-card-slot) {
+  stroke-width: 3.5px;
+}
+.splash-face .id-card-accent {
+  stroke-width: 2.6;
+}
+/* The lanyard: the boldest line, a ribbon rather than a string. */
+.splash-face .id-card-strap {
+  stroke-width: 5;
+}
+.splash-face .id-card-fine {
+  stroke-width: 1.4;
 }
 
-/* ---------- Page transition loader (components/navigation/PageTransition) ---------- */
-/* Covers the page for 1.4s between pages, on the theme's own surface. */
-
+/* ---------- Page loader (components/navigation/PageTransition) ---------- */
+/* Only for slow page changes: the loading ID card on the page surface. */
 .page-transition {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-6);
   background-color: var(--color-background-surface);
-  color: var(--color-text-primary);
 }
-.loader-orbits {
-  inline-size: min(28vw, 112px);
-  block-size: auto;
-  overflow: visible;
-  /* A slow, linear settle over the full 1.4s: no snap, no bounce. */
-  animation: loader-arrive 1.4s linear both;
-}
-@keyframes loader-arrive {
-  0% {
-    transform: scale(0.94);
-    opacity: 0;
-  }
-  25% {
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-.loader-ring {
-  fill: none;
-  stroke: var(--color-text-secondary);
-  stroke-opacity: 0.6;
-  stroke-width: 1px;
-  vector-effect: non-scaling-stroke;
-}
-/* Slow and linear, like the illustration loops. The viewBox is centred on
-   0,0, so that is the point the dot circles. */
-.loader-orbit {
-  animation: loader-orbit 3s linear infinite;
-  transform-box: view-box;
-  transform-origin: 0 0;
-}
-@keyframes loader-orbit {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.loader-planet {
-  fill: var(--color-text-primary);
-}
-.loader-core {
-  fill: var(--color-brand-text);
+.page-transition-card {
+  inline-size: min(48vw, 180px);
 }
 
 /* Footer wordmark: fades from full strength at the top to 10% at the bottom.

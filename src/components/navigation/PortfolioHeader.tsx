@@ -9,6 +9,7 @@ import {useAppShellMobile} from '@astryxdesign/core/AppShell';
 import {Menu} from 'lucide-react';
 import {isActivePath} from './isActivePath';
 import {Wordmark} from './Wordmark';
+import {openResume} from './resume';
 import {mobileMenu} from '@/content/navigation';
 import {headerLinks, site} from '@/content/site';
 
@@ -108,7 +109,8 @@ export function PortfolioHeader() {
           href={site.resumeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Résumé (PDF, opens in a new tab)">
+          onClick={openResume}
+          aria-label="Résumé (PDF, opens in a new tab and downloads)">
           <PdfIcon />
         </a>
         {site.linkedinUrl && (
