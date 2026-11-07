@@ -49,7 +49,7 @@ export default function NotFound() {
               level={1}
               textWrap="balance"
               style={{
-                ...typeRole('display-m'),
+                ...typeRole('hero-title'),
                 letterSpacing: '-0.02em',
                 maxInlineSize: '20ch',
                 marginInline: 'auto',

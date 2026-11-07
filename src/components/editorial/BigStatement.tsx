@@ -60,7 +60,7 @@ export function BigStatement({
             data-text-reveal
             level={2}
             textWrap="balance"
-            style={{...typeRole('display-xl'), letterSpacing: '-0.03em', maxInlineSize: '16ch'}}>
+            style={{...typeRole('section-title'), letterSpacing: '-0.03em', maxInlineSize: '24ch'}}>
             <Lines text={title} />
           </Heading>
           {intro && (

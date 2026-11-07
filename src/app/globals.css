@@ -879,7 +879,7 @@ html {
 .site-footer {
   background-color: var(--color-background-muted);
   color: var(--color-text-primary);
-  border-block-start: 1px solid var(--color-border);
+  /* Its top rule comes from the section above (.page-sections section). */
   overflow: hidden;
 }
 
@@ -1170,10 +1170,22 @@ html {
 /* ---------- Portfolio frame, header and hero ---------- */
 /* The page frame: hairlines along the content column's left and right edges,
    the full height of the page (the content column is the Container's inner
-   width: the screen minus gutters, capped at --content-max). Drawn above the
+   width: the screen minus gutters, capped at --content-max). On large
+   screens the lines stop at 160px from the edges (--frame-margin-wide). Drawn above the
    header so the lines run through it, and never interactive. */
 :root {
-  --frame-inset: max(var(--space-gutter), calc((100vw - var(--content-max)) / 2));
+  /* The lines follow the content column's edges until those sit 160px in
+     (at about 1780px wide). Past that the content stays fixed and centred,
+     but the lines hold 160px from the screen's edges instead of drifting
+     inwards with it. 100% resolves where it's used (.page-frame, fixed):
+     the viewport beside any scrollbar, the width the content centres in. */
+  --frame-margin-wide: 160px;
+  --frame-inset: max(
+    var(--space-gutter),
+    min(var(--frame-margin-wide), calc((100% - var(--content-max)) / 2))
+  );
+  /* The content column's own edges (where the hard lines sit until 1780px). */
+  --content-inset: max(var(--space-gutter), calc((100% - var(--content-max)) / 2));
   --header-height: calc(var(--nav-padding-block) * 2 + var(--size-element-lg));
   /* Breathing room between the frame lines and the content inside them:
      6px on phones (390px and below), 16px from 1440px, fluid in between. */
@@ -1186,6 +1198,36 @@ html {
   z-index: 60;
   border-inline: 1px solid var(--color-border);
   pointer-events: none;
+}
+/* Faded lines on the content column's edges, so the page width still reads
+   once the hard lines move out to the screen margins on large displays.
+   From 1600px up (below that the hard lines are the content edges, so these
+   go). Fixed, so they measure from the viewport like the frame itself. */
+.page-frame::before {
+  content: '';
+  position: fixed;
+  inset-block: 0;
+  inset-inline: var(--content-inset);
+  /* A solid hairline tinted with the brand blue, at 8%. */
+  border-inline: 1px solid color-mix(in srgb, var(--color-brand-text) 8%, transparent);
+}
+@media (max-width: 1599.98px) {
+  .page-frame::before {
+    display: none;
+  }
+}
+
+/* Section rules: a solid hairline under every top-level section of a page,
+   running the full width of the screen across the frame lines, so the page
+   reads as a grid of rows. The border image's outset draws it edge to edge
+   without widening the page (ink overflow never scrolls). */
+.page-sections section:not(section section) {
+  border-block-end: 1px solid var(--color-border);
+  border-image: linear-gradient(var(--color-border), var(--color-border)) 0 0 1 0 / 0 0 1px 0 / 0 100vw;
+}
+/* A page without sections (the 404) still gets the footer's top rule. */
+.page-sections:not(:has(section)) > .site-footer {
+  border-block-start: 1px solid var(--color-border);
 }
 
 /* Header: links left, square icon cells right, on the frame. The app shell's
@@ -1420,11 +1462,6 @@ html {
   }
   .portfolio-hero-block {
     min-block-size: calc(100svh - var(--header-height));
-  }
-  /* The name in three scripts: 64px on desktop. Phones and tablets keep
-     the type scale's display-l. */
-  .portfolio-hero-names {
-    --hero-name-size: 4rem;
   }
   .portfolio-hero-break {
     display: inline;
@@ -1736,15 +1773,6 @@ html {
   z-index: 3;
   padding-block: var(--spacing-6);
   background-color: var(--color-background-surface);
-}
-/* Phones: the pinned title steps down to Headline XL so the stops get the
-   screen. The heading reads its size from these, so overriding them here is
-   enough. */
-@media (max-width: 767px) {
-  .timeline-head {
-    --type-display-m-size: var(--type-headline-xl-size);
-    --type-display-m-leading: var(--type-headline-xl-leading);
-  }
 }
 .timeline-head::after {
   content: '';
@@ -2171,7 +2199,22 @@ html {
 }
 .motion-ok .deck-track {
   display: flex;
-  block-size: 100%;
+  flex: 1 1 0;
+  min-block-size: 0;
+}
+/* The chapter title, pinned at the top of the stage while the cards slide
+   beneath it (the same treatment as the timeline's pinned head). */
+.deck-head {
+  flex: none;
+  padding-block: var(--spacing-6);
+  background-color: var(--color-background-surface);
+}
+/* The cards now share the stage with the title: the illustration gives a
+   little height back on large screens. */
+@media (min-width: 1024px) {
+  .motion-ok .deck-card-art .illustration {
+    max-block-size: 48svh;
+  }
 }
 .motion-ok .deck-card {
   flex: 0 0 100%;
@@ -2347,6 +2390,8 @@ html {
   inline-size: 100%;
   block-size: 100%;
   pointer-events: none;
+  /* Quieter everywhere it appears (welcome, hero story, Contact sign-off). */
+  opacity: 0.7;
 }
 .splash-mark {
   position: relative;
@@ -2488,6 +2533,16 @@ html.has-custom-cursor
   margin: -10px 0 0 -10px;
   pointer-events: none;
 }
+/* It's a popover (so it can sit above popups in the top layer): drop the
+   browser's popover box, keeping only the cursor's own styles above. */
+.cursor-squircle[popover] {
+  inset: 0 auto auto 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: visible;
+  color: inherit;
+}
 .cursor-lens {
   display: block;
   inline-size: 100%;
@@ -2614,16 +2669,42 @@ html.lenis {
 }
 
 /* Reading progress: a brand-blue hairline across the top, above the header. */
+/* Reading progress as a flight (ScrollProgress): the line is the distance
+   flown, along the very top edge of the screen; a small plane flies at its
+   tip, hanging just under the line. */
 .scroll-progress {
   position: fixed;
   inset-block-start: 0;
   inset-inline: 0;
   z-index: 70;
+  block-size: 0;
+  pointer-events: none;
+}
+.scroll-progress-line {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
   block-size: 2px;
   background-color: var(--color-brand-text);
   transform: scaleX(0);
   transform-origin: left center;
-  pointer-events: none;
+}
+.scroll-progress-plane {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  display: block;
+  inline-size: 12px;
+  block-size: 12px;
+  color: var(--color-brand-text);
+}
+/* Lucide's plane flies up and to the right: turned to fly along the line. */
+.scroll-progress-plane svg {
+  display: block;
+  inline-size: 12px;
+  block-size: 12px;
+  rotate: 45deg;
+  fill: var(--color-brand-text);
 }
 
 /* Masked line reveal (useTextReveal): hidden until split so it never
@@ -2809,5 +2890,363 @@ html.lenis {
     aspect-ratio: auto;
     block-size: 100%;
     min-block-size: 0;
+  }
+}
+
+/* ---------- Boarding pass popup (ProjectGate) ---------- */
+/* The dialog's own surface steps aside: the ticket is the surface. */
+dialog.pass-dialog {
+  background: none;
+  border: 0;
+  box-shadow: none;
+  overflow: visible;
+  perspective: 1600px;
+}
+dialog.pass-dialog > * {
+  overflow: visible;
+}
+
+/* The ticket: front and back stacked in one grid cell, flipped in 3D. */
+.pass {
+  --pass-notch: 14px;
+  --pass-stub: 13.5rem;
+  display: grid;
+  transform-style: preserve-3d;
+}
+/* The shadow sits on each face (a filter on .pass would flatten the 3D flip)
+   as a drop-shadow, so it follows the notches. */
+.pass-face {
+  grid-area: 1 / 1;
+  filter: drop-shadow(0 24px 48px color-mix(in srgb, var(--color-overlay) 45%, transparent));
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  min-inline-size: 0;
+}
+.pass-back {
+  transform: rotateY(180deg);
+}
+/* Belt and braces for backface-visibility (controls with their own layers
+   can show through): the hidden face also turns invisible at the flip's
+   midpoint. */
+.pass-back,
+.pass[data-stage='lounge'] .pass-front {
+  visibility: hidden;
+  transition: visibility 0s linear 0.16s;
+}
+.pass[data-stage='lounge'] .pass-back {
+  visibility: visible;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pass-face {
+    transition: none;
+  }
+}
+
+/* Front: the pass, then the stub across a perforation. Stacked on phones,
+   side by side from 640px. */
+.pass-front {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+.pass-main {
+  position: relative;
+  background: var(--color-background-surface);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+  border-radius: var(--radius-container);
+  /* Half-notches at the perforation (the bottom corners when stacked). */
+  -webkit-mask:
+    radial-gradient(circle at 0 100%, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 100%, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle at 0 100%, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 100%, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) right / 51% 100% no-repeat;
+}
+.pass-stub {
+  position: relative;
+  color: var(--color-on-brand);
+  background:
+    radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--color-on-brand) 22%, transparent), transparent 60%),
+    var(--color-brand);
+  border-radius: var(--radius-container);
+  border-block-start: 2px dashed color-mix(in srgb, var(--color-background-surface) 70%, transparent);
+  transform-origin: 0 0;
+  -webkit-mask:
+    radial-gradient(circle at 0 0, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 0, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle at 0 0, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 0, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) right / 51% 100% no-repeat;
+}
+.pass-stub-inner {
+  padding: var(--spacing-6);
+}
+@media (min-width: 640px) {
+  .pass-front {
+    grid-template-columns: minmax(0, 1fr) var(--pass-stub);
+  }
+  .pass-main {
+    -webkit-mask:
+      radial-gradient(circle at 100% 0, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) top / 100% 51% no-repeat,
+      radial-gradient(circle at 100% 100%, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) bottom / 100% 51% no-repeat;
+    mask:
+      radial-gradient(circle at 100% 0, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) top / 100% 51% no-repeat,
+      radial-gradient(circle at 100% 100%, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) bottom / 100% 51% no-repeat;
+  }
+  .pass-stub {
+    border-block-start: 0;
+    border-inline-start: 2px dashed color-mix(in srgb, var(--color-background-surface) 70%, transparent);
+    -webkit-mask:
+      radial-gradient(circle at 0 0, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) top / 100% 51% no-repeat,
+      radial-gradient(circle at 0 100%, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) bottom / 100% 51% no-repeat;
+    mask:
+      radial-gradient(circle at 0 0, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) top / 100% 51% no-repeat,
+      radial-gradient(circle at 0 100%, transparent var(--pass-notch), black calc(var(--pass-notch) + 0.5px)) bottom / 100% 51% no-repeat;
+  }
+  .pass-stub-inner {
+    block-size: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* Phones: a shorter ticket. The stub becomes one compact row (flight and
+   seat beside the barcode) and the dialog scrolls if a screen is shorter
+   still. */
+@media (max-width: 639.98px) {
+  dialog.pass-dialog {
+    overflow-y: auto;
+  }
+  .pass {
+    --pass-notch: 12px;
+  }
+  .pass-body {
+    padding: var(--spacing-5) !important;
+    gap: var(--spacing-6) !important;
+  }
+  .pass-stub .pass-stub-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 7rem;
+    align-items: center;
+    gap: var(--spacing-3) var(--spacing-4);
+    padding: var(--spacing-5);
+  }
+  .pass-stub-airline,
+  .pass-stub-tear {
+    display: none;
+  }
+  /* Over the details row, clear of the headline. */
+  .pass-stamp {
+    inset-block-start: 54%;
+    inset-inline-end: var(--spacing-5);
+  }
+  .pass-stub-flight {
+    grid-column: 1;
+  }
+  .pass-stub-seat {
+    grid-column: 1;
+  }
+  .pass-stub .pass-barcode {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    block-size: 100%;
+    min-block-size: 3.5rem;
+  }
+}
+
+.pass-header {
+  padding: var(--spacing-4) var(--spacing-4) var(--spacing-3) var(--spacing-6);
+  border-block-end: 1px dashed var(--color-border);
+}
+.pass-body {
+  padding: var(--spacing-6);
+}
+
+/* Route: FROM, the flight path, TO. */
+.pass-route {
+  grid-template-columns: auto minmax(3rem, 1fr) auto;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+.pass-route-path {
+  position: relative;
+  justify-content: center;
+  color: var(--color-brand-text);
+  block-size: 100%;
+}
+.pass-route-path::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 50%;
+  border-block-start: 2px dotted color-mix(in srgb, var(--color-brand-text) 55%, transparent);
+}
+.pass-route-plane {
+  position: relative;
+  display: inline-flex;
+  padding-inline: var(--spacing-2);
+  background: var(--color-background-surface);
+}
+
+.pass-fields {
+  padding-block: var(--spacing-4);
+  border-block: 1px dashed var(--color-border);
+}
+
+/* The barcode: bars of uneven widths in the stub's text colour. */
+.pass-barcode {
+  block-size: 3rem;
+  inline-size: 100%;
+  opacity: 0.9;
+  background: repeating-linear-gradient(
+    90deg,
+    currentColor 0 2px,
+    transparent 2px 4px,
+    currentColor 4px 5px,
+    transparent 5px 8px,
+    currentColor 8px 11px,
+    transparent 11px 12px,
+    currentColor 12px 13px,
+    transparent 13px 16px
+  );
+}
+
+/* The "Boarded" stamp: a double-ruled ink stamp that lands on the pass. */
+.pass-stamp {
+  position: absolute;
+  /* Beside the headline, clear of the route above and the actions below. */
+  inset-block-start: 36%;
+  inset-inline-end: var(--spacing-8);
+  padding: var(--spacing-3) var(--spacing-5);
+  color: var(--color-brand-text);
+  border: 3px double currentColor;
+  border-radius: var(--radius-container);
+  background: color-mix(in srgb, var(--color-background-surface) 80%, transparent);
+  pointer-events: none;
+  mix-blend-mode: normal;
+}
+
+/* Back: the VIP lounge card, brand blue with a soft sheen. */
+.pass-back {
+  color: var(--color-on-brand);
+  background:
+    radial-gradient(90% 70% at 100% 0%, color-mix(in srgb, var(--color-on-brand) 24%, transparent), transparent 60%),
+    radial-gradient(70% 60% at 0% 100%, color-mix(in srgb, var(--color-background-surface) 35%, transparent), transparent 70%),
+    var(--color-brand);
+  border-radius: var(--radius-container);
+}
+.pass-back .pass-header,
+.pass-back .pass-fields {
+  border-color: color-mix(in srgb, var(--color-on-brand) 35%, transparent);
+}
+.pass-back :is(.astryx-heading, .astryx-text) {
+  color: inherit;
+}
+.pass-back em {
+  color: inherit !important;
+}
+/* On the blue card the primary action turns white, so it still leads. */
+.pass-back .astryx-button[data-variant='primary'] {
+  background: var(--color-on-brand) !important;
+  color: var(--color-brand) !important;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-overlay) 35%, transparent) !important;
+}
+.pass-back .astryx-button[data-variant='primary'] * {
+  color: inherit !important;
+}
+/* The card fills the ticket's height: its content spreads to the edges and
+   a large crown watermarks the corner. */
+.pass-back {
+  position: relative;
+  overflow: hidden;
+}
+.pass-back > .pass-body {
+  flex: 1;
+  justify-content: space-between;
+}
+.pass-back-watermark {
+  position: absolute;
+  inset-block-end: calc(var(--spacing-8) * -1);
+  inset-inline-end: calc(var(--spacing-6) * -1);
+  inline-size: 14rem;
+  block-size: 14rem;
+  color: var(--color-on-brand);
+  opacity: 0.1;
+  rotate: -12deg;
+  pointer-events: none;
+}
+.pass-back .astryx-button,
+.pass-back .astryx-icon-button {
+  color: inherit;
+}
+
+/* ---------- Popup backdrop ---------- */
+/* The scrim fades in with the popup instead of snapping to dark first, and
+   stays light enough (with a soft blur) that the page still shows behind. */
+dialog.astryx-dialog::backdrop {
+  background-color: color-mix(in srgb, var(--color-overlay) 55%, transparent);
+  backdrop-filter: blur(6px);
+  animation: popup-backdrop-in 240ms cubic-bezier(0.2, 0, 0, 1);
+}
+@keyframes popup-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog.astryx-dialog::backdrop {
+    animation: none;
+  }
+}
+
+/* ---------- Contact sign-off (ContactClosing) ---------- */
+/* The rippling dot grid fills the section behind the line. */
+.closing-section {
+  position: relative;
+  overflow: clip;
+}
+.closing-grid {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 100%);
+  mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 100%);
+}
+.closing {
+  position: relative;
+  z-index: 1;
+}
+/* The rolling word: a mask the scripts slide through. Padded so accents
+   and descenders (Hindi's matras, the serif's tails) are never cut. */
+.closing-word {
+  display: inline-flex;
+  align-items: baseline;
+  overflow: clip;
+  overflow-clip-margin: 0.1em;
+  padding-block: 0.12em;
+  margin-block: -0.12em;
+  vertical-align: bottom;
+}
+.closing-word-text {
+  display: inline-block;
+  white-space: nowrap;
+}
+/* The hand waves on hover, like a real hello. */
+.closing-wave .lucide {
+  transform-origin: 70% 80%;
+}
+.closing-wave:hover .lucide,
+.closing-wave:focus-visible .lucide {
+  animation: closing-wave 900ms ease-in-out;
+}
+@keyframes closing-wave {
+  0%, 100% { rotate: 0deg; }
+  15% { rotate: 16deg; }
+  30% { rotate: -10deg; }
+  45% { rotate: 14deg; }
+  60% { rotate: -6deg; }
+  75% { rotate: 8deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .closing-wave:hover .lucide,
+  .closing-wave:focus-visible .lucide {
+    animation: none;
   }
 }

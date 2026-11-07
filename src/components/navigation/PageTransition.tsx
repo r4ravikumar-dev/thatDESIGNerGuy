@@ -66,6 +66,9 @@ export function PageTransition() {
         return;
       const anchor = (event.target as Element | null)?.closest('a');
       if (!anchor || anchor.hasAttribute('download')) return;
+      // Links that open something in place instead of a page (the locked
+      // projects open their boarding pass) never start the loader.
+      if (anchor.hasAttribute('data-stays-on-page')) return;
       if (anchor.target && anchor.target !== '_self') return;
       const url = new URL(anchor.href, window.location.href);
       if (url.origin !== window.location.origin || url.pathname === window.location.pathname)

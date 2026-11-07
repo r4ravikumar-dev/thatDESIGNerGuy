@@ -18,8 +18,8 @@ type ChapterHeaderProps = {
   intro?: string;
   /** 1 when this header opens the page. */
   level?: 1 | 2;
-  /** Display XL by default; Display XXL for the homepage hero. */
-  size?: Extract<TypeRole, 'display-xxl' | 'display-xl' | 'display-l' | 'display-m'>;
+  /** The shared section headline size by default (section-title). */
+  size?: Extract<TypeRole, 'section-title' | 'display-xxl' | 'display-xl' | 'display-l' | 'display-m'>;
 };
 
 /**
@@ -32,7 +32,7 @@ export function ChapterHeader({
   title,
   intro,
   level = 2,
-  size = 'display-xl',
+  size = 'section-title',
 }: ChapterHeaderProps) {
   const titleRef = useTextReveal({delay: 0.05});
   return (
@@ -48,7 +48,7 @@ export function ChapterHeader({
         data-text-reveal
         level={level}
         textWrap="balance"
-        style={{...typeRole(size), letterSpacing: '-0.03em', maxInlineSize: '18ch'}}>
+        style={{...typeRole(size), letterSpacing: '-0.03em', maxInlineSize: '30ch'}}>
         <Lines text={title} />
       </Heading>
       {intro && (

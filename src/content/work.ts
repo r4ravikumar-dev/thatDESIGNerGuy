@@ -115,3 +115,59 @@ export const workPage = {
     action: {label: 'Let’s talk', href: '/contact'},
   },
 };
+
+/**
+ * The case studies aren't open yet: any project a visitor clicks opens this
+ * boarding pass instead (ProjectGate). "{project}" is the project's name and
+ * "{code}" its three-letter destination code (MAM, JOY, DEN).
+ *
+ * Two ways off the pass:
+ * - board: the stub tears off at the perforation, the pass is stamped
+ *   "Boarded" and the visitor is taken to Contact to book a walkthrough;
+ * - wait: the pass flips over to a VIP lounge card.
+ */
+export const boardingPass = {
+  airline: 'RK Airways',
+  kind: 'Boarding pass',
+  close: 'Close boarding pass',
+  from: {label: 'From', code: 'YOU', place: 'Right here'},
+  to: {label: 'To'},
+  front: {
+    eyebrow: 'Now boarding · Case study',
+    title: 'Fasten your *seatbelt.*',
+    body: "This one is still on its way to its final destination. I'm polishing every screen so the ride is worth the wait.",
+    fields: [
+      {label: 'Passenger', value: 'You'},
+      {label: 'Status', value: 'Final checks'},
+      {label: 'Boarding', value: 'Very soon'},
+    ],
+    note: "Can't wait for landing? Board early and I'll walk you through it live, window seat included.",
+    board: 'Book a walkthrough',
+    wait: "I'll wait",
+  },
+  stub: {
+    flight: 'Flight',
+    seat: {label: 'Seat', value: '1A'},
+    cabin: {label: 'Class', value: 'First'},
+    tear: 'Tear here to board',
+  },
+  boarded: {
+    stamp: 'Boarded',
+    stampNote: 'Gate: Contact',
+    title: "You're *boarded.*",
+    body: 'Stub torn, seat saved. Taking you to the gate to pick a time for your walkthrough.',
+  },
+  vip: {
+    eyebrow: 'RK Airways · VIP lounge',
+    title: "You're on the *VIP* list.",
+    body: "Thanks for waiting so gracefully. You're now a VIP member of RK Airways: first in line the moment {project} lands. Until then, the lounge is all yours.",
+    fields: [
+      {label: 'Member', value: 'You'},
+      {label: 'Tier', value: 'First class'},
+      {label: 'Perk', value: 'Priority boarding'},
+    ],
+    card: 'Member no. VIP-0001',
+    done: 'Enjoy the lounge',
+    flipBack: 'Back to my ticket',
+  },
+} as const;

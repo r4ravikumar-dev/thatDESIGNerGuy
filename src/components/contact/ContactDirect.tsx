@@ -25,7 +25,6 @@ export function ContactDirect() {
         label={copy.label}
         title={copy.title}
         intro={copy.intro}
-        size="display-l"
       />
       <Reveal delay={0.1}>
         <Link

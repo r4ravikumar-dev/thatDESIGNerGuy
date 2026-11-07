@@ -8,7 +8,10 @@ import {Heading} from '@astryxdesign/core/Heading';
 import {Text} from '@astryxdesign/core/Text';
 import {Chapter} from '@/components/editorial/Chapter';
 import {IndexLabel} from '@/components/editorial/IndexLabel';
-import {CtaButton} from '@/components/navigation/CtaButton';
+import {Button} from '@astryxdesign/core/Button';
+import {Icon} from '@astryxdesign/core/Icon';
+import {ArrowUpRight} from 'lucide-react';
+import {useProjectGate} from '@/components/work/ProjectGate';
 import {Reveal} from '@/components/motion/Reveal';
 import {Lines} from '@/components/storytelling/Lines';
 import {useMediaReveal, useTextReveal} from '@/motion/scroll';
@@ -29,10 +32,13 @@ const hrefOf = (project: WorkFeature) => project.href ?? '/contact';
  */
 function Picture({project, isFirst}: {project: WorkFeature; isFirst: boolean}) {
   const ref = useMediaReveal<HTMLDivElement>();
+  const gate = useProjectGate();
   return (
     <VStack ref={ref} className="work-feature-frame" data-layout={project.layout}>
       <NextLink
         href={hrefOf(project)}
+        data-stays-on-page
+        onClick={gate.onProjectClick(project.label)}
         className="work-showcase-link"
         aria-label={`${workPage.exploreLabel}: ${project.label}`}
         data-cursor="project"
@@ -80,7 +86,7 @@ function Title({project}: {project: WorkFeature}) {
       data-text-reveal
       level={2}
       textWrap="balance"
-      style={{...typeRole('display-l'), letterSpacing: '-0.03em', maxInlineSize: '14ch'}}>
+      style={{...typeRole('section-title'), letterSpacing: '-0.03em', maxInlineSize: '20ch'}}>
       <Lines text={project.title} />
     </Heading>
   );
@@ -88,6 +94,7 @@ function Title({project}: {project: WorkFeature}) {
 
 /** Description, what it centred on, and the way in. */
 function Details({project}: {project: WorkFeature}) {
+  const gate = useProjectGate();
   return (
     <Reveal delay={0.12}>
       <VStack gap={6}>
@@ -98,12 +105,12 @@ function Details({project}: {project: WorkFeature}) {
           {project.focus}
         </Text>
         <HStack>
-          <CtaButton
+          <Button
             label={workPage.exploreLabel}
-            href={hrefOf(project)}
             variant="secondary"
             size="md"
-            direction="out"
+            onClick={() => gate.open(project.label)}
+            endContent={<Icon icon={ArrowUpRight} size="sm" color="inherit" />}
           />
         </HStack>
       </VStack>

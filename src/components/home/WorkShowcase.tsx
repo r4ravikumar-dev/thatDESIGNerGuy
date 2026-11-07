@@ -13,6 +13,7 @@ import {ScriptNames} from '@/components/editorial/ScriptNames';
 import {accentStyle} from '@/components/storytelling/Lines';
 import {typeRole} from '@/theme/typeScale';
 import {EYEBROW_STYLE} from '@/theme/eyebrow';
+import {useProjectGate} from '@/components/work/ProjectGate';
 import {workShowcase, type WorkProject} from '@/content/home';
 import {useMediaReveal} from '@/motion/scroll';
 
@@ -84,10 +85,13 @@ const projectHref = (project: WorkProject) => project.href ?? '/work';
  */
 function ThumbnailFrame({project, children}: {project: WorkProject; children: React.ReactNode}) {
   const ref = useMediaReveal<HTMLDivElement>();
+  const gate = useProjectGate();
   return (
     <VStack ref={ref} className="work-showcase-frame">
       <NextLink
         href={projectHref(project)}
+        data-stays-on-page
+        onClick={gate.onProjectClick(project.label)}
         className="work-showcase-link"
         aria-label={`${workShowcase.viewLabel}: ${project.label}`}
         data-cursor="project"
@@ -140,6 +144,7 @@ export function WorkShowcase() {
   }, []);
 
   const current = projects[active] ?? projects[0];
+  const gate = useProjectGate();
 
   return (
     <Container gap={0}>
@@ -148,7 +153,7 @@ export function WorkShowcase() {
           <VStack className="work-showcase-side" justify="between">
             <VStack gap={6} className="work-showcase-header">
               <Reveal delay={0.05} distance={32}>
-                <ScriptNames names={names} />
+                <ScriptNames names={names} role="section-title" />
               </Reveal>
               <Reveal delay={0.1}>
                 <Text
@@ -167,6 +172,8 @@ export function WorkShowcase() {
                 target only: keyboard and screen readers use the banners). */}
               <NextLink
                 href={projectHref(current)}
+                data-stays-on-page
+                onClick={gate.onProjectClick(current.label)}
                 tabIndex={-1}
                 className="work-showcase-link"
                 data-cursor="project"

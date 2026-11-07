@@ -17,6 +17,8 @@ import {ANCHORS, fluid, rem} from './breakpoints';
  */
 
 export type TypeRole =
+  | 'hero-title'
+  | 'section-title'
   | 'display-xxl'
   | 'display-xl'
   | 'display-l'
@@ -78,6 +80,12 @@ export const typeScale: Record<TypeRole, RoleSpec> = {
   // v2 expressive tier: used at most once per section.
   'display-xxl': display(153, 144, 104, 64, LINE_HEIGHT.hero),
   'display-xl': display(102, 96, 72, 48, LINE_HEIGHT.chapter),
+  // Every page hero's headline: 72px on the web (no further growth on wide
+  // screens), fluid down to 32px on phones.
+  'hero-title': display(72, 72, 52, 32, LINE_HEIGHT.display),
+  // Every section's headline, site-wide, for consistency: 56px on the web
+  // (no further growth on wide screens), fluid down to 28px on phones.
+  'section-title': display(56, 56, 40, 28, LINE_HEIGHT.display),
   // v1 scale.
   'display-l': display(59, 56, 50, 44, LINE_HEIGHT.display),
   'display-m': display(50, 48, 44, 40, LINE_HEIGHT.display),

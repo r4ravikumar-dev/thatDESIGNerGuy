@@ -34,7 +34,7 @@ export default function ContactPage() {
       </Chapter>
 
       {/* Sign-off */}
-      <Chapter label={contactClosing.label}>
+      <Chapter label={contactClosing.label} className="closing-section">
         <ContactClosing />
       </Chapter>
     </VStack>

@@ -28,7 +28,7 @@ export function AboutSection() {
       <section aria-label={label} id="about" className="about-section">
         <VStack gap={6} className="about-section-text">
           <Reveal>
-            <ScriptNames names={names} role="display-l" />
+            <ScriptNames names={names} role="section-title" />
           </Reveal>
           <Reveal delay={0.05}>
             <Text type="large" color="secondary" textWrap="pretty" style={{maxInlineSize: '40ch'}}>

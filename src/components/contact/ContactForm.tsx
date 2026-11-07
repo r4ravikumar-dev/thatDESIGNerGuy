@@ -108,7 +108,7 @@ export function ContactForm() {
 
   return (
     <Grid columns={1} className="contact-form-grid">
-      <ChapterHeader index={copy.index} label={copy.label} title={copy.title} size="display-l" />
+      <ChapterHeader index={copy.index} label={copy.label} title={copy.title} />
 
       <VStack gap={0} aria-live="polite">
         {isDone ? (

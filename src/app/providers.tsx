@@ -8,6 +8,7 @@ import {portfolioTheme} from '@/theme/portfolio';
 import {springs} from '@/motion/springs';
 import {ScrollManager} from '@/components/navigation/ScrollManager';
 import {SmoothScroll} from '@/components/motion/SmoothScroll';
+import {ProjectGateProvider} from '@/components/work/ProjectGate';
 
 export function Providers({children}: {children: React.ReactNode}) {
   return (
@@ -18,7 +19,8 @@ export function Providers({children}: {children: React.ReactNode}) {
           {/* Lenis smooth scrolling on GSAP's ticker (off with reduced motion). */}
           <SmoothScroll />
           <ScrollManager />
-          {children}
+          {/* Case studies are locked for now: project links open a popup. */}
+          <ProjectGateProvider>{children}</ProjectGateProvider>
         </MotionConfig>
       </LinkProvider>
     </Theme>

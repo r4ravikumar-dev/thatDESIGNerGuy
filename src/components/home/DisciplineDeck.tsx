@@ -1,6 +1,6 @@
 'use client';
 
-import {useRef, type CSSProperties} from 'react';
+import {useRef, type CSSProperties, type ReactNode} from 'react';
 import {
   BookOpen,
   ClipboardCheck,
@@ -129,8 +129,8 @@ function DeckCard({item, index}: {item: Discipline; index: number}) {
 }
 
 /**
- * What I do, as a deck of full-screen cards. The stage pins under the site
- * header (position: sticky inside a tall track, .deck in globals.css) and
+ * What I do, as a deck of full-screen cards. The stage, with the chapter's
+ * title pinned at its top (head), pins under the site header (position: sticky inside a tall track, .deck in globals.css) and
  * the vertical scroll slides the cards in from the right, one after another,
  * resting on each before the next arrives.
  *
@@ -141,7 +141,16 @@ function DeckCard({item, index}: {item: Discipline; index: number}) {
  * The horizontal deck needs motion-ok (set on <html> before paint); with
  * reduced motion or without JavaScript the cards simply stack, one per row.
  */
-export function DisciplineDeck({items, label}: {items: readonly Discipline[]; label: string}) {
+export function DisciplineDeck({
+  items,
+  label,
+  head,
+}: {
+  items: readonly Discipline[];
+  label: string;
+  /** The chapter's title block, pinned at the top of the stage above the cards. */
+  head?: ReactNode;
+}) {
   const deckRef = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -221,6 +230,11 @@ export function DisciplineDeck({items, label}: {items: readonly Discipline[]; la
       className="deck"
       style={{'--deck-count': items.length} as CSSProperties}>
       <VStack gap={0} className="deck-stage">
+        {head && (
+          <VStack gap={0} className="deck-head">
+            {head}
+          </VStack>
+        )}
         <ol className="deck-track">
           {items.map((item, index) => (
             <DeckCard key={item.title} item={item} index={index} />

@@ -25,7 +25,7 @@ export function SiteShell({children}: {children: React.ReactNode}) {
         height="auto"
         topNav={<PortfolioHeader />}
         mobileNav={{hasToggle: false, content: <MobileMenu />}}>
-        <VStack gap={0}>
+        <VStack gap={0} className="page-sections">
           {children}
           <Footer />
         </VStack>
