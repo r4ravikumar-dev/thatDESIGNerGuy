@@ -2,6 +2,7 @@ import type {Metadata, Viewport} from 'next';
 import './globals.css';
 import {Providers} from './providers';
 import {SiteShell} from '@/components/layout/SiteShell';
+import {NotInStudio} from '@/components/layout/NotInStudio';
 import {site} from '@/content/site';
 
 /** The tagline without its *accent* markers, for titles and metadata. */
@@ -93,7 +94,9 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
       </head>
       <body>
         <Providers>
-          <Splash />
+          <NotInStudio>
+            <Splash />
+          </NotInStudio>
           <SiteShell>{children}</SiteShell>
         </Providers>
         <Analytics />

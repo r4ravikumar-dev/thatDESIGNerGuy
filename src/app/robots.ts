@@ -3,7 +3,8 @@ import {site} from '@/content/site';
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {userAgent: '*', allow: '/'},
+    // The writing studio and its sign-in stay out of search (they're noindex too).
+    rules: {userAgent: '*', allow: '/', disallow: ['/write', '/auth']},
     sitemap: `${site.url}/sitemap.xml`,
   };
 }

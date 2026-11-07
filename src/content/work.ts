@@ -44,6 +44,8 @@ export type WorkFeature = {
   href?: string;
   /** Each project gets its own composition (WorkFeatures). */
   layout: 'wide' | 'split' | 'split-reverse';
+  /** True for a published case study from the studio: it opens its page instead of the boarding pass. */
+  isLive?: boolean;
 };
 
 /** Work page copy (V2), in page order. "*word*" sets the italic serif accent. */
@@ -56,6 +58,8 @@ export const workPage = {
   },
   /** The project link, and the cursor's tag over a project picture. */
   exploreLabel: 'Explore project',
+  /** The link once a project has a published case study. */
+  viewCaseStudy: 'View case study',
   projects: [
     {
       slug: 'mamily',
@@ -169,5 +173,18 @@ export const boardingPass = {
     card: 'Member no. VIP-0001',
     done: 'Enjoy the lounge',
     flipBack: 'Back to my ticket',
+  },
+} as const;
+
+/** A case study page's fixed copy (the story itself comes from the studio). */
+export const caseStudyPage = {
+  next: 'Next case study',
+  allWork: 'All work',
+  closing: {
+    label: 'Want to go deeper?',
+    title: 'Happy to walk you through the *details.*',
+    intro: 'The decisions, the trade-offs, and the bits that didn’t make it into the final screens.',
+    note: 'No polished brief needed.',
+    action: {label: 'Let’s talk', href: '/contact'},
   },
 } as const;

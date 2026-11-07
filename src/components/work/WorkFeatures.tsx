@@ -37,12 +37,11 @@ function Picture({project, isFirst}: {project: WorkFeature; isFirst: boolean}) {
     <VStack ref={ref} className="work-feature-frame" data-layout={project.layout}>
       <NextLink
         href={hrefOf(project)}
-        data-stays-on-page
-        onClick={gate.onProjectClick(project.label)}
+        {...gate.linkProps(project.label, project.isLive)}
         className="work-showcase-link"
         aria-label={`${workPage.exploreLabel}: ${project.label}`}
         data-cursor="project"
-        data-cursor-label={workPage.exploreLabel}>
+        data-cursor-label={project.isLive ? workPage.viewCaseStudy : workPage.exploreLabel}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="work-showcase-image"
@@ -106,10 +105,11 @@ function Details({project}: {project: WorkFeature}) {
         </Text>
         <HStack>
           <Button
-            label={workPage.exploreLabel}
+            label={project.isLive ? workPage.viewCaseStudy : workPage.exploreLabel}
             variant="secondary"
             size="md"
-            onClick={() => gate.open(project.label)}
+            href={project.isLive ? hrefOf(project) : undefined}
+            onClick={project.isLive ? undefined : () => gate.open(project.label)}
             endContent={<Icon icon={ArrowUpRight} size="sm" color="inherit" />}
           />
         </HStack>
@@ -160,10 +160,10 @@ function Feature({project, index}: {project: WorkFeature; index: number}) {
  * The three featured projects, each a chapter of its own with an anchor
  * (/work#mamily, …) that the homepage's project banners open.
  */
-export function WorkFeatures() {
+export function WorkFeatures({projects = workPage.projects}: {projects?: readonly WorkFeature[]}) {
   return (
     <>
-      {workPage.projects.map((project, index) => (
+      {projects.map((project, index) => (
         <Chapter key={project.slug} id={project.slug} label={project.label}>
           <Feature project={project} index={index} />
         </Chapter>

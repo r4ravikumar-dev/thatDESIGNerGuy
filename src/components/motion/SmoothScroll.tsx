@@ -4,6 +4,7 @@ import {useEffect} from 'react';
 import {usePathname} from 'next/navigation';
 import Lenis from 'lenis';
 import {gsap, ScrollTrigger, prefersReducedMotion} from '@/motion/gsap';
+import {isStudioPath} from '@/lib/studio';
 
 /** The running Lenis instance, or null (reduced motion, or before mount). */
 let lenis: Lenis | null = null;
@@ -34,8 +35,11 @@ export function jumpTo(target: number | HTMLElement) {
 export function SmoothScroll() {
   const pathname = usePathname();
 
+  // No smooth scrolling in the writing studio: the editor scrolls natively.
+  const isStudio = isStudioPath(pathname);
+
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion() || isStudio) return;
 
     const instance = new Lenis({
       lerp: 0.1,
@@ -77,7 +81,7 @@ export function SmoothScroll() {
       instance.destroy();
       lenis = null;
     };
-  }, []);
+  }, [isStudio]);
 
   // Positions change with each new page and once the web fonts arrive.
   useEffect(() => {

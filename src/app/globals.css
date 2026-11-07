@@ -3250,3 +3250,812 @@ dialog.astryx-dialog::backdrop {
     animation: none;
   }
 }
+
+/* =====================================================================
+   Case studies: the prose (editor and live page share it)
+   ===================================================================== */
+.cs-prose {
+  color: var(--color-text-primary);
+  gap: var(--space-block);
+}
+.cs-prose > * {
+  margin: 0;
+}
+/* Sections breathe; the story reads in a steady column. */
+.cs-prose .cs-section-heading,
+.write-prose h2 {
+  margin-block-start: var(--space-chapter-gap);
+}
+.cs-prose > .cs-section-heading:first-child,
+.write-prose > h2:first-child {
+  margin-block-start: 0;
+}
+.cs-paragraph,
+.write-prose p {
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+.cs-prose strong,
+.write-prose strong {
+  color: var(--color-text-primary);
+}
+.cs-link,
+.write-prose a {
+  color: var(--color-brand-text);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+.cs-prose blockquote,
+.write-prose blockquote {
+  margin: 0;
+  padding-inline-start: var(--spacing-6);
+  border-inline-start: 2px solid var(--color-brand-text);
+  font-family: var(--font-family-accent);
+  font-style: italic;
+  font-size: var(--type-headline-m-size);
+  line-height: 1.3;
+  color: var(--color-text-primary);
+}
+.cs-prose ul,
+.cs-prose ol,
+.write-prose ul,
+.write-prose ol {
+  padding-inline-start: var(--spacing-6);
+  color: var(--color-text-secondary);
+  display: grid;
+  gap: var(--spacing-2);
+}
+.cs-prose hr,
+.write-prose hr {
+  border: 0;
+  border-block-start: 1px solid var(--color-border);
+  margin-block: var(--space-block);
+}
+.cs-prose pre,
+.write-prose pre {
+  padding: var(--spacing-4);
+  border-radius: var(--radius-container);
+  background: var(--color-background-muted);
+  font-family: var(--font-family-code);
+  overflow-x: auto;
+}
+.cs-prose mark,
+.write-prose mark {
+  color: inherit;
+  border-radius: 2px;
+  padding-inline: 0.1em;
+}
+
+/* Media: images, video and embeds sit in the work-frame style. */
+.cs-media {
+  margin: 0;
+  display: grid;
+  gap: var(--spacing-3);
+}
+.cs-image,
+.cs-video,
+.write-prose img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+}
+.cs-embed {
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+  background: var(--color-background-muted);
+}
+.cs-embed[data-provider='figma'] {
+  aspect-ratio: 4 / 3;
+}
+.cs-caption {
+  font-size: var(--type-caption-l-size);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+.cs-cover {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  max-block-size: 80svh;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+}
+
+/* Files: a quiet bar with a download, and an optional preview above it. */
+.cs-file {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+  overflow: hidden;
+  background: var(--color-background-surface);
+}
+.cs-file-preview {
+  display: block;
+  inline-size: 100%;
+  block-size: min(80svh, 44rem);
+  border: 0;
+  border-block-end: 1px solid var(--color-border);
+  background: var(--color-background-muted);
+}
+.cs-file-bar {
+  padding: var(--spacing-4);
+  color: var(--color-text-primary);
+}
+.cs-file-download {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.cs-file-download:hover {
+  border-color: var(--color-brand-text);
+  color: var(--color-brand-text);
+}
+
+/* Callouts: a brand-tinted note. */
+.cs-callout {
+  padding: var(--spacing-5);
+  border-radius: var(--radius-container);
+  border: 1px solid color-mix(in srgb, var(--color-brand-text) 30%, transparent);
+  background: color-mix(in srgb, var(--color-brand-text) 8%, transparent);
+  color: var(--color-brand-text);
+}
+.cs-callout p {
+  color: var(--color-text-primary);
+}
+
+/* =====================================================================
+   The writing studio (/write)
+   ===================================================================== */
+.studio,
+.write {
+  min-block-size: 100svh;
+  background: var(--color-background-body);
+}
+.studio-bar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 20;
+  padding: var(--spacing-3) var(--spacing-5);
+  border-block-end: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-background-surface) 92%, transparent);
+  backdrop-filter: blur(10px);
+}
+.studio-home,
+.studio-link {
+  color: inherit;
+  text-decoration: none;
+}
+.studio-link {
+  font-weight: 600;
+}
+.studio-link:hover {
+  color: var(--color-brand-text);
+}
+.studio-body {
+  inline-size: min(100% - 2 * var(--spacing-5), 72rem);
+  margin-inline: auto;
+  padding-block: var(--spacing-10);
+}
+.studio-empty {
+  padding: var(--spacing-10);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-container);
+  text-align: center;
+  align-items: center;
+}
+.studio-centered {
+  inline-size: min(100% - 2 * var(--spacing-5), 30rem);
+  margin: 18svh auto 0;
+}
+
+/* Editor: the canvas, and the settings panel beside it. */
+.write-main {
+  align-items: stretch;
+  min-block-size: 0;
+}
+.write-canvas {
+  position: relative;
+  flex: 1;
+  min-inline-size: 0;
+}
+.write-toolbar {
+  position: sticky;
+  inset-block-start: 57px;
+  z-index: 10;
+  padding: var(--spacing-2) var(--spacing-5);
+  border-block-end: 1px solid var(--color-border);
+  background: var(--color-background-surface);
+}
+.write-document {
+  padding: var(--spacing-10) var(--spacing-5) 40svh;
+}
+.write-prose {
+  inline-size: min(100%, 44rem);
+  margin-inline: auto;
+  display: grid;
+  outline: none;
+  font-size: var(--type-body-l-size);
+  line-height: 1.6;
+}
+.write-prose h1 {
+  font-size: var(--type-hero-title-size);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+.write-prose h2 {
+  font-size: var(--type-section-title-size);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+.write-prose h3 {
+  font-size: var(--type-headline-l-size);
+}
+.write-prose h4 {
+  font-size: var(--type-headline-s-size);
+}
+.write-prose .is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  block-size: 0;
+  pointer-events: none;
+  color: var(--color-text-disabled);
+}
+.write-settings {
+  inline-size: 22rem;
+  flex: none;
+  padding: var(--spacing-6) var(--spacing-5) var(--spacing-10);
+  border-inline-start: 1px solid var(--color-border);
+  background: var(--color-background-surface);
+  position: sticky;
+  inset-block-start: 57px;
+  max-block-size: calc(100svh - 57px);
+  overflow-y: auto;
+}
+@media (max-width: 1023.98px) {
+  .write-main {
+    flex-direction: column;
+  }
+  .write-settings {
+    inline-size: 100%;
+    position: static;
+    max-block-size: none;
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--color-border);
+  }
+}
+.write-image-field {
+  inline-size: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+}
+.write-image-empty {
+  border-style: dashed;
+}
+.write-swatch {
+  display: block;
+  inline-size: 16px;
+  block-size: 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--swatch);
+}
+.write-swatch[data-empty] {
+  background: linear-gradient(135deg, transparent 45%, var(--color-text-error) 46% 54%, transparent 55%);
+}
+.write-bubble {
+  padding: var(--spacing-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+  background: var(--color-background-popover);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-overlay) 30%, transparent);
+}
+.write-slash {
+  position: absolute;
+  z-index: 30;
+  inline-size: 17rem;
+  max-block-size: 22rem;
+  overflow-y: auto;
+  padding: var(--spacing-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+  background: var(--color-background-popover);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--color-overlay) 35%, transparent);
+}
+.write-slash .astryx-button {
+  justify-content: flex-start;
+}
+.write-slash-empty {
+  padding: var(--spacing-3);
+}
+/* Rich blocks: an outline when selected, and their settings beneath. */
+.write-block {
+  display: grid;
+  gap: var(--spacing-2);
+  border-radius: var(--radius-container);
+  outline: 2px solid transparent;
+  outline-offset: 4px;
+}
+.write-block[data-selected] {
+  outline-color: var(--color-brand-text);
+}
+.write-block-controls {
+  flex-wrap: wrap;
+}
+.write-dialog-body {
+  padding: var(--spacing-4);
+}
+.preview-bar {
+  background: color-mix(in srgb, var(--color-brand-text) 14%, var(--color-background-surface));
+}
+
+/* =====================================================================
+   Visual blocks (components/caseStudy/visualBlocks): shared by the editor
+   preview and the published page. Responsive by default.
+   ===================================================================== */
+.vb {
+  margin: 0;
+  display: grid;
+  gap: var(--spacing-3);
+  min-inline-size: 0;
+}
+.vb-media {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: var(--radius-container);
+  background: var(--color-background-muted);
+}
+.vb-replace {
+  display: block;
+  inline-size: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  border-radius: var(--radius-container);
+}
+.vb-replace:hover .vb-media,
+.vb-replace:focus-visible .vb-media {
+  outline: 2px solid var(--color-brand-text);
+  outline-offset: 2px;
+}
+.vb-empty {
+  inline-size: 100%;
+  border: 1px dashed var(--color-border-emphasized);
+  border-radius: var(--radius-container);
+  background: var(--color-background-muted);
+}
+
+/* 1. Image grid: even, asymmetric (first image double) or masonry. */
+.vb-grid {
+  --vb-gap: var(--spacing-4);
+  display: grid;
+  grid-template-columns: repeat(var(--vb-columns, 2), minmax(0, 1fr));
+  gap: var(--vb-gap);
+}
+.vb-grid[data-gap='none'] { --vb-gap: 0px; }
+.vb-grid[data-gap='sm'] { --vb-gap: var(--spacing-2); }
+.vb-grid[data-gap='lg'] { --vb-gap: var(--spacing-8); }
+.vb-grid[data-gap='none'] .vb-media { border-radius: 0; }
+.vb-grid[data-arrangement='asymmetric'] > :first-child {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+.vb-grid[data-arrangement='asymmetric'] > :first-child .vb-media,
+.vb-grid[data-arrangement='asymmetric'] > .vb-media:first-child {
+  block-size: 100%;
+  object-fit: cover;
+}
+.vb-grid[data-arrangement='masonry'] {
+  display: block;
+  columns: var(--vb-columns, 2);
+  column-gap: var(--vb-gap);
+}
+.vb-grid[data-arrangement='masonry'] > * {
+  break-inside: avoid;
+  margin-block-end: var(--vb-gap);
+}
+@media (max-width: 767.98px) {
+  .vb-grid { grid-template-columns: repeat(min(var(--vb-columns, 2), 2), minmax(0, 1fr)); }
+  .vb-grid[data-arrangement='masonry'] { columns: 2; }
+}
+@media (max-width: 479.98px) {
+  .vb-grid { grid-template-columns: minmax(0, 1fr); }
+  .vb-grid[data-arrangement='asymmetric'] > :first-child { grid-column: auto; grid-row: auto; }
+  .vb-grid[data-arrangement='masonry'] { columns: 1; }
+}
+
+/* 2. Comparison: two sides at 50/50, 60/40 or 40/60; stacked on phones. */
+.vb-compare-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--spacing-6);
+  align-items: start;
+}
+.vb-compare[data-split='60-40'] .vb-compare-grid { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+.vb-compare[data-split='40-60'] .vb-compare-grid { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
+.vb-compare-side[data-tone='after'] .vb-media {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-brand-text) 45%, transparent);
+}
+@media (max-width: 639.98px) {
+  .vb-compare .vb-compare-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* 3. Full-bleed showcase: edge to edge of the screen, or the page frame's width. */
+.vb-showcase {
+  inline-size: 100vw;
+  margin-inline: calc(50% - 50vw);
+}
+.vb-showcase[data-width='wide'] {
+  inline-size: min(100vw - 2 * var(--space-gutter), var(--content-max));
+  margin-inline: calc(50% - min(50vw - var(--space-gutter), var(--content-max) / 2));
+}
+.vb-showcase .vb-media { border-radius: 0; }
+.vb-showcase[data-width='wide'] .vb-media { border-radius: var(--radius-container); }
+.vb-showcase[data-surface='muted'] { background: var(--color-background-muted); }
+.vb-showcase[data-surface='brand'] { background: color-mix(in srgb, var(--color-brand-text) 12%, var(--color-background-surface)); }
+.vb-showcase[data-surface='inverse'] { background: var(--color-background-inverted); }
+.vb-showcase[data-inset='sm'] { padding: var(--spacing-4); }
+.vb-showcase[data-inset='md'] { padding: var(--space-block); }
+.vb-showcase[data-inset='lg'] { padding: var(--space-chapter-gap); }
+.vb-showcase[data-inset]:not([data-inset='none']) .vb-media { border-radius: var(--radius-container); }
+.vb-showcase .cs-caption { padding-inline: var(--space-gutter); }
+/* Keep the bleed from widening the page. */
+.cs-article-chapter { overflow-x: clip; }
+
+/* 4. Device mockups: devices placed on a stage by %, so the composition
+   scales as one. Frames are drawn in CSS from theme tokens. */
+.vb-devices {
+  padding: var(--spacing-6);
+  border-radius: var(--radius-container);
+}
+.vb-devices[data-surface='none'] { padding: 0; }
+.vb-devices[data-surface='muted'] { background: var(--color-background-muted); }
+.vb-devices[data-surface='brand'] { background: color-mix(in srgb, var(--color-brand-text) 12%, var(--color-background-surface)); }
+.vb-devices[data-surface='inverse'] { background: var(--color-background-inverted); }
+.vb-stage {
+  position: relative;
+  inline-size: 100%;
+  container-type: inline-size;
+}
+.vb-device-slot {
+  position: absolute;
+  transform-origin: center;
+}
+.vb-device-slot[data-selected] .vb-device { outline: 2px solid var(--color-brand-text); outline-offset: 4px; }
+.vb-device {
+  position: relative;
+  display: grid;
+  background: var(--color-background-inverted);
+  border: 1px solid var(--color-border-emphasized);
+}
+.vb-devices[data-shadow] .vb-device {
+  box-shadow:
+    0 2cqi 5cqi color-mix(in srgb, var(--color-overlay) 30%, transparent),
+    0 0.4cqi 1cqi color-mix(in srgb, var(--color-overlay) 25%, transparent);
+}
+.vb-device-screen {
+  overflow: hidden;
+  background: var(--color-background-surface);
+}
+.vb-device-screen .vb-media,
+.vb-device-screen .vb-empty,
+.vb-device-screen .vb-replace {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 0;
+}
+.vb-device-screen .vb-replace .vb-media { block-size: 100%; }
+.vb-device[data-type='phone'] { padding: 2.6%; border-radius: 16% / 7.5%; }
+.vb-device[data-type='phone'] .vb-device-screen { aspect-ratio: 9 / 19.5; border-radius: 13% / 6%; }
+.vb-device[data-type='tablet'] { padding: 3%; border-radius: 6%; }
+.vb-device[data-type='tablet'] .vb-device-screen { aspect-ratio: 4 / 3; border-radius: 2%; }
+.vb-device[data-type='laptop'] { padding: 2.2% 2.2% 0; border-radius: 3% 3% 0 0; }
+.vb-device[data-type='laptop'] .vb-device-screen { aspect-ratio: 16 / 10; border-radius: 1%; }
+.vb-device-base {
+  block-size: 0;
+  padding-block-end: 4%;
+  margin-inline: -9%;
+  background: var(--color-border-emphasized);
+  border-radius: 0 0 40% 40% / 0 0 100% 100%;
+}
+.vb-device[data-type='browser'] { padding: 0; border-radius: 1.6%; overflow: hidden; background: var(--color-background-muted); }
+.vb-device[data-type='browser'] .vb-device-screen { aspect-ratio: 16 / 10; }
+.vb-device-chrome {
+  display: flex;
+  gap: 1.2%;
+  padding: 1.6% 2%;
+  border-block-end: 1px solid var(--color-border);
+}
+.vb-device-chrome i {
+  inline-size: 1.4%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-border-emphasized);
+}
+@media (max-width: 639.98px) {
+  .vb-devices[data-mobile='stack'] .vb-stage {
+    aspect-ratio: auto !important;
+    display: grid;
+    justify-items: center;
+    gap: var(--spacing-6);
+  }
+  .vb-devices[data-mobile='stack'] .vb-device-slot {
+    position: static;
+    transform: none !important;
+    inline-size: min(100%, 16rem) !important;
+  }
+  .vb-devices[data-mobile='stack'] .vb-device-slot:has([data-type='laptop']),
+  .vb-devices[data-mobile='stack'] .vb-device-slot:has([data-type='browser']) {
+    inline-size: 100% !important;
+  }
+  .vb-devices[data-mobile='first'] .vb-device-slot:not(:first-child) { display: none; }
+  .vb-devices[data-mobile='first'] .vb-device-slot:first-child {
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    inline-size: 40% !important;
+  }
+  .vb-devices { padding: var(--spacing-4); }
+}
+
+/* 5. Split editorial: media and text, proportions adjustable; stacked on phones. */
+.vb-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-block);
+  align-items: center;
+}
+.vb-split[data-proportion='60-40'] { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+.vb-split[data-proportion='40-60'] { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
+.vb-split[data-proportion='67-33'] { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+.vb-split[data-proportion='33-67'] { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+.vb-split[data-align='start'] { align-items: start; }
+.vb-split[data-align='end'] { align-items: end; }
+.vb-split[data-order='text-media'] .vb-split-media { order: 2; }
+.vb-split-text {
+  display: grid;
+  gap: var(--spacing-4);
+  min-inline-size: 0;
+}
+.vb-split-text > * { margin: 0; }
+@media (max-width: 767.98px) {
+  .vb-split { grid-template-columns: minmax(0, 1fr) !important; }
+  .vb-split .vb-split-media { order: 0 !important; }
+}
+
+/* 6. Quote, callout, metrics. */
+.vb-quote-text {
+  margin: 0;
+  color: var(--color-text-primary);
+  text-wrap: balance;
+}
+.vb-quote[data-style='serif'] .vb-quote-text {
+  font-family: var(--font-family-accent);
+  font-style: italic;
+  font-size: var(--type-headline-xl-size);
+  line-height: 1.25;
+}
+.vb-quote[data-style='large'] .vb-quote-text {
+  font-size: var(--type-section-title-size);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+.vb-quote[data-style='bordered'] {
+  padding-inline-start: var(--spacing-6);
+  border-inline-start: 3px solid var(--color-brand-text);
+}
+.vb-quote[data-style='bordered'] .vb-quote-text {
+  font-size: var(--type-headline-l-size);
+  line-height: 1.3;
+}
+.vb-quote-by { display: grid; gap: var(--spacing-1); }
+.cs-callout[data-tone='neutral'] {
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+  background: var(--color-background-muted);
+}
+.cs-callout[data-tone='success'] {
+  color: var(--color-text-success);
+  border-color: color-mix(in srgb, var(--color-text-success) 30%, transparent);
+  background: color-mix(in srgb, var(--color-text-success) 8%, transparent);
+}
+.cs-callout[data-tone='warning'] {
+  color: var(--color-text-warning);
+  border-color: color-mix(in srgb, var(--color-text-warning) 30%, transparent);
+  background: color-mix(in srgb, var(--color-text-warning) 8%, transparent);
+}
+.vb-metrics-grid {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--vb-columns, 3), minmax(0, 1fr));
+  gap: var(--spacing-6);
+}
+.vb-metric {
+  display: grid;
+  gap: var(--spacing-1);
+  align-content: start;
+  padding-block-start: var(--spacing-4);
+  border-block-start: 1px solid var(--color-border);
+}
+.vb-metric dd { margin: 0; }
+.vb-metric-label {
+  order: 2;
+  font-family: var(--font-family-eyebrow);
+  font-size: var(--type-caption-l-size);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+}
+.vb-metric-value {
+  order: 1;
+  font-size: var(--type-section-title-size);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.vb-metric-detail { order: 3; color: var(--color-text-secondary); }
+.vb-metrics[data-style='brand'] .vb-metric-value { color: var(--color-brand-text); }
+.vb-metrics[data-style='cards'] .vb-metric {
+  padding: var(--spacing-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+  background: var(--color-background-surface);
+}
+@media (max-width: 767.98px) {
+  .vb-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 399.98px) {
+  .vb-metrics-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* =====================================================================
+   Editor chrome for blocks, the side panel, the media library, preview.
+   ===================================================================== */
+.write-block-bar {
+  user-select: none;
+  padding: var(--spacing-1) var(--spacing-1) var(--spacing-1) 0;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.write-block:hover > .write-block-bar,
+.write-block[data-selected] > .write-block-bar,
+.write-block:focus-within > .write-block-bar {
+  opacity: 1;
+}
+.write-block-grip {
+  display: inline-flex;
+  padding: var(--spacing-1);
+  color: var(--color-text-secondary);
+  cursor: grab;
+  border-radius: var(--radius-container);
+}
+.write-block-grip:active { cursor: grabbing; }
+.write-block[data-content] .write-block-content { display: grid; gap: var(--spacing-3); }
+.write-block .vb-showcase {
+  /* In the editor the bleed stays within the canvas. */
+  inline-size: auto;
+  margin-inline: 0;
+}
+.write-side {
+  inline-size: 22rem;
+  flex: none;
+  border-inline-start: 1px solid var(--color-border);
+  background: var(--color-background-surface);
+  position: sticky;
+  inset-block-start: 57px;
+  max-block-size: calc(100svh - 57px);
+}
+.write-side .write-settings {
+  inline-size: auto;
+  position: static;
+  max-block-size: none;
+  border: 0;
+  flex: 1;
+  min-block-size: 0;
+}
+.write-side-tabs {
+  padding: var(--spacing-3) var(--spacing-5);
+  border-block-end: 1px solid var(--color-border);
+}
+@media (max-width: 1023.98px) {
+  .write-side {
+    inline-size: 100%;
+    position: static;
+    max-block-size: none;
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--color-border);
+  }
+}
+.inspector-thumb {
+  inline-size: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+}
+.inspector-thumb-sm {
+  inline-size: 40px;
+  block-size: 40px;
+  object-fit: cover;
+  border-radius: var(--radius-container);
+  border: 1px solid var(--color-border);
+}
+.inspector-item {
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+}
+.media-library {
+  padding: var(--spacing-4);
+  overflow-y: auto;
+}
+.media-empty {
+  padding: var(--spacing-10);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-container);
+}
+.media-tile {
+  display: grid;
+  gap: var(--spacing-1);
+  padding: var(--spacing-2);
+  text-align: start;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+  background: var(--color-background-surface);
+  color: inherit;
+  cursor: pointer;
+}
+.media-tile:hover,
+.media-tile:focus-visible {
+  border-color: var(--color-brand-text);
+}
+.media-tile img,
+.media-tile-icon {
+  inline-size: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-container);
+  background: var(--color-background-muted);
+  color: var(--color-text-secondary);
+}
+.write-preview-stage {
+  flex: 1;
+  padding: var(--spacing-4);
+  background: var(--color-background-muted);
+  overflow: auto;
+}
+.write-preview-frame {
+  block-size: calc(100dvh - 120px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+  background: var(--color-background-body);
+}
+/* The pull quote has its own styles; the plain-blockquote rule stays off it. */
+.cs-prose .vb-quote-text,
+.write-prose .vb-quote-text {
+  padding: 0;
+  border: 0;
+}
+.vb-quote[data-style='large'] .vb-quote-text,
+.vb-quote[data-style='bordered'] .vb-quote-text {
+  font-family: inherit;
+  font-style: normal;
+}

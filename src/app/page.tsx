@@ -6,18 +6,25 @@ import {DisciplineDeck} from '@/components/home/DisciplineDeck';
 import {BigStatement} from '@/components/editorial/BigStatement';
 import {PortfolioHero} from '@/components/home/PortfolioHero';
 import {WorkShowcase} from '@/components/home/WorkShowcase';
+import {getFeaturedCaseStudies, toWorkProject} from '@/lib/caseStudies/queries';
 import {AboutSection} from '@/components/home/AboutSection';
 import {Timeline} from '@/components/home/Timeline';
 import {closing, disciplines, process} from '@/content/home';
 
-export default function HomePage() {
+/** Featured case studies refresh within five minutes (and at once on publish). */
+export const revalidate = 300;
+
+export default async function HomePage() {
+  // Featured case studies from the studio; the static projects until there are any.
+  const featured = await getFeaturedCaseStudies();
+  const projects = featured.length ? featured.map(toWorkProject) : undefined;
   return (
     <VStack gap={0}>
       {/* Hero: the name, the intro and the story, with the photo pinned beside them. */}
       <PortfolioHero />
 
       {/* Work: the pinned 30/70 showcase. */}
-      <WorkShowcase />
+      <WorkShowcase projects={projects} />
 
       {/* About: who's behind the screens. */}
       <AboutSection />

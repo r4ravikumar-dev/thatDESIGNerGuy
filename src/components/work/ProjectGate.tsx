@@ -33,6 +33,11 @@ type Gate = {
   open: (project: string) => void;
   /** A click handler for a project link: stays on the page and opens the pass. */
   onProjectClick: (project: string) => (event: MouseEvent) => void;
+  /**
+   * Props for a project link: a published case study (isLive) opens its page
+   * like any link; any other project opens the boarding pass instead.
+   */
+  linkProps: (project: string, isLive?: boolean) => {onClick?: (event: MouseEvent) => void; 'data-stays-on-page'?: true};
 };
 
 const GateContext = createContext<Gate | null>(null);
@@ -160,6 +165,16 @@ export function ProjectGateProvider({children}: {children: React.ReactNode}) {
         event.preventDefault();
         open(name);
       },
+      linkProps: (name, isLive) =>
+        isLive
+          ? {}
+          : {
+              'data-stays-on-page': true as const,
+              onClick: (event: MouseEvent) => {
+                event.preventDefault();
+                open(name);
+              },
+            },
     }),
     [open],
   );
