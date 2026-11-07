@@ -7,7 +7,7 @@ import {Icon} from '@astryxdesign/core/Icon';
 import {ArrowRight} from 'lucide-react';
 import {VStack} from '@astryxdesign/core/Layout';
 import {IdCard, IdCardBack} from '@/components/illustrations/IdCard';
-import {SplashGrid} from './SplashGrid';
+import {RippleGrid} from '@/components/illustrations/RippleGrid';
 import {setCovered} from '@/motion/gsap';
 import {welcome} from '@/content/navigation';
 
@@ -31,7 +31,7 @@ export const splashSeenScript = `try{if(sessionStorage.getItem('${SPLASH_KEY}'))
  * before then shows it again). The page behind is still and scroll-locked
  * meanwhile; the button takes focus as it appears. With reduced motion the
  * card and button are simply there. Behind it, the dot grid drifts and
- * ripples out from the pointer as it moves (SplashGrid). Hovering (or
+ * ripples out from the pointer as it moves (RippleGrid). Hovering (or
  * tapping) the card flips it over to Ravi's photo. Hidden without JavaScript (see the
  * noscript style in layout.tsx).
  */
@@ -88,8 +88,8 @@ export function Splash() {
           aria-modal="true"
           aria-label={`Welcome: ${welcome.name}, ${welcome.role}, currently at ${welcome.current}`}
           exit={{opacity: 0, transition: {duration: 0.5, delay: 0.25, ease: [0.4, 0, 1, 1]}}}>
-          {/* The dot grid: drifting, rippling under the pointer (SplashGrid). */}
-          <SplashGrid />
+          {/* The dot grid: drifting, rippling under the pointer (RippleGrid). */}
+          <RippleGrid />
           <motion.div
             className="splash-mark"
             exit={

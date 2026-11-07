@@ -34,6 +34,8 @@ export const navLinks: NavLink[] = [
 
 export const brand = {
   homeLabel: 'Back to Ravi Kumar home',
+  /** Beside the header's wordmark once the visitor is past the hero. */
+  role: 'Product Designer',
 };
 
 export const projectAction = {

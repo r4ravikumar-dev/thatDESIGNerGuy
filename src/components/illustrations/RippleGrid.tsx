@@ -29,14 +29,18 @@ function toRgb(color: string, probe: HTMLElement): [number, number, number] {
 }
 
 /**
- * The welcome's dot grid, drawn on a canvas so each dot can react: it drifts
- * slowly, fades towards the edges, and as the pointer moves ripples spread
- * from it, pushing the dots outward as the ring passes; the dots swell and
- * tint brand blue at the crest. Dots near the pointer lift a little.
+ * The site's dot grid, drawn on a canvas so each dot can react: it drifts
+ * slowly, fades towards the edges, and as the pointer moves over it ripples
+ * spread from the pointer, pushing the dots outward as the ring passes; the
+ * dots swell and tint brand blue at the crest. Dots near the pointer lift a
+ * little. Used behind the first-visit welcome and the hero's design story.
+ *
+ * It fills its parent (give the parent position: relative). It only draws
+ * while on screen, and ripples only start while the pointer is over it.
  * With reduced motion it is a still grid and the pointer does nothing.
  * Decorative.
  */
-export function SplashGrid() {
+export function RippleGrid({className}: {className?: string}) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -45,7 +49,7 @@ export function SplashGrid() {
     if (!canvas || !context) return;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Theme colours, read once (the welcome never outlives a theme change).
+    // Theme colours, read once when it mounts.
     const probe = document.createElement('span');
     probe.style.display = 'none';
     canvas.parentElement?.appendChild(probe);
@@ -65,26 +69,32 @@ export function SplashGrid() {
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
     };
     resize();
-    window.addEventListener('resize', resize);
+    const sizeObserver = new ResizeObserver(resize);
+    sizeObserver.observe(canvas);
 
     const ripples: Ripple[] = [];
     const pointer = {x: -1e4, y: -1e4};
     let lastRipple = {x: -1e4, y: -1e4, at: 0};
 
+    const onLeave = () => {
+      pointer.x = -1e4;
+      pointer.y = -1e4;
+    };
     const onMove = (event: PointerEvent) => {
       const box = canvas.getBoundingClientRect();
       pointer.x = event.clientX - box.left;
       pointer.y = event.clientY - box.top;
+      // Only over the grid itself.
+      if (pointer.x < 0 || pointer.y < 0 || pointer.x > box.width || pointer.y > box.height) {
+        onLeave();
+        return;
+      }
       const now = performance.now();
       const moved = Math.hypot(pointer.x - lastRipple.x, pointer.y - lastRipple.y);
       if (now - lastRipple.at > RIPPLE_GAP_MS && moved > RIPPLE_GAP_PX) {
         ripples.push({x: pointer.x, y: pointer.y, born: now});
         lastRipple = {x: pointer.x, y: pointer.y, at: now};
       }
-    };
-    const onLeave = () => {
-      pointer.x = -1e4;
-      pointer.y = -1e4;
     };
     if (!reduceMotion) {
       window.addEventListener('pointermove', onMove, {passive: true});
@@ -139,17 +149,31 @@ export function SplashGrid() {
           context.fill();
         }
       }
-      if (!reduceMotion) frame = requestAnimationFrame(draw);
+      if (!reduceMotion && isVisible) frame = requestAnimationFrame(draw);
     };
-    frame = requestAnimationFrame(draw);
+    // Draw only while on screen.
+    let isVisible = false;
+    const visibility = new IntersectionObserver(([entry]) => {
+      const wasVisible = isVisible;
+      isVisible = entry.isIntersecting;
+      if (isVisible && !wasVisible) frame = requestAnimationFrame(draw);
+    });
+    visibility.observe(canvas);
 
     return () => {
       cancelAnimationFrame(frame);
-      window.removeEventListener('resize', resize);
+      sizeObserver.disconnect();
+      visibility.disconnect();
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerleave', onLeave);
     };
   }, []);
 
-  return <canvas ref={ref} className="splash-grid" aria-hidden />;
+  return (
+    <canvas
+      ref={ref}
+      className={['ripple-grid', className].filter(Boolean).join(' ')}
+      aria-hidden
+    />
+  );
 }

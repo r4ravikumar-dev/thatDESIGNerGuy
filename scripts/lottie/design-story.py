@@ -9,11 +9,12 @@ src/components/illustrations/lottie/design-story.json
 The story, 12 seconds at 30fps, looping:
   1. Ravi's cursor (a Figma-style multiplayer cursor) arrives on the dot grid.
   2. It drags out a design frame from the top left corner.
-  3. Five ideas pop up around it (people, an idea, a flow, a layout, polish).
+  3. Five ideas for the app pop up around it (who it's for, the idea, a
+     wireframe, components, a tap).
   4. The cursor visits each one, selecting it.
   5. The ideas fall into one tidy row, joined by a line.
-  6. The cursor builds a screen on the frame: nav, hero image, headline,
-     text, buttons. It clicks the button.
+  6. The cursor builds a simple mobile app on the frame: the phone, a
+     header, a banner card and two list rows. It taps the banner's button.
   7. A short hold, then everything fades and it starts again.
 
 Drawn in the site's illustration language: monoline line art (1.75 for the
@@ -244,9 +245,9 @@ NOTE = {'w': 40, 'h': 30}
 IDEAS = [
     {'name': 'people', 'from': (52, 128, -9), 'to': (108, 112)},
     {'name': 'idea', 'from': (346, 124, 7), 'to': (154, 112)},
-    {'name': 'flow', 'from': (200, 212, -4), 'to': (200, 112)},
-    {'name': 'layout', 'from': (60, 290, 6), 'to': (246, 112)},
-    {'name': 'polish', 'from': (340, 270, -6), 'to': (292, 112)},
+    {'name': 'wireframe', 'from': (200, 212, -4), 'to': (200, 112)},
+    {'name': 'components', 'from': (60, 290, 6), 'to': (246, 112)},
+    {'name': 'tap', 'from': (340, 270, -6), 'to': (292, 112)},
 ]
 POP = 96  # first idea pops up
 VISIT = 142  # cursor reaches the first idea
@@ -259,15 +260,13 @@ def idea_icon(name):
         return [ellipse(0, -4, 7), path([(-6, 7), (-3.5, 2.5), (3.5, 2.5), (6, 7)])]
     if name == 'idea':
         return [ellipse(0, -2.5, 10), path([(-2.5, 5), (2.5, 5)]), path([(-1.5, 7.5), (1.5, 7.5)])]
-    if name == 'flow':
-        return [ellipse(-8, 0, 5), path([(-5, 0), (5, 0)]), path([(2, -3), (5, 0), (2, 3)]), ellipse(8.5, 0, 5)]
-    if name == 'layout':
-        return [rect(-4, -3, 6, 6, 1.5), rect(4, -3, 6, 6, 1.5), rect(0, 5, 14, 4, 1.5)]
-    # polish: a four-point sparkle
-    return [path(
-        [(0, -8), (2, -2), (8, 0), (2, 2), (0, 8), (-2, 2), (-8, 0), (-2, -2)],
-        closed=True,
-    )]
+    if name == 'wireframe':
+        # A phone with a header line and a block.
+        return [rect(0, 0, 11, 18, 2.5), path([(-2, -6), (2, -6)]), rect(0, 1, 6, 5, 1)]
+    if name == 'components':
+        return [rect(-3.5, -3.5, 6, 6, 1.5), rect(3.5, -3.5, 6, 6, 1.5), rect(-3.5, 3.5, 6, 6, 1.5), ellipse(3.5, 3.5, 6)]
+    # tap: a touch point with its ripple
+    return [ellipse(0, 1, 4), ellipse(0, 1, 11), path([(-6, -6), (-4.5, -4.5)]), path([(6, -6), (4.5, -4.5)]), path([(0, -8), (0, -6)])]
 
 
 # 1. The frame, dragged out from its top left corner.
@@ -287,42 +286,44 @@ label_shapes = [
     ]),
 ]
 
-# 2. The finished screen, built piece by piece (listed top first).
+# 2. The finished screen: a complete mobile app, built piece by piece inside
+# the frame (listed top first).
+PHONE = {'x': 130, 'y': 90, 'w': 140, 'h': 282}
+
+
+def list_row(index, y, start):
+    """A list row: an icon tile and one line of text."""
+    return group(f'row {index + 1}', [
+        group('tile', [rect(153, y, 16, 16, 4), trim(draw(start, start + 7)), stroke(INK, 1.25)]),
+        group('title', [path([(168, y), (236, y)]), trim(draw(start + 3, start + 10)), stroke(MUTED, 1.75)]),
+    ])
+
+
+# Kept simple: the phone, a header, one banner card, two list rows.
 ui = [
-    group('nav', [rect(200, 108, 228, 22, 5), trim(draw(230, 244)), stroke(INK, 1.25)]),
-    group('nav logo', [ellipse(98, 108, 8), trim(draw(236, 246)), stroke(INK, 1.25)]),
-    group('nav links', [
-        path([(250, 108), (262, 108)]),
-        path([(268, 108), (280, 108)]),
-        path([(286, 108), (298, 108)]),
-        trim(draw(240, 250)),
-        stroke(MUTED, 2),
+    # The device.
+    group('phone', [
+        rect(PHONE['x'] + PHONE['w'] / 2, PHONE['y'] + PHONE['h'] / 2, PHONE['w'], PHONE['h'], 20),
+        trim(draw(234, 250)),
+        stroke(INK, 1.75),
     ]),
-    group('image surface', [rect(200, 186, 228, 110, 7), fill(INK, 4)],
-          transform(o=[(0, 0, 'hold'), (246, 0), (262, 100)])),
-    group('image', [rect(200, 186, 228, 110, 7), trim(draw(244, 262)), stroke(INK, 1.25)]),
-    group('sun', [ellipse(122, 160, 18), trim(draw(254, 264)), stroke(INK, 1.25)]),
-    group('hills', [
-        path([(87, 240), (148, 186), (190, 222), (226, 196), (313, 240)]),
-        trim(draw(256, 270)),
-        stroke(INK, 1.25),
-    ]),
-    group('headline 1', [path([(86, 262), (250, 262)]), trim(draw(262, 272)), stroke(INK, 3.5)]),
-    group('headline 2', [path([(86, 276), (196, 276)]), trim(draw(266, 276)), stroke(INK, 3.5)]),
-    group('body 1', [path([(86, 294), (306, 294)]), trim(draw(272, 280)), stroke(MUTED, 1.5)]),
-    group('body 2', [path([(86, 304), (286, 304)]), trim(draw(275, 283)), stroke(MUTED, 1.5)]),
-    group('body 3', [path([(86, 314), (232, 314)]), trim(draw(278, 286)), stroke(MUTED, 1.5)]),
-    # The button: drawn, then pressed once by the cursor.
-    group('button', [
-        group('button outline', [rect(0, 0, 88, 26, 13), trim(draw(282, 292)), stroke(INK, 1.5)]),
-        group('button label', [path([(-20, 0), (20, 0)]), trim(draw(288, 294)), stroke(INK, 2)]),
-    ], transform(p=(130, 344), s=[(0, [100, 100], 'hold'), (294, [100, 100]), (298, [93, 93]), (302, [100, 100])])),
-    group('chip', [
-        rect(222, 344, 72, 26, 13),
-        path([(206, 344), (238, 344)]),
-        trim(draw(286, 296)),
-        stroke(MUTED, 1),
-    ]),
+    group('island', [rect(200, 101, 34, 8, 4), trim(draw(248, 255)), stroke(INK, 1.25)]),
+    # Header: avatar and greeting.
+    group('avatar', [ellipse(152, 128, 16), trim(draw(254, 263)), stroke(INK, 1.25)]),
+    group('greeting', [path([(167, 128), (214, 128)]), trim(draw(257, 265)), stroke(INK, 2.5)]),
+    # The banner card, with its button.
+    group('banner surface', [rect(200, 182, 116, 60, 10), fill(INK, 5)],
+          transform(o=[(0, 0, 'hold'), (266, 0), (276, 100)])),
+    group('banner', [rect(200, 182, 116, 60, 10), trim(draw(264, 276)), stroke(INK, 1.5)]),
+    group('banner title', [path([(152, 170), (214, 170)]), trim(draw(272, 280)), stroke(INK, 2.5)]),
+    group('banner button', [
+        group('pill', [rect(0, 0, 36, 13, 6.5), trim(draw(278, 287)), stroke(INK, 1.5)]),
+        group('label', [path([(-9, 0), (9, 0)]), trim(draw(283, 289)), stroke(INK, 1.5)]),
+    ], transform(p=(170, 196), s=[(0, [100, 100], 'hold'), (312, [100, 100]), (316, [90, 90]), (320, [100, 100])])),
+    # Two list rows, and the home indicator.
+    list_row(0, 238, 288),
+    list_row(1, 266, 293),
+    group('home indicator', [path([(182, 360), (218, 360)]), trim(draw(298, 306)), stroke(INK, 2)]),
 ]
 
 # 3. The ideas: each pops up where it lands, is selected when the cursor
@@ -389,17 +390,20 @@ for index, idea in enumerate(IDEAS):
 cursor_path += [
     (196, cursor_path[-1][1]),
     (222, [300, 150]),
-    (224, [300, 150]),
-    (236, [92, 112]),
-    (238, [92, 112]),
-    (256, [310, 238]),
-    (258, [310, 238]),
-    (268, [252, 270]),
-    (270, [252, 270]),
-    (280, [306, 314]),
-    (282, [306, 314]),
-    (292, [150, 350], 'hold'),
-    (330, [150, 350], 'in'),
+    (226, [300, 150]),
+    (234, [PHONE['x'], PHONE['y']], 'hold'),
+    (236, [PHONE['x'], PHONE['y']]),
+    (250, [PHONE['x'] + PHONE['w'], PHONE['y'] + PHONE['h']]),
+    (252, [PHONE['x'] + PHONE['w'], PHONE['y'] + PHONE['h']]),
+    (264, [218, 132]),
+    (266, [218, 132]),
+    (278, [258, 212]),
+    (280, [258, 212]),
+    (296, [240, 270]),
+    (298, [240, 270]),
+    # The last move: a tap on the banner's button.
+    (312, [176, 199], 'hold'),
+    (330, [176, 199], 'in'),
     (352, [430, 410]),
 ]
 # Tidy the list: every key but the last gets an ease.

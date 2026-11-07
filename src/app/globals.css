@@ -1193,7 +1193,43 @@ html {
   margin-inline-start: var(--frame-padding);
 }
 .portfolio-header-brand {
+  position: relative;
   display: inline-flex;
+}
+/* The role beside the wordmark, after a hairline. Placed outside the
+   wordmark's box so the name stays exactly centred; slides in once the
+   visitor is past the hero (data-shown, PortfolioHeader). */
+.portfolio-header-role {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 100%;
+  margin-inline-start: var(--spacing-4);
+  padding-inline-start: var(--spacing-4);
+  border-inline-start: 1px solid var(--color-border-emphasized);
+  font-family: var(--font-family-eyebrow);
+  font-size: var(--text-supporting-size);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.6;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  opacity: 0;
+  transform: translate(-8px, -50%);
+  pointer-events: none;
+  transition:
+    opacity 400ms ease,
+    transform 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.portfolio-header-role[data-shown] {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-header-role {
+    transform: translate(0, -50%);
+    transition: opacity 200ms linear;
+  }
 }
 .portfolio-header-links {
   /* The first link's own padding plus this lines its text up with the
@@ -1278,7 +1314,23 @@ html {
 .portfolio-hero-photo {
   order: -1;
   padding-block: var(--spacing-10);
-  background-color: color-mix(in srgb, var(--color-background-muted) 60%, transparent);
+  /* No panel background: the portrait blends straight into the page. */
+}
+/* The hero portrait: the photo with no frame or ring, its edges fading into
+   the panel on every side (a soft elliptical mask, heavier at the bottom).
+   In dark mode its near-black backdrop also gives way to the panel's own
+   colour (mix-blend-mode: lighten), so no edge shows at all. */
+.hero-portrait {
+  display: block;
+  inline-size: min(100%, 34rem);
+  block-size: auto;
+  -webkit-mask-image: radial-gradient(ellipse 72% 70% at 50% 42%, #000 52%, transparent 100%);
+  mask-image: radial-gradient(ellipse 72% 70% at 50% 42%, #000 52%, transparent 100%);
+}
+@media (prefers-color-scheme: dark) {
+  .hero-portrait {
+    mix-blend-mode: lighten;
+  }
 }
 /* The portrait: a comfortable size on phones; on wide screens it is sized
    by the column's height (about 85% of it, at the image's 300:321 ratio)
@@ -1362,6 +1414,13 @@ html {
   .portfolio-hero-photo .illustration {
     inline-size: min(88%, (100svh - var(--header-height)) * 0.85 * 300 / 321);
   }
+  /* Desktop: the portrait fills the pinned panel, cropped to its shape. */
+  .portfolio-hero-photo .hero-portrait {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    object-position: 50% 30%;
+  }
 }
 
 /* The design story (components/illustrations/DesignStory): a Lottie
@@ -1371,16 +1430,14 @@ html {
    intro. From 1024px: in the pinned panel, cross-fading with the photo as
    the intro arrives (.is-story). */
 .design-story-lottie {
+  position: relative;
   inline-size: 100%;
   aspect-ratio: 400 / 420;
-  background-image: radial-gradient(
-    color-mix(in srgb, var(--color-text-secondary) 35%, transparent) 1px,
-    transparent 1px
-  );
-  background-size: 24px 24px;
-  background-position: center;
 }
-.design-story-lottie svg {
+/* The scene on top of the rippling dot grid (RippleGrid). */
+.design-story-lottie > svg {
+  position: relative;
+  z-index: 1;
   display: block;
 }
 .design-story-lottie [stroke='rgb(1,2,3)'] {
@@ -1415,6 +1472,18 @@ html {
 .hero-art-story {
   display: none;
 }
+/* The portrait is a link to the About page, filling its space. */
+.hero-portrait-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  inline-size: 100%;
+  block-size: 100%;
+}
+.hero-portrait-link:focus-visible {
+  outline: 2px solid var(--color-brand-text);
+  outline-offset: -2px;
+}
 @media (min-width: 1024px) {
   .hero-story-inline {
     display: none;
@@ -1430,15 +1499,23 @@ html {
     display: flex;
     opacity: 0;
     transform: scale(1.03);
+    /* Hidden layers never take the pointer (the portrait's link, the story). */
+    pointer-events: none;
   }
+  /* The story fills the whole pinned panel: the dot grid edge to edge, the
+     scene as large as fits (the animation keeps its proportions, centred). */
   .hero-art-story .design-story-lottie {
-    inline-size: min(90%, (100svh - var(--header-height)) * 0.84 * 400 / 420);
+    inline-size: 100%;
+    block-size: 100%;
+    aspect-ratio: auto;
   }
   .portfolio-hero-photo.is-story .hero-art-photo {
+    pointer-events: none;
     opacity: 0;
     transform: scale(0.96);
   }
   .portfolio-hero-photo.is-story .hero-art-story {
+    pointer-events: auto;
     opacity: 1;
     transform: none;
   }
@@ -2237,8 +2314,8 @@ html {
   padding: var(--space-gutter);
   background-color: var(--color-background-surface);
 }
-/* The dot grid (SplashGrid): a canvas filling the welcome, behind the card. */
-.splash-grid {
+/* The dot grid (RippleGrid): a canvas filling its parent, behind the content. */
+.ripple-grid {
   position: absolute;
   inset: 0;
   inline-size: 100%;
