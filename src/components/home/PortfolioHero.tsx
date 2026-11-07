@@ -84,9 +84,8 @@ export function PortfolioHero() {
                   level={1}
                   className="portfolio-hero-names"
                   style={{
-                    ...typeRole('display-l'),
-                    // 64px on desktop (.portfolio-hero-names), the scale's display-l below.
-                    fontSize: 'var(--hero-name-size, var(--type-display-l-size))',
+                    // The shared hero headline size (72px on the web, 32px on phones).
+                    ...typeRole('hero-title'),
                     letterSpacing: '-0.03em',
                     lineHeight: 1.3,
                   }}>

@@ -55,9 +55,9 @@ export function ProfileNote({
                 level={2}
                 textWrap="balance"
                 style={{
-                  ...typeRole('display-m'),
+                  ...typeRole('section-title'),
                   letterSpacing: '-0.02em',
-                  maxInlineSize: '18ch',
+                  maxInlineSize: '26ch',
                 }}>
                 <span aria-hidden style={accentStyle}>
                   “

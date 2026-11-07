@@ -18,6 +18,8 @@ type ChapterProps = {
   width?: 'default' | 'narrow' | 'reading';
   /** Accessible name for the section landmark. */
   label?: string;
+  /** Extra class on the section, for a chapter with its own backdrop. */
+  className?: string;
   children: ReactNode;
 };
 
@@ -31,6 +33,7 @@ export function Chapter({
   isFullHeight = false,
   width = 'default',
   label,
+  className,
   children,
 }: ChapterProps) {
   return (
@@ -38,6 +41,7 @@ export function Chapter({
       as="section"
       id={id}
       aria-label={label}
+      className={className}
       justify={isFullHeight ? 'center' : undefined}
       style={{
         paddingBlock: 'var(--space-section)',

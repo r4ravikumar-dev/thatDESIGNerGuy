@@ -3,7 +3,6 @@ import {Chapter} from '@/components/editorial/Chapter';
 import {ChapterHeader} from '@/components/editorial/ChapterHeader';
 import {SequenceRail} from '@/components/editorial/SequenceRail';
 import {DisciplineDeck} from '@/components/home/DisciplineDeck';
-import {Marquee} from '@/components/editorial/Marquee';
 import {BigStatement} from '@/components/editorial/BigStatement';
 import {PortfolioHero} from '@/components/home/PortfolioHero';
 import {WorkShowcase} from '@/components/home/WorkShowcase';
@@ -28,14 +27,19 @@ export default function HomePage() {
 
       {/* 01 What I do */}
       <Chapter label={disciplines.label}>
-        <ChapterHeader
-          index={disciplines.index}
-          label={disciplines.label}
-          title={disciplines.title}
+        {/* Full-screen cards, pinned, sliding in sideways one after another,
+          with the title pinned above them like the timeline's. */}
+        <DisciplineDeck
+          items={disciplines.items}
+          label="What I do, by discipline"
+          head={
+            <ChapterHeader
+              index={disciplines.index}
+              label={disciplines.label}
+              title={disciplines.title}
+            />
+          }
         />
-        {/* Full-screen cards, pinned, sliding in sideways one after another. */}
-        <DisciplineDeck items={disciplines.items} label="What I do, by discipline" />
-        <Marquee items={disciplines.principles} />
       </Chapter>
 
       {/* 03 How I work */}

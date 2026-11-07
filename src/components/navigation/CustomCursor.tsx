@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState, useSyncExternalStore} from 'react';
+import {useEffect, useRef, useState, useSyncExternalStore} from 'react';
 import {motion, useMotionValue, useReducedMotion, useSpring} from 'framer-motion';
 import {springs} from '@/motion/springs';
 
@@ -68,6 +68,7 @@ export function CustomCursor() {
   const [mode, setMode] = useState<Mode>('hidden');
   const [isPressed, setIsPressed] = useState(false);
   const [label, setLabel] = useState(PROJECT_LABEL);
+  const cursorRef = useRef<HTMLSpanElement>(null);
 
   const x = useMotionValue(-100);
   const y = useMotionValue(-100);
@@ -128,6 +129,32 @@ export function CustomCursor() {
     };
   }, [isFinePointer, reduceMotion, x, y]);
 
+  // A popup (a modal <dialog>) sits in the browser's top layer, above any
+  // z-index, so the cursor would vanish behind it while the native one is
+  // hidden. The cursor is a popover in that top layer too, and is lifted
+  // back above each popup as it opens (the newest top-layer element is on top).
+  useEffect(() => {
+    const cursor = cursorRef.current;
+    if (!isFinePointer || !cursor || typeof cursor.showPopover !== 'function') return;
+    const raise = () => {
+      if (cursor.matches(':popover-open')) cursor.hidePopover();
+      cursor.showPopover();
+    };
+    raise();
+    const observer = new MutationObserver(records => {
+      const opened = records.some(
+        record =>
+          record.target instanceof HTMLDialogElement && record.target.hasAttribute('open'),
+      );
+      if (opened) raise();
+    });
+    observer.observe(document.body, {subtree: true, attributes: true, attributeFilter: ['open']});
+    return () => {
+      observer.disconnect();
+      if (cursor.matches(':popover-open')) cursor.hidePopover();
+    };
+  }, [isFinePointer]);
+
   if (!isFinePointer) return null;
 
   const isProject = mode === 'project';
@@ -136,7 +163,12 @@ export function CustomCursor() {
   const scale = !isVisible ? 0.4 : isPressed ? 0.8 : 1;
 
   return (
-    <motion.span aria-hidden className="cursor-squircle" style={{x: springX, y: springY}}>
+    <motion.span
+      ref={cursorRef}
+      aria-hidden
+      popover="manual"
+      className="cursor-squircle"
+      style={{x: springX, y: springY}}>
       {/* The lens: liquid glass that inverts what is beneath (globals.css). */}
       <motion.span
         className={mode === 'interactive' ? 'cursor-lens is-interactive' : 'cursor-lens'}

@@ -17,9 +17,7 @@ export function jumpTo(target: number | HTMLElement) {
   if (typeof target === 'number') window.scrollTo({top: target, left: 0, behavior: 'instant'});
   else target.scrollIntoView({block: 'start', behavior: 'instant'});
   // Re-sync Lenis to where the page now is, which also cancels any smooth
-  // scroll in flight. (Not stop() then start(): with autoToggle, stop() only
-  // sets overflow: clip and waits for a transition, so an immediate start()
-  // is ignored and the page is left clipped, unable to scroll.)
+  // scroll in flight.
   lenis?.scrollTo(window.scrollY, {immediate: true, force: true});
 }
 
@@ -43,12 +41,29 @@ export function SmoothScroll() {
       lerp: 0.1,
       wheelMultiplier: 1,
       anchors: true,
-      // Stops while the page's overflow is hidden (an open drawer or dialog).
-      autoToggle: true,
       allowNestedScroll: true,
       autoRaf: false,
     });
     lenis = instance;
+
+    // Pause while an overlay (a dialog, the mobile menu) locks the page's
+    // scroll, and carry on when it unlocks. Watched here rather than with
+    // Lenis' autoToggle, which waits for an overflow transition that doesn't
+    // always fire when the lock is released, leaving the page stuck.
+    const root = document.documentElement;
+    const syncLock = () => {
+      // The lock's inline style only: Lenis' own .lenis-stopped also clips
+      // the page, and reading that back would keep it stopped for good.
+      const locked = [root, document.body].some(el =>
+        ['hidden', 'clip'].includes(el.style.overflowY || el.style.overflow),
+      );
+      if (locked) instance.stop();
+      else instance.start();
+    };
+    const lockObserver = new MutationObserver(syncLock);
+    lockObserver.observe(root, {attributes: true, attributeFilter: ['style']});
+    lockObserver.observe(document.body, {attributes: true, attributeFilter: ['style']});
+    syncLock();
 
     instance.on('scroll', ScrollTrigger.update);
     const tick = (time: number) => instance.raf(time * 1000);
@@ -57,6 +72,7 @@ export function SmoothScroll() {
     gsap.ticker.lagSmoothing(0);
 
     return () => {
+      lockObserver.disconnect();
       gsap.ticker.remove(tick);
       instance.destroy();
       lenis = null;

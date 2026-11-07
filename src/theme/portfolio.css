@@ -297,6 +297,10 @@
     --type-display-xxl-leading: 0.95;
     --type-display-xl-size: clamp(6rem, 2.625rem + 3.75vw, 6.375rem);
     --type-display-xl-leading: 1;
+    --type-hero-title-size: 4.5rem;
+    --type-hero-title-leading: 1.1;
+    --type-section-title-size: 3.5rem;
+    --type-section-title-leading: 1.1;
     --type-display-l-size: clamp(3.5rem, 1.8125rem + 1.875vw, 3.6875rem);
     --type-display-l-leading: 1.1;
     --type-display-m-size: clamp(3rem, 1.875rem + 1.25vw, 3.125rem);
@@ -957,6 +961,8 @@
     :scope {
     --type-display-xxl-size: clamp(4rem, 2.1429rem + 7.619vw, 9rem);
     --type-display-xl-size: clamp(3rem, 1.8857rem + 4.5714vw, 6rem);
+    --type-hero-title-size: clamp(2rem, 1.0714rem + 3.8095vw, 4.5rem);
+    --type-section-title-size: clamp(1.75rem, 1.1rem + 2.6667vw, 3.5rem);
     --type-display-l-size: clamp(2.75rem, 2.4714rem + 1.1429vw, 3.5rem);
     --type-display-m-size: clamp(2.5rem, 2.3143rem + 0.7619vw, 3rem);
     --type-display-s-size: clamp(2.25rem, 2.1571rem + 0.381vw, 2.5rem);
@@ -1024,6 +1030,8 @@
     :scope {
     --type-display-xxl-size: clamp(3.375rem, 0.5179rem + 14.2857vw, 4rem);
     --type-display-xl-size: clamp(2.5625rem, 0.5625rem + 10vw, 3rem);
+    --type-hero-title-size: clamp(1.6875rem, 0.2589rem + 7.1429vw, 2rem);
+    --type-section-title-size: clamp(1.5rem, 0.3571rem + 5.7143vw, 1.75rem);
     --type-display-l-size: clamp(2.3125rem, 0.3125rem + 10vw, 2.75rem);
     --type-display-m-size: clamp(2.125rem, 0.4107rem + 8.5714vw, 2.5rem);
     --type-display-s-size: clamp(1.9375rem, 0.5089rem + 7.1429vw, 2.25rem);

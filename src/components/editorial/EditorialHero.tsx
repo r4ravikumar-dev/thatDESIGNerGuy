@@ -27,8 +27,8 @@ type EditorialHeroProps = {
   meta?: readonly string[];
   /** An illustration shown beside the description on wide screens. */
   illustration?: ReactNode;
-  /** Display XXL for the homepage, Display XL for inner pages. */
-  size?: 'display-xxl' | 'display-xl';
+  /** The shared hero headline size (hero-title) by default. */
+  size?: 'hero-title' | 'display-xxl' | 'display-xl';
   /** Fill the viewport (homepage) or sit at natural height (inner pages). */
   isFullHeight?: boolean;
   /** Centre the text (only without an illustration). Left-aligned by default. */
@@ -49,7 +49,7 @@ export function EditorialHero({
   action,
   meta,
   illustration,
-  size = 'display-xl',
+  size = 'hero-title',
   isFullHeight = false,
   align = 'start',
 }: EditorialHeroProps) {

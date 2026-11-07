@@ -228,7 +228,7 @@ export function Timeline() {
             data-text-reveal
             level={2}
             textWrap="balance"
-            style={{...typeRole('display-m'), letterSpacing: '-0.03em'}}>
+            style={{...typeRole('section-title'), letterSpacing: '-0.03em'}}>
             <Lines text={title} />
           </Heading>
           <Reveal delay={0.15}>

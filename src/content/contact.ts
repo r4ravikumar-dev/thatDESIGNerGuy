@@ -52,7 +52,48 @@ export const contactDirect = {
   linkedin: {label: 'LinkedIn', value: 'Connect with Ravi', href: site.linkedinUrl},
 };
 
+/**
+ * The sign-off: the closing line, whose "hello" rolls through the three
+ * scripts of the site's name (English, Hindi, Kannada), over the rippling dot
+ * grid, with two small ways to actually say it.
+ */
 export const contactClosing = {
   label: 'Good things start somewhere.',
-  line: 'Sometimes all it takes is a *hello.*',
+  /**
+   * The line before the rolling word, as two lines ("\n"), so the line with
+   * the word never re-wraps as it changes. Full sentence: `${lead} hello.`
+   */
+  lead: 'Sometimes all it takes\nis a',
+  hellos: [
+    {text: 'hello', lang: 'en', name: 'English'},
+    {text: 'नमस्ते', lang: 'hi', name: 'हिन्दी'},
+    {text: 'ನಮಸ್ಕಾರ', lang: 'kn', name: 'ಕನ್ನಡ'},
+  ],
+  languages: 'Say it in',
+  /**
+   * "Say hello" opens the visitor's email app with this filled in. "{hello}"
+   * is the greeting in the script they picked (Hello, नमस्ते, ನಮಸ್ಕಾರ).
+   */
+  wave: {
+    label: 'Say hello',
+    subject: 'Hello from your portfolio',
+    body: [
+      '{hello} Ravi,',
+      '',
+      "I came across your portfolio and wanted to say hello.",
+      '',
+      'A little about me',
+      'Name:',
+      'Role and company:',
+      '',
+      "What I'd like to talk about",
+      '(a role, a project, or simply a chat)',
+      '',
+      'A good time to talk:',
+      '',
+      'Looking forward to it,',
+    ].join('\n'),
+  },
+  copy: {label: 'Copy my email', done: 'Copied. Talk soon!'},
+  note: 'English, Hindi or Kannada. Whatever feels most like you.',
 };
