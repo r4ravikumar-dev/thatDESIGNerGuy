@@ -2,40 +2,32 @@
 
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {usePathname} from 'next/navigation';
-import {AnimatePresence, motion, useReducedMotion} from 'framer-motion';
-import {VisuallyHidden} from '@astryxdesign/core/VisuallyHidden';
+import {AnimatePresence, motion} from 'framer-motion';
+import {Text} from '@astryxdesign/core/Text';
+import {IdCard} from '@/components/illustrations/IdCard';
 import {setCovered} from '@/motion/gsap';
+import {statusCopy} from '@/content/navigation';
 
-/** How long the loader plays on every page change. */
-const DURATION_MS = 1400;
+/** A page that arrives within this long changes with no loader at all. */
+const SHOW_AFTER_MS = 400;
+/** Once shown, the loader stays at least this long, so it never just flickers. */
+const MIN_VISIBLE_MS = 700;
 /** If a page never arrives (failed navigation), give the screen back anyway. */
-const SAFETY_MS = 8000;
-
-/** The loader, kept minimal: one ring and one dot slowly orbiting a brand-blue core. */
-function Orbit() {
-  return (
-    <svg className="loader-orbits" viewBox="-50 -50 100 100" aria-hidden>
-      <circle className="loader-ring" r={30} />
-      <g className="loader-orbit">
-        <circle cx={0} cy={-30} r={3.5} className="loader-planet" />
-      </g>
-      <circle r={6} className="loader-core" />
-    </svg>
-  );
-}
+const SAFETY_MS = 10000;
 
 /**
- * The page-change loader. It starts the moment an internal link to another
- * page is followed (or Back/Forward changes the page), plays for 1.4s, and
- * stays until the new page has arrived. Hash links, new tabs and modified
- * clicks are ignored; reduced-motion visitors skip it entirely.
+ * The page-change loader, only for slow connections. When an internal link to
+ * another page is followed (or Back/Forward changes the page), it waits:
+ * if the new page arrives within 0.4s nothing is shown at all; if not, Ravi's
+ * ID card appears, swinging on its lanyard with its details still loading
+ * (IdCard "loading"), until the page is in. Hash links, new tabs and
+ * modified clicks are ignored. With reduced motion the card is still.
  */
 export function PageTransition() {
   const pathname = usePathname();
-  const reduceMotion = useReducedMotion();
   const [isVisible, setIsVisible] = useState(false);
-  const startedAt = useRef<number | null>(null);
-  const hasArrived = useRef(false);
+  const isPending = useRef(false);
+  const shownAt = useRef<number | null>(null);
   const timers = useRef<number[]>([]);
   const previousPath = useRef(pathname);
 
@@ -44,34 +36,27 @@ export function PageTransition() {
     timers.current = [];
   };
 
-  /** Hides the loader once it has played for 1.4s and the new page is in. */
-  const hideWhenReady = useCallback(() => {
-    if (startedAt.current === null || !hasArrived.current) return;
-    const remaining = DURATION_MS - (performance.now() - startedAt.current);
-    timers.current.push(
-      window.setTimeout(
-        () => {
-          startedAt.current = null;
-          setIsVisible(false);
-        },
-        Math.max(0, remaining),
-      ),
-    );
+  const hide = useCallback(() => {
+    shownAt.current = null;
+    setIsVisible(false);
   }, []);
 
   const start = useCallback(() => {
-    if (reduceMotion) return;
     clearTimers();
-    startedAt.current = performance.now();
-    hasArrived.current = false;
-    setIsVisible(true);
+    isPending.current = true;
     timers.current.push(
+      // Still waiting after a moment: the connection is slow, so show the card.
       window.setTimeout(() => {
-        startedAt.current = null;
-        setIsVisible(false);
+        if (!isPending.current) return;
+        shownAt.current = performance.now();
+        setIsVisible(true);
+      }, SHOW_AFTER_MS),
+      window.setTimeout(() => {
+        isPending.current = false;
+        hide();
       }, SAFETY_MS),
     );
-  }, [reduceMotion]);
+  }, [hide]);
 
   // Start on clicks that will change the page. Capture phase, because
   // Next.js links prevent the default before a bubbling listener would run.
@@ -104,13 +89,17 @@ export function PageTransition() {
     setCovered('data-page-transition', isVisible);
   }, [isVisible]);
 
-  // The new page has arrived: hide once the full 1.4s has played.
+  // The new page has arrived: no loader if it never showed; otherwise hide it
+  // once it has been up for its minimum.
   useEffect(() => {
     if (previousPath.current === pathname) return;
     previousPath.current = pathname;
-    hasArrived.current = true;
-    hideWhenReady();
-  }, [pathname, hideWhenReady]);
+    isPending.current = false;
+    clearTimers();
+    if (shownAt.current === null) return;
+    const remaining = MIN_VISIBLE_MS - (performance.now() - shownAt.current);
+    timers.current.push(window.setTimeout(hide, Math.max(0, remaining)));
+  }, [pathname, hide]);
 
   return (
     <AnimatePresence>
@@ -121,10 +110,12 @@ export function PageTransition() {
           role="status"
           aria-live="polite"
           initial={{opacity: 0}}
-          animate={{opacity: 1, transition: {duration: 0.2, ease: [0.2, 0, 0, 1]}}}
+          animate={{opacity: 1, transition: {duration: 0.25, ease: [0.2, 0, 0, 1]}}}
           exit={{opacity: 0, transition: {duration: 0.3, ease: [0.4, 0, 1, 1]}}}>
-          <VisuallyHidden>Loading page</VisuallyHidden>
-          <Orbit />
+          <IdCard variant="loading" className="page-transition-card" />
+          <Text color="secondary" className="page-transition-label">
+            {statusCopy.loading}
+          </Text>
         </motion.div>
       )}
     </AnimatePresence>

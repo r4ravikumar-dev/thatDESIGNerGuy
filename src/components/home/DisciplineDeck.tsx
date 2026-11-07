@@ -81,7 +81,13 @@ function DeckCard({item, index}: {item: Discipline; index: number}) {
             level={3}
             textWrap="balance"
             data-appear
-            style={{...typeRole('headline-xl'), fontWeight: 400, letterSpacing: '-0.02em'}}>
+            style={{
+              ...typeRole('headline-xl'),
+              fontWeight: 400,
+              letterSpacing: '-0.02em',
+              // The discipline's name in the brand blue (the accessible text blue).
+              color: 'var(--color-brand-text)',
+            }}>
             {item.title}
           </Heading>
           <Text
