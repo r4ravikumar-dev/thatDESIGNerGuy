@@ -90,8 +90,7 @@ function ThumbnailFrame({project, children}: {project: WorkProject; children: Re
     <VStack ref={ref} className="work-showcase-frame">
       <NextLink
         href={projectHref(project)}
-        data-stays-on-page
-        onClick={gate.onProjectClick(project.label)}
+        {...gate.linkProps(project.label, project.isLive)}
         className="work-showcase-link"
         aria-label={`${workShowcase.viewLabel}: ${project.label}`}
         data-cursor="project"
@@ -111,8 +110,8 @@ function ThumbnailFrame({project, children}: {project: WorkProject; children: Re
  * the screen, the left column switches to that project. Below 1024px it
  * stacks: headline, then each thumbnail followed by its text.
  */
-export function WorkShowcase() {
-  const {names, supporting, projects, label} = workShowcase;
+export function WorkShowcase({projects = workShowcase.projects}: {projects?: readonly WorkProject[]}) {
+  const {names, supporting, label} = workShowcase;
   const [active, setActive] = useState(0);
   const reduceMotion = useReducedMotion();
   const panels = useRef<(HTMLLIElement | null)[]>([]);
@@ -172,8 +171,7 @@ export function WorkShowcase() {
                 target only: keyboard and screen readers use the banners). */}
               <NextLink
                 href={projectHref(current)}
-                data-stays-on-page
-                onClick={gate.onProjectClick(current.label)}
+                {...gate.linkProps(current.label, current.isLive)}
                 tabIndex={-1}
                 className="work-showcase-link"
                 data-cursor="project"

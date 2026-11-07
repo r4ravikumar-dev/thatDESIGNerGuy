@@ -157,6 +157,8 @@ export type WorkProject = {
   thumbnail?: {src: string; alt: string; focus?: string};
   /** Where the project opens: its case study, or its place on the Work page until there is one. */
   href?: string;
+  /** True for a published case study from the studio: it opens its page instead of the boarding pass. */
+  isLive?: boolean;
 };
 
 /** Icon keys for a discipline's "covers" row (mapped to icons in DisciplineDeck). */
