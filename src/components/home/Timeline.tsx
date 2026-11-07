@@ -75,19 +75,24 @@ function TimelineStop({stop, index, isLatest}: {stop: Stop; index: number; isLat
           style={{maxInlineSize: '36ch'}}>
           {stop.story}
         </Text>
-        <Text
-          type="supporting"
-          data-appear
-          style={{...EYEBROW_STYLE, marginBlockStart: 'var(--spacing-4)'}}>
-          {stop.listLabel}
-        </Text>
-        <ul className="timeline-list">
-          {stop.items.map(item => (
-            <li key={item} data-appear>
-              <Text color="secondary">{item}</Text>
-            </li>
-          ))}
-        </ul>
+        {/* The short list, for stops that have one. */}
+        {stop.items.length > 0 && (
+          <>
+            <Text
+              type="supporting"
+              data-appear
+              style={{...EYEBROW_STYLE, marginBlockStart: 'var(--spacing-4)'}}>
+              {stop.listLabel}
+            </Text>
+            <ul className="timeline-list">
+              {stop.items.map(item => (
+                <li key={item} data-appear>
+                  <Text color="secondary">{item}</Text>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </VStack>
     </li>
   );

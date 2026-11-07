@@ -89,9 +89,9 @@ function ThumbnailFrame({project, children}: {project: WorkProject; children: Re
       <NextLink
         href={projectHref(project)}
         className="work-showcase-link"
-        aria-label={`Open project: ${project.label}`}
+        aria-label={`${workShowcase.viewLabel}: ${project.label}`}
         data-cursor="project"
-        data-cursor-label="Open project">
+        data-cursor-label={workShowcase.viewLabel}>
         {children}
       </NextLink>
     </VStack>
@@ -170,7 +170,7 @@ export function WorkShowcase() {
                 tabIndex={-1}
                 className="work-showcase-link"
                 data-cursor="project"
-                data-cursor-label="Open project">
+                data-cursor-label={workShowcase.viewLabel}>
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={active}

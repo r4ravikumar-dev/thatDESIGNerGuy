@@ -6,29 +6,31 @@ import type {SequenceStep} from '@/components/editorial/SequenceRail';
 export const hero = {
   /** Block 1: one name in three scripts (English, Hindi, Kannada). */
   hello: {
-    label: "Hello, I'm",
+    label: 'Product Designer · UI/UX Designer',
     names: [
       {text: 'Ravi Kumar', lang: 'en'},
       {text: 'रवि कुमार', lang: 'hi'},
       {text: 'ರವಿ ಕುಮಾರ್', lang: 'kn'},
     ],
-    role: 'Product & UX Designer',
-    scroll: 'Scroll',
+    /** The signature line, under the name ("*word*" sets the serif accent). */
+    headline: 'Making complicated things *feel* simpler.',
+    supporting: 'Mobile apps, digital products, and the details that make them work.',
+    scroll: 'Scroll to explore',
     /** The portrait leads to the About page (the cursor's tag over it). */
     portraitAction: {label: 'Know more about Ravi', href: '/about'},
   },
   /** Block 2: "*word*" sets the italic serif accent. */
   intro: {
     label: 'In short',
-    text: '*That DESIGNer Guy* who enjoys making complicated things feel simple.',
+    text: '*That DESIGNer Guy* who likes figuring things out.',
   },
   /** Block 3: a short headline, then the story. */
   story: {
     label: 'So far',
-    title: 'Products, interfaces and design *systems.*',
+    title: 'From mobile apps to the details that make them *work.*',
     paragraphs: [
-      'My work so far has taken me through digital products, interfaces, and design systems, giving me the chance to explore different kinds of products and the problems that come with them.',
-      'I enjoy getting involved in the process, understanding the problem, and seeing how an idea takes shape.',
+      'I’m Ravi Kumar, a product designer. My work so far has taken me across mobile apps, digital products, interfaces, and design systems.',
+      'I enjoy getting involved in the process, understanding what’s needed, and working through the details that help an idea take shape.',
     ],
   },
 };
@@ -46,7 +48,9 @@ export const workShowcase = {
     {text: 'काम', lang: 'hi'},
     {text: 'ಕೆಲಸ', lang: 'kn'},
   ],
-  supporting: 'A few things I’ve worked on along the way.',
+  supporting: 'A few things I’ve had a hand in.',
+  /** The cursor's tag over a project. */
+  viewLabel: 'View project',
   projects: [
     {
       label: 'Mamily × Visit Health',
@@ -55,10 +59,10 @@ export const workShowcase = {
         focus: 'left center',
         alt: 'Womenhood Care Program banner from the Mamily integration in the Visit Health app',
       },
-      title: 'Making women’s wellness easier to find.',
+      title: 'Making women’s wellness easier to reach.',
       description:
-        'Bringing Mamily into the Visit Health experience and shaping the journey so users can discover, understand, and access women’s wellness support with less friction.',
-      meta: ['Women’s Wellness', 'Product Design', 'Mobile'],
+        'Worked on bringing Mamily into the Visit Health app, shaping how people discover and access women’s wellness support through the product.',
+      meta: ['Women’s Wellness', 'Mobile App', 'Visit Health'],
     },
     {
       label: 'Joye × Visit Health',
@@ -68,20 +72,20 @@ export const workShowcase = {
       },
       title: 'Making space for emotional wellness.',
       description:
-        'Integrating Joye into the Visit Health experience and creating a simple, guided journey for corporate employees to take an emotional wellness assessment and understand what comes next.',
-      meta: ['Emotional Wellness', 'Product Design', 'Mobile'],
+        'Worked on integrating Joye into Visit Health and shaping the emotional assessment journey for corporate employees, with clear steps and guidance throughout.',
+      meta: ['Emotional Wellness', 'Mobile App', 'Visit Health'],
     },
     {
-      label: 'Dental Care',
+      label: 'Dental Care Service Line',
       thumbnail: {
         src: '/work/dental.webp',
         focus: '12% center',
         alt: 'Visit Dental mobile app screens: cashless dental booking, pre-auth approval and appointment details',
       },
-      title: 'Making every step easier to understand.',
+      title: 'Taking the guesswork out of dental care.',
       description:
-        'Reworking the dental journey to make it simpler and more informative, helping users understand each stage of their care instead of figuring it out along the way.',
-      meta: ['Dental Care', 'UX/UI', 'Mobile'],
+        'Reworked the dental journey to make each step easier to follow, with clearer information so users know what’s happening and what comes next.',
+      meta: ['Dental Care', 'UX/UI', 'Mobile App'],
     },
   ] as WorkProject[],
 };
@@ -117,39 +121,23 @@ export const timeline = {
       glyph: 'code' as GlyphName,
       title: 'B.Tech · Computer Science',
       story:
-        'Started with code, but found myself more curious about how people use what gets built.',
-      listLabel: 'Along the way',
-      items: [
-        'Explored UX & UI principles',
-        'Started designing digital interfaces',
-        'Learned by making, breaking, and making again',
-      ],
+        'Started with computer science and gradually found myself exploring the design side of technology. Along the way, I began learning UX/UI principles and experimenting with digital interfaces.',
+      listLabel: '',
+      items: [] as string[],
     },
     {
-      date: 'Aug 2025',
+      date: 'Aug 2025–Present',
       glyph: 'idcard' as GlyphName,
-      title: 'Joined Visit Health',
-      story: 'My first deep dive into working on real products, real users, and real constraints.',
-      listLabel: 'Since then',
-      items: [
-        'Explored Visit Health’s products & journeys',
-        'Designed new features and user flows',
-        'Reworked existing flows to make them simpler',
-        'Worked across mobile experiences',
-        'Contributed to the design system',
-      ],
-    },
-    {
-      date: '2025–Now',
-      glyph: 'compass' as GlyphName,
-      title: 'Still figuring things out',
+      title: 'UI/UX Designer · Visit Health',
       story:
-        'Each project brought a new problem, a new perspective, and usually a few more screens.',
-      listLabel: 'Currently',
+        'Stepped into the world of real products and healthcare experiences, working on new features, existing journeys, and the design system behind them.',
+      listLabel: 'A few things along the way',
       items: [
-        'Exploring better product experiences',
-        'Learning through every project',
-        'Building, testing, refining',
+        'Explored different Visit Health products and user journeys',
+        'Designed new features and reworked existing flows',
+        'Worked on Mamily and Joye integrations',
+        'Contributed to the dental care experience',
+        'Worked on design systems and reusable components',
       ],
     },
   ],
@@ -205,12 +193,13 @@ export const manifesto = {
 export const disciplines = {
   index: 1,
   label: 'What I do',
-  title: 'I make the confusing feel *obvious.*',
+  title: 'I make sense of the messy *bits.*',
   /** Each discipline is a full-screen card in the pinned deck (DisciplineDeck). */
   items: [
     {
       title: 'Product Design',
-      description: 'Shape a product around what people actually need.',
+      description:
+        'Working through what a product needs, from the first idea to the details people use.',
       glyph: 'product-digital',
       covers: [
         {label: 'User research', icon: 'search'},
@@ -220,7 +209,7 @@ export const disciplines = {
     },
     {
       title: 'UX Design',
-      description: 'Create journeys that are easier to follow.',
+      description: 'Making journeys easier to follow, one step at a time.',
       glyph: 'steps',
       covers: [
         {label: 'User journeys', icon: 'route'},
@@ -230,7 +219,7 @@ export const disciplines = {
     },
     {
       title: 'UI Design',
-      description: 'Build interfaces that feel clear, consistent and intentional.',
+      description: 'Making screens clear, useful, and easy to understand.',
       glyph: 'screen',
       covers: [
         {label: 'Visual design', icon: 'palette'},
@@ -240,7 +229,7 @@ export const disciplines = {
     },
     {
       title: 'Interaction Design',
-      description: 'Make actions, feedback and transitions easier to understand.',
+      description: 'Thinking through what happens after every tap, click, and action.',
       glyph: 'toggle',
       covers: [
         {label: 'Micro-interactions', icon: 'pointer'},
@@ -249,8 +238,8 @@ export const disciplines = {
       ],
     },
     {
-      title: 'UX Flow Revamp',
-      description: 'Find the parts of an experience that get in the way, then rethink them.',
+      title: 'Flow Improvements',
+      description: 'Finding where a journey gets confusing and making the next step clearer.',
       glyph: 'rethink',
       covers: [
         {label: 'Flow audits', icon: 'scan'},
@@ -260,8 +249,7 @@ export const disciplines = {
     },
     {
       title: 'Design Systems',
-      description:
-        'Foundations, components and patterns that keep a product consistent as it grows.',
+      description: 'Creating reusable pieces that help a product stay consistent as it grows.',
       glyph: 'system',
       covers: [
         {label: 'Foundations & tokens', icon: 'shapes'},
@@ -283,17 +271,33 @@ export const disciplines = {
 export const process = {
   index: 3,
   label: 'How I work',
-  title: 'Start with why. Finish with *wow.*',
+  title: 'Make it work. Then make it *worth* looking at.',
   steps: [
     {
       title: 'Understand',
-      description: 'Figure out what people are actually trying to do.',
+      description: 'Get clear on what people are actually trying to do.',
       glyph: 'look',
     },
-    {title: 'Question', description: 'Find the parts that make them stop and think.', glyph: 'ask'},
-    {title: 'Simplify', description: 'Remove what doesn’t need to be there.', glyph: 'reduce'},
-    {title: 'Shape', description: 'Turn the thinking into something tangible.', glyph: 'sketch'},
-    {title: 'Refine', description: 'Keep tweaking until it feels natural.', glyph: 'tune'},
+    {
+      title: 'Question',
+      description: 'Look for the parts that slow them down or leave them guessing.',
+      glyph: 'ask',
+    },
+    {
+      title: 'Simplify',
+      description: 'Keep what helps. Rethink what gets in the way.',
+      glyph: 'reduce',
+    },
+    {
+      title: 'Shape',
+      description: 'Turn the thinking into something people can follow and use.',
+      glyph: 'sketch',
+    },
+    {
+      title: 'Refine',
+      description: 'Adjust the details until the whole thing feels right.',
+      glyph: 'tune',
+    },
   ] satisfies SequenceStep[],
 };
 
@@ -301,6 +305,7 @@ export const process = {
 export const closing = {
   label: 'Say hello',
   title: 'Got a role in mind? Let’s *talk.*',
-  intro: 'I’d love to hear what you’re working on and see where I could fit in.',
-  note: 'A good conversation is usually a good place to start.',
+  intro:
+    'Hiring for a product design role or looking for a hand with a digital product? I’d be glad to hear what you’re working on. Drop me a message, and we can take it from there.',
+  note: 'Email me and we can set up a call.',
 };

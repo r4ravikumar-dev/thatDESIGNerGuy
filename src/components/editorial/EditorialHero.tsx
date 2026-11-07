@@ -31,6 +31,8 @@ type EditorialHeroProps = {
   size?: 'display-xxl' | 'display-xl';
   /** Fill the viewport (homepage) or sit at natural height (inner pages). */
   isFullHeight?: boolean;
+  /** Centre the text (only without an illustration). Left-aligned by default. */
+  align?: 'start' | 'center';
 };
 
 /**
@@ -49,8 +51,12 @@ export function EditorialHero({
   illustration,
   size = 'display-xl',
   isFullHeight = false,
+  align = 'start',
 }: EditorialHeroProps) {
   const titleRef = useTextReveal({delay: 0.1});
+  const isCentered = align === 'center' && !illustration;
+  /** Centred: each block centres itself and its text. */
+  const centred = isCentered ? ({marginInline: 'auto', textAlign: 'center'} as const) : {};
   return (
     <VStack
       as="header"
@@ -68,7 +74,10 @@ export function EditorialHero({
           columns={1}
           className={illustration ? 'hero-split' : undefined}
           style={{flex: 1, alignContent: 'center', gap: 'var(--space-block)'}}>
-          <VStack gap={0} style={{gap: 'var(--space-block)'}}>
+          <VStack
+            gap={0}
+            hAlign={isCentered ? 'center' : 'start'}
+            style={{gap: 'var(--space-block)'}}>
             {label && (
               <Reveal>
                 <IndexLabel>{label}</IndexLabel>
@@ -80,7 +89,14 @@ export function EditorialHero({
               data-text-reveal
               level={1}
               textWrap="balance"
-              style={{...typeRole(size), letterSpacing: '-0.04em', maxInlineSize: '14ch'}}>
+              style={{
+                ...typeRole(size),
+                letterSpacing: '-0.04em',
+                // Beside an illustration it keeps a narrow measure; on its own
+                // it can run the full width.
+                maxInlineSize: illustration ? '14ch' : '24ch',
+                ...centred,
+              }}>
               <Lines text={title} />
             </Heading>
             {(description || action) && (
@@ -91,7 +107,7 @@ export function EditorialHero({
                       type="large"
                       color="secondary"
                       textWrap="pretty"
-                      style={{maxInlineSize: '36ch'}}>
+                      style={{maxInlineSize: illustration ? '36ch' : '60ch', ...centred}}>
                       <Lines text={description} />
                     </Text>
                   </Reveal>

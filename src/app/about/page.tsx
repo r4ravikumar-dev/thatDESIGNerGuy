@@ -6,7 +6,6 @@ import {EditorialHero} from '@/components/editorial/EditorialHero';
 import {IndexList} from '@/components/editorial/IndexList';
 import {BigStatement} from '@/components/editorial/BigStatement';
 import {ProfileNote} from '@/components/studio/ProfileNote';
-import {OriginRings} from '@/components/illustrations/scenes';
 import {aboutClosing, aboutHero, beliefs, profile} from '@/content/about';
 
 export const metadata: Metadata = {
@@ -18,7 +17,8 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <VStack gap={0}>
-      <EditorialHero {...aboutHero} illustration={<OriginRings />} />
+      {/* Full width and centred: the title and introduction on their own. */}
+      <EditorialHero {...aboutHero} align="center" />
 
       {/* 01 The person */}
       <Chapter label={profile.label}>

@@ -751,8 +751,10 @@ html {
   }
 }
 
-/* Profile note: photo, quote, bio when stacked; quote left with the photo
-   above the bio on the right from 1024px. */
+/* Profile note. Phones and tablets: the portrait, then the quote, then the
+   bio. From 1024px, two columns: the text on the left (the quote, then the
+   name, role and bio beneath it), the portrait on the right spanning both
+   rows and centred against the text. */
 .profile-grid {
   grid-template-areas: 'art' 'quote' 'bio';
 }
@@ -762,14 +764,31 @@ html {
 .profile-art {
   grid-area: art;
 }
+.profile-portrait {
+  inline-size: min(100%, 30rem);
+  margin-inline: auto;
+}
 .profile-bio {
   grid-area: bio;
+  max-inline-size: 36rem;
 }
 @media (min-width: 1024px) {
-  .profile-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-areas: 'quote art' 'quote bio';
-    align-items: start;
+  .profile-grid.profile-grid {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    grid-template-areas:
+      'quote art'
+      'bio art';
+    grid-template-rows: auto auto;
+    column-gap: var(--space-chapter-gap);
+    row-gap: var(--space-block);
+    align-content: center;
+  }
+  .profile-art {
+    align-self: center;
+  }
+  .profile-portrait {
+    inline-size: 100%;
+    max-inline-size: 36rem;
   }
 }
 
