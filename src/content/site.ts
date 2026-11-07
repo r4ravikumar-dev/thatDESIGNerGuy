@@ -33,9 +33,9 @@ export const projectCta: NavItem = {
   href: `mailto:${site.email}`,
 };
 
-/** The header's page links. Contact jumps to the closing "Say hello" section. */
+/** The header's page links. Contact is its own page (/contact). */
 export const headerLinks: NavItem[] = [
   {label: 'Work', href: '/work'},
   {label: 'About', href: '/about'},
-  {label: 'Contact', href: '#contact'},
+  {label: 'Contact', href: '/contact'},
 ];

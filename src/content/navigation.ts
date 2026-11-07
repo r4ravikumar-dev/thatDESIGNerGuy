@@ -30,6 +30,13 @@ export const navLinks: NavLink[] = [
     hint: 'A little about me.',
     mobileDescription: 'Who I am, what I believe and how I work.',
   },
+  {
+    label: 'Contact',
+    href: '/contact',
+    description: 'Say hello, about a role, a project or an idea.',
+    hint: 'Sometimes all it takes is a hello.',
+    mobileDescription: 'Say hello, about a role, a project or an idea.',
+  },
 ];
 
 export const brand = {

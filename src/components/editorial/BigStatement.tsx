@@ -26,6 +26,8 @@ type BigStatementProps = {
   note?: string;
   /** Show the Start a project button. Off on the Start a Project page itself. */
   hasProjectAction?: boolean;
+  /** The button's label and link, in place of the default Let's talk (a call or an email). */
+  action?: {label: string; href: string};
 };
 
 /**
@@ -42,6 +44,7 @@ export function BigStatement({
   intro,
   note,
   hasProjectAction = true,
+  action = callCta,
 }: BigStatementProps) {
   const titleRef = useTextReveal({delay: 0.05});
   return (
@@ -93,7 +96,7 @@ export function BigStatement({
           </Reveal>
           <Reveal delay={0.18}>
             <HStack gap={6} vAlign="center" wrap="wrap">
-              {hasProjectAction && <CtaButton {...callCta} direction="out" />}
+              {hasProjectAction && <CtaButton {...action} direction="out" />}
               {note && (
                 <Text color="secondary" textWrap="pretty">
                   {note}

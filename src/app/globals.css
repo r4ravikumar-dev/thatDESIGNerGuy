@@ -1244,6 +1244,13 @@ html {
   opacity: 1;
   transform: translate(0, -50%);
 }
+/* Below 1080px there isn't room beside the centred name: the role would run
+   into the résumé and LinkedIn icons, so the header keeps just the name. */
+@media (max-width: 1079.98px) {
+  .portfolio-header-role {
+    display: none;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .portfolio-header-role {
     transform: translate(0, -50%);
@@ -2643,4 +2650,164 @@ html.lenis {
 /* Footer wordmark rise (useScrubRise): the footer clips it as it climbs. */
 .footer-wordmark-rise {
   overflow: clip;
+}
+
+/* Contact page (/contact). The form sits beside its heading from 1024px,
+   stacked below that. */
+.contact-form-grid {
+  gap: var(--space-block);
+}
+@media (min-width: 1024px) {
+  .contact-form-grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: var(--space-chapter-gap);
+    align-items: start;
+  }
+}
+/* Not a corporate form: large, understated fields on one thin hairline,
+   no boxes, with the brand blue on the active field. */
+.contact-field .astryx-field-label {
+  font-family: var(--font-family-eyebrow);
+  font-size: var(--text-supporting-size);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+.contact-field .astryx-text-input,
+.contact-field .astryx-text-area {
+  padding-inline: 0;
+  background: transparent;
+  border: 0;
+  border-block-end: 1px solid var(--color-border-emphasized);
+  border-radius: 0;
+  box-shadow: none;
+  transition: border-color 200ms ease;
+}
+.contact-field input,
+.contact-field textarea {
+  font-size: var(--text-large-size);
+  padding-inline: 0;
+}
+.contact-field textarea {
+  padding-block: var(--spacing-2);
+  resize: vertical;
+}
+.contact-field .astryx-text-input:hover,
+.contact-field .astryx-text-area:hover {
+  border-block-end-color: var(--color-text-secondary);
+}
+.contact-field .astryx-text-input:focus-within,
+.contact-field .astryx-text-area:focus-within {
+  border-block-end-color: var(--color-brand-text);
+  outline: none;
+  box-shadow: 0 1px 0 0 var(--color-brand-text);
+}
+.contact-field[data-status='error'] .astryx-text-input,
+.contact-field .astryx-text-input[data-status='error'],
+.contact-field .astryx-text-area[data-status='error'] {
+  border-block-end-color: var(--color-border-error);
+}
+/* A field that needs another look says so in one quiet red line, not a box. */
+.contact-field .astryx-field-status {
+  padding: 0;
+  padding-block-start: var(--spacing-2);
+  color: var(--color-text-error);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+/* The topic chips wrap onto a second line on narrow screens. */
+.contact-topics .astryx-toggle-button-group {
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+}
+.contact-topics .astryx-button {
+  border: 1px solid var(--color-border-emphasized);
+  border-radius: var(--radius-full);
+  transition:
+    color 200ms ease,
+    border-color 200ms ease;
+}
+.contact-topics .astryx-button:hover {
+  border-color: var(--color-text-secondary);
+}
+.contact-topics .astryx-button[aria-pressed='true'] {
+  color: var(--color-brand-text);
+  border-color: var(--color-brand-text);
+}
+.contact-form-error {
+  color: var(--color-text-error);
+}
+/* The direct route: just two cells (email, LinkedIn) at every width from 768px. */
+@media (min-width: 768px) {
+  .footer-bar.contact-direct-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Work page (/work): three featured projects, each in its own composition
+   (WorkFeatures). Stacked below 1024px: picture, eyebrow, text. */
+.work-feature {
+  gap: var(--space-block);
+}
+.work-feature-text {
+  gap: var(--space-block);
+}
+.work-feature-frame {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+}
+.work-feature-frame .work-showcase-image {
+  transition: transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.work-feature-wide-text {
+  gap: var(--space-block);
+}
+/* Stacked (below 1024px) every project opens with its picture. */
+@media (max-width: 1023.98px) {
+  .work-feature-frame {
+    order: -1;
+  }
+}
+@media (min-width: 768px) {
+  .work-feature-frame[data-layout='wide'] {
+    aspect-ratio: 16 / 9;
+  }
+}
+@media (min-width: 1024px) {
+  /* 01: the picture across the full width, the text in two columns beneath. */
+  .work-feature-frame[data-layout='wide'] {
+    aspect-ratio: auto;
+    block-size: min(80svh, 56vw);
+  }
+  .work-feature-wide-text {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--space-chapter-gap);
+    align-items: end;
+  }
+  /* 02 and 03: text and picture side by side, swapping sides. */
+  .work-feature[data-layout='split'] {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: var(--space-chapter-gap);
+    align-items: stretch;
+  }
+  .work-feature[data-layout='split-reverse'] {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--space-chapter-gap);
+    align-items: stretch;
+  }
+  .work-feature[data-layout='split-reverse'] .work-feature-text {
+    order: 2;
+  }
+  /* Beside the text, the picture fills the row from the eyebrow's top to
+     the button's foot, cropped to fit (each image's focus keeps its subject). */
+  .work-feature-frame[data-layout='split'],
+  .work-feature-frame[data-layout='split-reverse'] {
+    aspect-ratio: auto;
+    block-size: 100%;
+    min-block-size: 0;
+  }
 }

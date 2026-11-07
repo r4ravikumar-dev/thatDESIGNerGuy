@@ -14,13 +14,13 @@ let lenis: Lenis | null = null;
  * page-to-page navigation (ScrollManager), where scrolling should be instant.
  */
 export function jumpTo(target: number | HTMLElement) {
-  if (lenis) {
-    // stop() then start() cancels the animation and re-syncs to the page.
-    lenis.stop();
-    lenis.start();
-  }
   if (typeof target === 'number') window.scrollTo({top: target, left: 0, behavior: 'instant'});
   else target.scrollIntoView({block: 'start', behavior: 'instant'});
+  // Re-sync Lenis to where the page now is, which also cancels any smooth
+  // scroll in flight. (Not stop() then start(): with autoToggle, stop() only
+  // sets overflow: clip and waits for a transition, so an immediate start()
+  // is ignored and the page is left clipped, unable to scroll.)
+  lenis?.scrollTo(window.scrollY, {immediate: true, force: true});
 }
 
 /**

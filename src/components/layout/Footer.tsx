@@ -31,8 +31,8 @@ function ColumnTitle({children}: {children: string}) {
   );
 }
 
-/** One cell of the contact bar: a small label over a larger value, with an arrow. */
-function BarCell({label, value, icon}: {label: string; value: string; icon: ReactNode}) {
+/** One cell of the contact bar: a small label over a larger value, with an arrow. Also on the Contact page. */
+export function BarCell({label, value, icon}: {label: string; value: string; icon: ReactNode}) {
   return (
     <HStack gap={4} justify="between" vAlign="end" width="100%">
       <VStack gap={1} style={{minInlineSize: 0}}>

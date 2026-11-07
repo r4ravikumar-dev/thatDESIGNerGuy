@@ -63,6 +63,7 @@ export const workShowcase = {
       description:
         'Worked on bringing Mamily into the Visit Health app, shaping how people discover and access women’s wellness support through the product.',
       meta: ['Women’s Wellness', 'Mobile App', 'Visit Health'],
+      href: '/work#mamily',
     },
     {
       label: 'Joye × Visit Health',
@@ -74,6 +75,7 @@ export const workShowcase = {
       description:
         'Worked on integrating Joye into Visit Health and shaping the emotional assessment journey for corporate employees, with clear steps and guidance throughout.',
       meta: ['Emotional Wellness', 'Mobile App', 'Visit Health'],
+      href: '/work#joye',
     },
     {
       label: 'Dental Care Service Line',
@@ -86,6 +88,7 @@ export const workShowcase = {
       description:
         'Reworked the dental journey to make each step easier to follow, with clearer information so users know what’s happening and what comes next.',
       meta: ['Dental Care', 'UX/UI', 'Mobile App'],
+      href: '/work#dental',
     },
   ] as WorkProject[],
 };
@@ -152,7 +155,7 @@ export type WorkProject = {
   meta: string[];
   /** `focus` is the CSS object-position kept in view when the panel crops it. */
   thumbnail?: {src: string; alt: string; focus?: string};
-  /** Where the project opens (its case study). Until there is one: the Work page. */
+  /** Where the project opens: its case study, or its place on the Work page until there is one. */
   href?: string;
 };
 
