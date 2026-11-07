@@ -20,6 +20,7 @@ import {typeRole} from '@/theme/typeScale';
 import {EYEBROW_STYLE} from '@/theme/eyebrow';
 import {Wordmark} from './Wordmark';
 import {isActivePath} from './isActivePath';
+import {openResume} from './resume';
 
 /**
  * The mobile menu, in the editorial language of the site: the wordmark as
@@ -140,14 +141,19 @@ export function MobileMenu() {
                   {site.email}
                 </Text>
               </a>
-              <a className="menu-contact" href={site.resumeUrl} target="_blank" rel="noreferrer">
+              <a
+                className="menu-contact"
+                href={site.resumeUrl}
+                target="_blank"
+                rel="noreferrer"
+                onClick={openResume}>
                 <Text
                   type="supporting"
                   color="inherit"
                   style={{...EYEBROW_STYLE, color: 'inherit'}}>
                   Résumé ↗
                 </Text>
-                <VisuallyHidden>(PDF, opens in new tab)</VisuallyHidden>
+                <VisuallyHidden>(PDF, opens in a new tab and downloads)</VisuallyHidden>
               </a>
               {site.linkedinUrl && (
                 <a

@@ -34,6 +34,8 @@ export const navLinks: NavLink[] = [
 
 export const brand = {
   homeLabel: 'Back to Ravi Kumar home',
+  /** Beside the header's wordmark once the visitor is past the hero. */
+  role: 'Product Designer',
 };
 
 export const projectAction = {
@@ -46,6 +48,17 @@ export const mobileMenu = {
   openLabel: 'Menu',
   title: 'Explore',
   prompt: 'Something on your mind?',
+};
+
+/** The first-visit welcome: Ravi's ID card, then the way in. */
+export const welcome = {
+  name: 'Ravi Kumar',
+  role: 'Product & UX Designer',
+  currentLabel: 'Currently at',
+  current: 'Visit Health',
+  /** The company's logo, beside its name on the card (add the file at this path). */
+  currentLogo: '/brands/visit-health.svg',
+  action: 'Get to know Ravi',
 };
 
 export const statusCopy = {

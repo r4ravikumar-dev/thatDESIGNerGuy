@@ -1,6 +1,7 @@
 'use client';
 
 import {Fragment, useRef, useState} from 'react';
+import NextLink from 'next/link';
 import {HStack, VStack} from '@astryxdesign/core/Layout';
 import {Icon} from '@astryxdesign/core/Icon';
 import {ArrowDown} from 'lucide-react';
@@ -8,7 +9,6 @@ import {Heading} from '@astryxdesign/core/Heading';
 import {Text} from '@astryxdesign/core/Text';
 import {Container} from '@/components/layout/Container';
 import {Reveal} from '@/components/motion/Reveal';
-import {Portrait} from '@/components/illustrations/scenes';
 import {DesignStory} from '@/components/illustrations/DesignStory';
 import {gsap, ScrollTrigger, useGSAP} from '@/motion/gsap';
 import {Lines} from '@/components/storytelling/Lines';
@@ -26,7 +26,7 @@ import {useTextReveal} from '@/motion/scroll';
  * supporting text. 01 the name in three scripts, 02 the one-line intro
  * (its words light up as it scrolls),
  * 03 the story. Right, pinned while the three blocks scroll past: Ravi's
- * photo in the brand duotone for the first fold; as the intro scrolls in it
+ * portrait for the first fold, blending into the panel; as the intro scrolls in it
  * cross-fades to the design story (DesignStory, a Lottie animation of
  * Ravi's cursor turning scattered ideas into a finished screen), which then
  * plays on its own from the start and loops; scrolling back up brings the
@@ -189,7 +189,26 @@ export function PortfolioHero() {
           hAlign="center"
           vAlign="center">
           <VStack className="hero-art hero-art-photo" hAlign="center" vAlign="center">
-            <Portrait label="Portrait of Ravi Kumar" maxWidth={720} />
+            {/* Ravi's portrait, blending into the panel (.hero-portrait). It
+              leads to the About page; over it the cursor becomes the
+              Figma-style pointer reading "Know more about Ravi". */}
+            <NextLink
+              href={hello.portraitAction.href}
+              className="hero-portrait-link"
+              aria-label={hello.portraitAction.label}
+              data-cursor="project"
+              data-cursor-label={hello.portraitAction.label}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                className="hero-portrait"
+                src="/ravi-portrait-hero.webp"
+                alt="Portrait of Ravi Kumar"
+                width={1309}
+                height={1201}
+                fetchPriority="high"
+                decoding="async"
+              />
+            </NextLink>
           </VStack>
           <VStack className="hero-art hero-art-story" hAlign="center" vAlign="center">
             <DesignStory label={STORY_LABEL} isShown={isStory} />

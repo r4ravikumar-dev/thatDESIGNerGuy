@@ -14,6 +14,8 @@ export const hero = {
     ],
     role: 'Product & UX Designer',
     scroll: 'Scroll',
+    /** The portrait leads to the About page (the cursor's tag over it). */
+    portraitAction: {label: 'Know more about Ravi', href: '/about'},
   },
   /** Block 2: "*word*" sets the italic serif accent. */
   intro: {

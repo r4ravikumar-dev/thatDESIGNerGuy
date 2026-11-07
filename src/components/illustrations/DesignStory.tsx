@@ -4,9 +4,10 @@ import {useEffect, useRef} from 'react';
 import type {AnimationItem} from 'lottie-web';
 import {VStack} from '@astryxdesign/core/Layout';
 import animationData from './lottie/design-story.json';
+import {RippleGrid} from './RippleGrid';
 
 /** The frame that shows the finished screen (used with reduced motion). */
-const FINISHED_FRAME = 320;
+const FINISHED_FRAME = 326;
 
 type DesignStoryProps = {
   label: string;
@@ -21,20 +22,21 @@ type DesignStoryProps = {
 /**
  * The hero's design story, a Lottie animation (lottie/design-story.json,
  * built by scripts/lottie/design-story.py): Ravi's cursor drags out a
- * frame, gathers scattered ideas into a tidy row and builds a finished
- * screen from them, then it all fades and begins again. About 12 seconds,
- * looping.
+ * frame, gathers scattered app ideas into a tidy row and builds a complete
+ * mobile app from them, then it all fades and begins again. About 12
+ * seconds, looping.
  *
- * It plays on its own (not with the scroll), only while it is on screen and
- * shown, and pauses while hovered, like the other illustration loops. With
+ * It plays on its own (not with the scroll) while it is on screen and
+ * shown; hovering it doesn't pause it. With
  * reduced motion it holds the finished screen. The placeholder colours in
  * the file are mapped onto theme tokens in globals.css
- * (.design-story-lottie), so it follows light and dark mode.
+ * (.design-story-lottie), so it follows light and dark mode. Behind it, the
+ * dot grid ripples under the pointer (RippleGrid).
  */
 export function DesignStory({label, isShown}: DesignStoryProps) {
   const ref = useRef<HTMLDivElement>(null);
   const player = useRef<AnimationItem | null>(null);
-  const state = useRef({inView: false, isHovered: false, isShown: isShown ?? true});
+  const state = useRef({inView: false, isShown: isShown ?? true});
   /** Applies the current state to the player. */
   const sync = useRef(() => {});
 
@@ -51,8 +53,8 @@ export function DesignStory({label, isShown}: DesignStoryProps) {
         anim.goToAndStop(FINISHED_FRAME, true);
         return;
       }
-      const {inView, isHovered, isShown: shown} = state.current;
-      if (shown && inView && !isHovered) anim.play();
+      const {inView, isShown: shown} = state.current;
+      if (shown && inView) anim.play();
       else anim.pause();
     };
 
@@ -96,19 +98,9 @@ export function DesignStory({label, isShown}: DesignStoryProps) {
   }, [isShown]);
 
   return (
-    <VStack
-      ref={ref}
-      role="img"
-      aria-label={label}
-      className="design-story-lottie"
-      onMouseEnter={() => {
-        state.current.isHovered = true;
-        sync.current();
-      }}
-      onMouseLeave={() => {
-        state.current.isHovered = false;
-        sync.current();
-      }}
-    />
+    <VStack ref={ref} role="img" aria-label={label} className="design-story-lottie">
+      {/* The dot grid behind the scene, rippling under the pointer. */}
+      <RippleGrid />
+    </VStack>
   );
 }

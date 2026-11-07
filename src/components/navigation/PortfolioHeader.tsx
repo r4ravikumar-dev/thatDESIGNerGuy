@@ -1,5 +1,6 @@
 'use client';
 
+import {useEffect, useState} from 'react';
 import NextLink from 'next/link';
 import {usePathname} from 'next/navigation';
 import {HStack} from '@astryxdesign/core/Layout';
@@ -9,7 +10,8 @@ import {useAppShellMobile} from '@astryxdesign/core/AppShell';
 import {Menu} from 'lucide-react';
 import {isActivePath} from './isActivePath';
 import {Wordmark} from './Wordmark';
-import {mobileMenu} from '@/content/navigation';
+import {openResume} from './resume';
+import {brand, mobileMenu} from '@/content/navigation';
 import {headerLinks, site} from '@/content/site';
 
 /** A document with "PDF" on it, in the illustration system's line style. */
@@ -60,9 +62,37 @@ function LinkedInIcon() {
  * résumé and LinkedIn move into the drawer (MobileMenu). The bar's glass and
  * bottom rule come from the app shell styles.
  */
+/**
+ * Whether the visitor has scrolled past the page's opening: past the hero on
+ * the homepage, past most of the first screen elsewhere.
+ */
+function usePastOpening(pathname: string) {
+  const [isPast, setIsPast] = useState(false);
+
+  useEffect(() => {
+    const hero = document.querySelector('.portfolio-hero');
+    if (hero) {
+      // The hero has gone once none of it shows below the header.
+      const observer = new IntersectionObserver(
+        ([entry]) => setIsPast(!entry.isIntersecting && entry.boundingClientRect.top < 0),
+        {rootMargin: '-96px 0px 0px 0px'},
+      );
+      observer.observe(hero);
+      return () => observer.disconnect();
+    }
+    const update = () => setIsPast(window.scrollY > window.innerHeight * 0.6);
+    update();
+    window.addEventListener('scroll', update, {passive: true});
+    return () => window.removeEventListener('scroll', update);
+  }, [pathname]);
+
+  return isPast;
+}
+
 export function PortfolioHeader() {
   const pathname = usePathname();
   const {isMobile} = useAppShellMobile();
+  const isPastOpening = usePastOpening(pathname);
 
   if (isMobile) {
     return (
@@ -99,8 +129,16 @@ export function PortfolioHeader() {
           );
         })}
       </HStack>
+      {/* The wordmark, centred; once past the opening, the role slides in
+        beside it (without moving the name). */}
       <span className="portfolio-header-brand">
         <Wordmark height={30} />
+        <span
+          className="portfolio-header-role"
+          data-shown={isPastOpening || undefined}
+          aria-hidden={!isPastOpening}>
+          {brand.role}
+        </span>
       </span>
       <HStack gap={0} className="portfolio-header-icons">
         <a
@@ -108,7 +146,8 @@ export function PortfolioHeader() {
           href={site.resumeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Résumé (PDF, opens in a new tab)">
+          onClick={openResume}
+          aria-label="Résumé (PDF, opens in a new tab and downloads)">
           <PdfIcon />
         </a>
         {site.linkedinUrl && (
