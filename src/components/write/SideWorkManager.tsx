@@ -61,7 +61,6 @@ function SideWorkItem({row, onRemove}: {row: SideWorkRow; onRemove: () => void})
       />
       <TextArea
         label="Description"
-        description="Not shown on the site. Screen readers read it out instead of the photo."
         placeholder="What is it? For example: a poster series for local festivals."
         value={description}
         onChange={value => {
