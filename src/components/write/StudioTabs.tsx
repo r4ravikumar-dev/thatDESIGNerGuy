@@ -14,7 +14,7 @@ export function StudioTabs() {
   const pathname = usePathname();
   const router = useRouter();
   return (
-    <HStack>
+    <HStack className="studio-switch">
       <SegmentedControl label="Studio sections" value={pathname} onChange={href => router.push(href)}>
         {SECTIONS.map(section => (
           <SegmentedControlItem key={section.href} value={section.href} label={section.label} />

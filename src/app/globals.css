@@ -4479,3 +4479,8 @@ dialog.astryx-dialog::backdrop {
   mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.4) 0%, transparent 70%);
   -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.4) 0%, transparent 70%);
 }
+/* The studio's Case studies / Side work switch: the chosen one in brand blue. */
+.studio-switch .astryx-segmented-control-item[data-selected] {
+  background-color: var(--color-brand);
+  color: var(--color-on-brand);
+}
