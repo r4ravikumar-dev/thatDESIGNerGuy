@@ -15,7 +15,6 @@ import {ACCEPT, uploadAsset} from '@/components/write/upload';
 import {addSideWork, deleteSideWork, updateSideWorkDescription} from '@/app/write/(sections)/side-work/actions';
 import {mediaUrl} from '@/lib/caseStudies/media';
 import type {SideWorkRow} from '@/lib/sideWork/types';
-import {EYEBROW_STYLE} from '@/theme/eyebrow';
 
 /** Opens the file picker for one or more images. */
 function pickImages(): Promise<File[]> {
@@ -136,9 +135,6 @@ export function SideWorkManager({rows: initialRows, loadError}: {rows: SideWorkR
     <VStack gap={8}>
       <HStack justify="between" vAlign="end" gap={6} wrap="wrap">
         <VStack gap={2}>
-          <Text type="supporting" color="secondary" style={EYEBROW_STYLE}>
-            {rows.length} {rows.length === 1 ? 'photo' : 'photos'}
-          </Text>
           <Heading level={1}>Side work</Heading>
           <Text color="secondary" style={{maxInlineSize: '60ch'}}>
             The photos that loop past in the Side work section on Home and Work, newest first. The section stays hidden
