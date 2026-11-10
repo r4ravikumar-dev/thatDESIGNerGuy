@@ -174,7 +174,8 @@ html {
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#) {
   position: relative;
   isolation: isolate;
@@ -204,12 +205,14 @@ html {
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#)::before,
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#)::after {
   content: '';
   position: absolute;
@@ -224,7 +227,8 @@ html {
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#)::before {
   background:
     radial-gradient(90% 140% at 0% 0%, var(--lg-sheen) 0%, transparent 60%),
@@ -235,7 +239,8 @@ html {
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#)::after {
   background: radial-gradient(140% 110% at 50% 140%, var(--lg-glow) 0%, transparent 72%);
   opacity: 0.9;
@@ -243,19 +248,22 @@ html {
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#):hover {
   --lg-ring: var(--lg-ring-hover);
 }
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#):hover::before,
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#):hover::after {
   opacity: 1;
 }
@@ -4479,8 +4487,57 @@ dialog.astryx-dialog::backdrop {
   mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.4) 0%, transparent 70%);
   -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.4) 0%, transparent 70%);
 }
-/* The studio's Case studies / Side work switch: the chosen one in brand blue. */
+/* The studio's Case studies / Side work switch, in the CTAs' liquid glass:
+   the track is frosted clear glass (like a secondary CTA) and the chosen
+   section is brand-blue tinted glass (like the primary CTA; the shared
+   material is above). The control's sliding highlight copies the chosen
+   segment's surface, so the glass slides across; labels ease their colour. */
+.studio-switch .astryx-segmented-control {
+  background-color: light-dark(
+    color-mix(in srgb, var(--color-background-surface) 40%, transparent),
+    rgb(14 14 18 / 0.5)
+  );
+  backdrop-filter: blur(var(--spacing-3)) saturate(1.4);
+  -webkit-backdrop-filter: blur(var(--spacing-3)) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-highlight),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-brand-text) 16%, transparent),
+    0 10px 26px -14px var(--glass-shadow);
+}
+.studio-switch .astryx-segmented-control-item {
+  transition: color 240ms ease;
+}
 .studio-switch .astryx-segmented-control-item[data-selected] {
-  background-color: var(--color-brand);
-  color: var(--color-on-brand);
+  --lg-fill: color-mix(in srgb, var(--color-brand) 94%, transparent);
+  --lg-fill-hover: var(--color-brand);
+  --lg-fill-solid: var(--color-brand);
+  --lg-text: rgb(255 255 255);
+  --lg-light: light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.34));
+  --lg-sheen: light-dark(rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.12));
+  --lg-ring: rgb(255 255 255 / 0.16);
+  --lg-ring-hover: rgb(255 255 255 / 0.28);
+  --lg-glow: light-dark(rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.1));
+  --lg-drop: 0 8px 20px -12px color-mix(in srgb, var(--color-brand) 70%, transparent);
+}
+/* Remove a side work photo: a quiet button in the destructive red. */
+.side-work-remove:not(#\#) {
+  color: var(--color-error);
+}
+.side-work-remove:not(#\#):hover {
+  background-color: color-mix(in srgb, var(--color-error) 12%, transparent);
+}
+/* A studio section arriving after a switch (template.tsx): fades and rises. */
+.studio-section-enter {
+  animation: studio-section-enter 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes studio-section-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--spacing-2));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-section-enter {
+    animation-duration: 1ms;
+  }
 }

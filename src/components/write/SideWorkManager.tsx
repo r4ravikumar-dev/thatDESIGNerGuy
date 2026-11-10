@@ -12,7 +12,7 @@ import {AlertDialog} from '@astryxdesign/core/AlertDialog';
 import {Icon} from '@astryxdesign/core/Icon';
 import {ImagePlus, Trash2} from 'lucide-react';
 import {ACCEPT, uploadAsset} from '@/components/write/upload';
-import {addSideWork, deleteSideWork, updateSideWorkDescription} from '@/app/write/side-work/actions';
+import {addSideWork, deleteSideWork, updateSideWorkDescription} from '@/app/write/(sections)/side-work/actions';
 import {mediaUrl} from '@/lib/caseStudies/media';
 import type {SideWorkRow} from '@/lib/sideWork/types';
 import {EYEBROW_STYLE} from '@/theme/eyebrow';
@@ -87,6 +87,7 @@ function SideWorkItem({row, onRemove}: {row: SideWorkRow; onRemove: () => void})
           label="Remove"
           size="sm"
           variant="ghost"
+          className="side-work-remove"
           onClick={onRemove}
           icon={<Icon icon={Trash2} size="sm" color="inherit" />}
         />
