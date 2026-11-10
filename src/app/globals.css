@@ -4440,21 +4440,6 @@ dialog.astryx-dialog::backdrop {
 }
 
 /* Studio: Side work (SideWorkManager). */
-.studio-nav {
-  gap: var(--spacing-4);
-}
-.studio-nav-link {
-  color: var(--color-text-secondary);
-  text-decoration: none;
-}
-.studio-nav-link:hover,
-.studio-nav-link[aria-current='page'] {
-  color: var(--color-text-primary);
-}
-.studio-nav-link[aria-current='page'] {
-  text-decoration: underline;
-  text-underline-offset: var(--spacing-1);
-}
 .side-work-studio-item {
   padding: var(--spacing-3);
   border: 1px solid var(--color-border);
