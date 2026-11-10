@@ -1,9 +1,14 @@
-import {Node, mergeAttributes, type Extensions} from '@tiptap/core';
+import {Extension, Node, mergeAttributes, type Extensions} from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import {TextStyleKit} from '@tiptap/extension-text-style';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align';
 import Image from '@tiptap/extension-image';
+import Subscript from '@tiptap/extension-subscript';
+import Superscript from '@tiptap/extension-superscript';
+import {TableKit} from '@tiptap/extension-table';
+import {TaskItem, TaskList} from '@tiptap/extension-list';
+import {Details, DetailsContent, DetailsSummary} from '@tiptap/extension-details';
 import {mediaUrl} from '@/lib/caseStudies/media';
 import {
   defaultComparison,
@@ -122,7 +127,10 @@ function visualAtom<T>(name: string, defaults: () => T) {
     selectable: true,
     addAttributes: () => configAttribute(defaults),
     parseHTML: () => [{tag: `div[data-block="${name}"]`}],
-    renderHTML: ({HTMLAttributes}) => ['div', mergeAttributes({'data-block': name}, HTMLAttributes)],
+    renderHTML: ({HTMLAttributes}) => [
+      'div',
+      mergeAttributes({'data-block': name}, HTMLAttributes),
+    ],
   });
 }
 
@@ -142,7 +150,11 @@ export const SplitLayoutNode = Node.create({
   draggable: true,
   addAttributes: () => configAttribute(defaultSplit),
   parseHTML: () => [{tag: 'section[data-block="splitLayout"]'}],
-  renderHTML: ({HTMLAttributes}) => ['section', mergeAttributes({'data-block': 'splitLayout'}, HTMLAttributes), 0],
+  renderHTML: ({HTMLAttributes}) => [
+    'section',
+    mergeAttributes({'data-block': 'splitLayout'}, HTMLAttributes),
+    0,
+  ],
 });
 
 /** A pull quote: the quote is editable inline text; attribution is in its config. */
@@ -154,7 +166,11 @@ export const PullQuoteNode = Node.create({
   draggable: true,
   addAttributes: () => configAttribute(defaultQuote),
   parseHTML: () => [{tag: 'figure[data-block="pullQuote"]'}],
-  renderHTML: ({HTMLAttributes}) => ['figure', mergeAttributes({'data-block': 'pullQuote'}, HTMLAttributes), 0],
+  renderHTML: ({HTMLAttributes}) => [
+    'figure',
+    mergeAttributes({'data-block': 'pullQuote'}, HTMLAttributes),
+    0,
+  ],
 });
 
 /** Images hold a storage path; shown through its public URL, with their pixel size. */
@@ -162,7 +178,10 @@ const StoredImage = Image.extend({
   addAttributes() {
     return {
       ...this.parent?.(),
-      src: {default: null, renderHTML: (attributes: {src?: string}) => ({src: mediaUrl(attributes.src)})},
+      src: {
+        default: null,
+        renderHTML: (attributes: {src?: string}) => ({src: mediaUrl(attributes.src)}),
+      },
       width: {default: null},
       height: {default: null},
     };
@@ -170,6 +189,183 @@ const StoredImage = Image.extend({
 });
 
 /** The extensions every case study is written and rendered with. */
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    fontWeight: {
+      /** Sets the weight of the selected text ("400", "600"…). */
+      setFontWeight: (fontWeight: string) => ReturnType;
+      unsetFontWeight: () => ReturnType;
+    };
+    textTransform: {
+      /** Sets the case of the selected text ("uppercase", "lowercase", "capitalize"). */
+      setTextTransform: (textTransform: 'uppercase' | 'lowercase' | 'capitalize') => ReturnType;
+      unsetTextTransform: () => ReturnType;
+    };
+    spacer: {
+      /** Inserts a block of empty space ("sm" to "xl"). */
+      insertSpacer: (size?: SpacerSize) => ReturnType;
+    };
+    letterSpacing: {
+      /** Sets the letter spacing of the selected text ("-0.02em"…). */
+      setLetterSpacing: (letterSpacing: string) => ReturnType;
+      unsetLetterSpacing: () => ReturnType;
+    };
+  }
+}
+
+/** A plain CSS value, nothing that could break out of the style attribute. */
+const SAFE_CSS_VALUE = /^[-\w.%() ]+$/;
+
+/** Font weight on selected text, stored on the textStyle mark like font size. */
+export const FontWeight = Extension.create({
+  name: 'fontWeight',
+  addGlobalAttributes() {
+    return [
+      {
+        types: ['textStyle'],
+        attributes: {
+          fontWeight: {
+            default: null,
+            parseHTML: element => element.style.fontWeight || null,
+            renderHTML: attributes =>
+              attributes.fontWeight && SAFE_CSS_VALUE.test(attributes.fontWeight)
+                ? {style: `font-weight: ${attributes.fontWeight}`}
+                : {},
+          },
+        },
+      },
+    ];
+  },
+  addCommands() {
+    return {
+      setFontWeight:
+        fontWeight =>
+        ({chain}) =>
+          chain().setMark('textStyle', {fontWeight}).run(),
+      unsetFontWeight:
+        () =>
+        ({chain}) =>
+          chain().setMark('textStyle', {fontWeight: null}).removeEmptyTextStyle().run(),
+    };
+  },
+});
+
+const TEXT_CASES = ['uppercase', 'lowercase', 'capitalize'];
+
+/** Text case (UPPERCASE, lowercase, Title Case) on selected text, as a style, not by retyping it. */
+export const TextTransform = Extension.create({
+  name: 'textTransform',
+  addGlobalAttributes() {
+    return [
+      {
+        types: ['textStyle'],
+        attributes: {
+          textTransform: {
+            default: null,
+            parseHTML: element => element.style.textTransform || null,
+            renderHTML: attributes =>
+              TEXT_CASES.includes(attributes.textTransform)
+                ? {style: `text-transform: ${attributes.textTransform}`}
+                : {},
+          },
+        },
+      },
+    ];
+  },
+  addCommands() {
+    return {
+      setTextTransform:
+        textTransform =>
+        ({chain}) =>
+          chain().setMark('textStyle', {textTransform}).run(),
+      unsetTextTransform:
+        () =>
+        ({chain}) =>
+          chain().setMark('textStyle', {textTransform: null}).removeEmptyTextStyle().run(),
+    };
+  },
+});
+
+export type SpacerSize = 'sm' | 'md' | 'lg' | 'xl';
+const SPACER_SIZES: SpacerSize[] = ['sm', 'md', 'lg', 'xl'];
+
+/** Empty space between blocks, for when a page needs more air than the rhythm gives. */
+export const Spacer = Node.create({
+  name: 'spacer',
+  group: 'block',
+  atom: true,
+  draggable: true,
+  selectable: true,
+  addAttributes() {
+    return {
+      size: {
+        default: 'md',
+        parseHTML: element => {
+          const size = element.getAttribute('data-size') as SpacerSize | null;
+          return size && SPACER_SIZES.includes(size) ? size : 'md';
+        },
+        renderHTML: attributes => ({
+          'data-size': SPACER_SIZES.includes(attributes.size) ? attributes.size : 'md',
+        }),
+      },
+    };
+  },
+  parseHTML() {
+    return [{tag: 'div[data-spacer]'}];
+  },
+  renderHTML({HTMLAttributes}) {
+    return [
+      'div',
+      mergeAttributes(
+        {'data-spacer': '', 'aria-hidden': 'true', class: 'cs-spacer'},
+        HTMLAttributes,
+      ),
+    ];
+  },
+  addCommands() {
+    return {
+      insertSpacer:
+        (size = 'md') =>
+        ({commands}) =>
+          commands.insertContent({type: this.name, attrs: {size}}),
+    };
+  },
+});
+
+/** Letter spacing on selected text, stored on the textStyle mark. */
+export const LetterSpacing = Extension.create({
+  name: 'letterSpacing',
+  addGlobalAttributes() {
+    return [
+      {
+        types: ['textStyle'],
+        attributes: {
+          letterSpacing: {
+            default: null,
+            parseHTML: element => element.style.letterSpacing || null,
+            renderHTML: attributes =>
+              attributes.letterSpacing && SAFE_CSS_VALUE.test(attributes.letterSpacing)
+                ? {style: `letter-spacing: ${attributes.letterSpacing}`}
+                : {},
+          },
+        },
+      },
+    ];
+  },
+  addCommands() {
+    return {
+      setLetterSpacing:
+        letterSpacing =>
+        ({chain}) =>
+          chain().setMark('textStyle', {letterSpacing}).run(),
+      unsetLetterSpacing:
+        () =>
+        ({chain}) =>
+          chain().setMark('textStyle', {letterSpacing: null}).removeEmptyTextStyle().run(),
+    };
+  },
+});
+
 export const caseStudyExtensions: Extensions = [
   StarterKit.configure({
     heading: {levels: [1, 2, 3, 4]},
@@ -181,8 +377,20 @@ export const caseStudyExtensions: Extensions = [
     },
   }),
   TextStyleKit,
+  FontWeight,
+  LetterSpacing,
+  TextTransform,
+  Spacer,
+  Details.configure({persist: true, HTMLAttributes: {class: 'cs-details'}}),
+  DetailsSummary,
+  DetailsContent,
   Highlight.configure({multicolor: true}),
   TextAlign.configure({types: ['heading', 'paragraph']}),
+  Subscript,
+  Superscript,
+  TaskList,
+  TaskItem.configure({nested: true}),
+  TableKit.configure({table: {resizable: false, HTMLAttributes: {class: 'cs-table'}}}),
   StoredImage.configure({allowBase64: false}),
   FileAttachment,
   VideoFile,

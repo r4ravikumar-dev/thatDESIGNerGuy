@@ -151,7 +151,7 @@ export function MobileMenu() {
                   type="supporting"
                   color="inherit"
                   style={{...EYEBROW_STYLE, color: 'inherit'}}>
-                  Résumé ↗
+                  Resume ↗
                 </Text>
                 <VisuallyHidden>(PDF, opens in a new tab and downloads)</VisuallyHidden>
               </a>

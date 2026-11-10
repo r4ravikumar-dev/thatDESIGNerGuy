@@ -14,17 +14,12 @@ import {ArrowUpRight} from 'lucide-react';
 import {ChapterHeader} from '@/components/editorial/ChapterHeader';
 import {Reveal} from '@/components/motion/Reveal';
 import {Lines} from '@/components/storytelling/Lines';
+import {MessageFailed, MessageSent} from '@/components/illustrations/scenes';
 import {contactForm as copy} from '@/content/contact';
 import {site} from '@/content/site';
+import {sendContactMessage} from '@/app/contact/actions';
 import {typeRole} from '@/theme/typeScale';
 import {EYEBROW_STYLE} from '@/theme/eyebrow';
-
-/**
- * Where the form posts (a Formspree-style endpoint that takes JSON and
- * answers 2xx on success). Without one, sending opens the visitor's email
- * app with the message written out, so the form still works with no backend.
- */
-const ENDPOINT = process.env.NEXT_PUBLIC_CONTACT_FORM_ENDPOINT || '';
 
 type Status = 'idle' | 'sending' | 'sent' | 'mailed' | 'error';
 type Errors = Partial<Record<'name' | 'email' | 'message', string>>;
@@ -46,6 +41,11 @@ export function ContactForm() {
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<Status>('idle');
   const formRef = useRef<HTMLFormElement>(null);
+  // When the visitor first typed, to tell people from bots (sendContactMessage).
+  const startedAt = useRef(0);
+  const markStarted = () => {
+    if (!startedAt.current) startedAt.current = Date.now();
+  };
 
   const check = (): Errors => {
     const next: Errors = {};
@@ -68,28 +68,26 @@ export function ContactForm() {
       return;
     }
 
-    const subject = `${topic ?? 'Hello'} · from ${name.trim()}`;
-    if (!ENDPOINT) {
-      const body = `${message.trim()}\n\n${name.trim()}\n${email.trim()}`;
-      window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      setStatus('mailed');
-      return;
-    }
-
+    // The site emails Ravi everything filled in (sendContactMessage). If email
+    // isn't set up yet, the visitor's own email app opens with it written out.
     setStatus('sending');
     try {
-      const response = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json', Accept: 'application/json'},
-        body: JSON.stringify({
-          name: name.trim(),
-          email: email.trim(),
-          topic: topic ?? 'Not given',
-          message: message.trim(),
-          _subject: subject,
-        }),
+      const result = await sendContactMessage({
+        name: name.trim(),
+        email: email.trim(),
+        topic,
+        message: message.trim(),
+        website: formRef.current?.querySelector<HTMLInputElement>('[name="website"]')?.value ?? '',
+        startedAt: startedAt.current,
       });
-      setStatus(response.ok ? 'sent' : 'error');
+      if (result.status === 'unconfigured') {
+        const subject = `${topic ?? 'Hello'} · from ${name.trim()}`;
+        const body = `${message.trim()}\n\n${name.trim()}\n${email.trim()}`;
+        window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        setStatus('mailed');
+        return;
+      }
+      setStatus(result.status === 'sent' ? 'sent' : 'error');
     } catch {
       setStatus('error');
     }
@@ -102,6 +100,7 @@ export function ContactForm() {
     setMessage('');
     setErrors({});
     setStatus('idle');
+    startedAt.current = 0;
   };
 
   const isDone = status === 'sent' || status === 'mailed';
@@ -114,6 +113,7 @@ export function ContactForm() {
         {isDone ? (
           <Reveal>
             <VStack gap={6} className="contact-form-done">
+              <MessageSent label={copy.illustration.sent} maxWidth={280} />
               <Heading level={3} style={{...typeRole('display-m'), letterSpacing: '-0.03em'}}>
                 <Lines text={copy.success.title} />
               </Heading>
@@ -130,7 +130,9 @@ export function ContactForm() {
             </VStack>
           </Reveal>
         ) : (
-          <form ref={formRef} className="contact-form" onSubmit={onSubmit} noValidate>
+          <form ref={formRef} className="contact-form" onSubmit={onSubmit} onInput={markStarted} noValidate>
+            {/* A field people never see; bots fill it in. */}
+            <input type="text" name="website" tabIndex={-1} autoComplete="off" className="cs-pdf-trap" aria-hidden />
             <VStack gap={10}>
               <Text type="large" color="secondary" textWrap="pretty">
                 {copy.intro}
@@ -221,12 +223,18 @@ export function ContactForm() {
                   isLoading={status === 'sending'}
                   endContent={<Icon icon={ArrowUpRight} size="sm" color="inherit" />}
                 />
-                {status === 'error' && (
-                  <Text role="alert" color="secondary" className="contact-form-error">
-                    {copy.error}
-                  </Text>
-                )}
               </HStack>
+              {/* Only when sending fails; fields to fix keep their own short lines. */}
+              {status === 'error' && (
+                <Reveal>
+                  <HStack gap={4} vAlign="center" wrap="wrap" role="alert" className="contact-form-problem">
+                    <MessageFailed label={copy.illustration.error} maxWidth={160} />
+                    <Text type="large" weight="medium" className="contact-form-error">
+                      {copy.error}
+                    </Text>
+                  </HStack>
+                </Reveal>
+              )}
             </VStack>
           </form>
         )}

@@ -238,9 +238,14 @@ function ShowcaseInspector({config, onChange}: Props<ShowcaseConfig>) {
     <VStack gap={6}>
       <MediaField label="Image or video" media={config.media} kinds={['image', 'video']} onChange={media => onChange({...config, media})} />
       <Section title="Presentation">
-        <SegmentedControl label="Width" value={config.width} onChange={value => onChange({...config, width: value as ShowcaseConfig['width']})} size="sm" layout="fill">
-          <SegmentedControlItem value="full" label="Edge to edge" />
-          <SegmentedControlItem value="wide" label="Page width" />
+        <SegmentedControl
+          label="Width"
+          value={config.width === 'frame' || config.width === 'wide' ? 'frame' : 'content'}
+          onChange={value => onChange({...config, width: value as ShowcaseConfig['width']})}
+          size="sm"
+          layout="fill">
+          <SegmentedControlItem value="content" label="Content width" />
+          <SegmentedControlItem value="frame" label="Page frame" />
         </SegmentedControl>
         {ratioSelector(config.ratio, value => onChange({...config, ratio: value as ShowcaseConfig['ratio']}))}
         <Selector label="Keep in view" options={FOCUS_POINTS} value={config.focus} onChange={focus => onChange({...config, focus})} size="sm" />

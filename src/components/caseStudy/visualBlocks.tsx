@@ -166,7 +166,11 @@ export function Comparison({config, edit}: {config: ComparisonConfig; edit?: Edi
 // ----------------------------------------------------------------------------
 export function Showcase({config, edit}: {config: ShowcaseConfig; edit?: EditHooks}) {
   return (
-    <figure className="vb vb-showcase" data-width={config.width} data-surface={config.surface} data-inset={config.inset}>
+    <figure
+      className="vb vb-showcase"
+      data-width={config.width === 'frame' || config.width === 'wide' ? 'frame' : 'content'}
+      data-surface={config.surface}
+      data-inset={config.inset}>
       <MediaView
         media={config.media}
         ratio={config.ratio}

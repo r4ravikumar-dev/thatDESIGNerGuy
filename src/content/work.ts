@@ -178,6 +178,25 @@ export const boardingPass = {
 
 /** A case study page's fixed copy (the story itself comes from the studio). */
 export const caseStudyPage = {
+  /** The downloadable versions, above the story. */
+  downloads: {
+    label: 'Prefer it offline?',
+    /** The button, with the file's format ("Download PDF"). */
+    button: 'Download {format}',
+  },
+  /** The end-of-story offer: the download, emailed to the visitor. {format} is PDF, presentation or document. */
+  pdfRequest: {
+    label: 'Take it with you',
+    title: 'Want this case study as a *{format}?*',
+    body: 'Leave your details and I’ll email it to you, ready to read offline or share with your team.',
+    open: 'Email me the {format}',
+    fields: {name: 'Your name', email: 'Email', phone: 'Mobile number'},
+    submit: 'Send me the {format}',
+    note: 'Your details only reach me. I use them to send the {format} and, if it helps, to follow up about the work.',
+    sentTitle: 'On its *way.*',
+    sentBody: 'Check your inbox at {email}. It can take a minute or two, and sometimes lands in spam.',
+    preview: 'This form sends emails once the case study is published.',
+  },
   next: 'Next case study',
   allWork: 'All work',
   closing: {

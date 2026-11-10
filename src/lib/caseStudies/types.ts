@@ -1,6 +1,21 @@
 import type {JSONContent} from '@tiptap/core';
 
 export type CaseStudyStatus = 'draft' | 'published';
+
+/** A downloadable version of the case study, separate from the written story. */
+/**
+ * The case study's one downloadable version (a PDF, a PowerPoint or a Word
+ * file), separate from the written story.
+ */
+export type CaseStudyDownload = {
+  kind: 'pdf' | 'slides' | 'doc';
+  /** Storage path in the case-study-media bucket. */
+  path: string;
+  /** The file's name, used for the downloaded file. */
+  name: string;
+  size: number;
+  mime: string;
+};
 export type CaseStudyLayout = 'wide' | 'split' | 'split-reverse';
 
 /** One row of public.case_studies (supabase/migrations/0001_case_studies.sql). */
@@ -23,6 +38,8 @@ export type CaseStudy = {
   is_featured: boolean;
   sort_order: number;
   seo_description: string;
+  /** The PDF and presentation versions offered for download. */
+  downloads: CaseStudyDownload[];
   content: JSONContent;
   /** The live version, taken at publish time (null until first published). */
   published: PublishedSnapshot | null;
@@ -50,6 +67,7 @@ export type CaseStudyMeta = Pick<
   | 'is_featured'
   | 'sort_order'
   | 'seo_description'
+  | 'downloads'
 >;
 
 /** Everything the editor saves in one go. */
@@ -79,4 +97,28 @@ export function slugify(text: string) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 80);
+}
+
+/** The file types a case study's download can be. */
+export const DOWNLOAD_EXTENSIONS = ['.pdf', '.pptx', '.doc', '.docx'] as const;
+
+/** The download's format from its file name, or null if it isn't allowed. */
+export function downloadKind(name: string): CaseStudyDownload['kind'] | null {
+  const lower = name.toLowerCase();
+  if (lower.endsWith('.pdf')) return 'pdf';
+  if (lower.endsWith('.pptx')) return 'slides';
+  if (lower.endsWith('.doc') || lower.endsWith('.docx')) return 'doc';
+  return null;
+}
+
+/** How the site names each format to visitors ("Email me the PDF"). */
+export const DOWNLOAD_FORMAT: Record<CaseStudyDownload['kind'], string> = {
+  pdf: 'PDF',
+  slides: 'presentation',
+  doc: 'document',
+};
+
+/** The case study's download (the first, for older case studies that had two). */
+export function primaryDownload(downloads: CaseStudyDownload[] | undefined | null) {
+  return downloads?.[0] ?? null;
 }

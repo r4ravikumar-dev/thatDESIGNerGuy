@@ -123,19 +123,11 @@ export function PortfolioHero() {
                     as="p"
                     textWrap="balance"
                     style={{
-                      ...typeRole('headline-m'),
+                      ...typeRole('tagline'),
                       fontWeight: 500,
-                      letterSpacing: '-0.01em',
-                      maxInlineSize: '22ch',
+                      maxInlineSize: '40ch',
                     }}>
                     <Lines text={hello.headline} />
-                  </Text>
-                  <Text
-                    type="large"
-                    color="secondary"
-                    textWrap="pretty"
-                    style={{maxInlineSize: '40ch'}}>
-                    {hello.supporting}
                   </Text>
                 </VStack>
               </Reveal>

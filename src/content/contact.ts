@@ -32,6 +32,10 @@ export const contactForm = {
     again: 'Send another message',
   },
   error: 'That didn’t go through. Give it another try.',
+  illustration: {
+    sent: 'An envelope with a blue tick: your message was sent',
+    error: 'An envelope in red with a warning mark: the message wasn’t sent',
+  },
   /** Shown under a field left empty or filled in wrongly. */
   required: {
     name: 'Tell me what to call you.',

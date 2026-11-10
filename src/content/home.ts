@@ -14,7 +14,6 @@ export const hero = {
     ],
     /** The signature line, under the name ("*word*" sets the serif accent). */
     headline: 'Making complicated things *feel* simpler.',
-    supporting: 'Mobile apps, digital products, and the details that make them work.',
     scroll: 'Scroll to explore',
     /** The portrait leads to the About page (the cursor's tag over it). */
     portraitAction: {label: 'Know more about Ravi', href: '/about'},

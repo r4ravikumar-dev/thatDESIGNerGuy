@@ -12,13 +12,13 @@ export type MediaKind = 'image' | 'video' | 'file';
 export const ACCEPT: Record<MediaKind, string> = {
   image: 'image/png,image/jpeg,image/webp,image/gif,image/avif,image/svg+xml',
   video: 'video/mp4,video/webm,video/quicktime',
-  file: '.pdf,.ppt,.pptx,.doc,.docx,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  file: '.pdf,.pptx,.doc,.docx,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 };
 
 export function kindOfFile(file: File): MediaKind | null {
   if (file.type.startsWith('image/')) return 'image';
   if (file.type.startsWith('video/')) return 'video';
-  if (/\.(pdf|pptx?|docx?)$/i.test(file.name)) return 'file';
+  if (/\.(pdf|pptx|docx?)$/i.test(file.name)) return 'file';
   return null;
 }
 

@@ -9,7 +9,7 @@ export const RESUME_FILE_NAME = 'Ravi-Kumar-Resume.pdf';
  * copy at the same time. Modified clicks (open in background tab, etc.) are
  * left to the browser. Without JavaScript the link still opens the PDF.
  */
-export function openResume(event: MouseEvent<HTMLAnchorElement>) {
+export function openResume(event: MouseEvent<HTMLElement>) {
   if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
     return;
   event.preventDefault();

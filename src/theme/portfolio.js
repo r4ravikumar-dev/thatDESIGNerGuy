@@ -225,6 +225,8 @@ export const portfolioTheme = {
     "--type-display-xl-leading": "1",
     "--type-hero-title-size": "4.5rem",
     "--type-hero-title-leading": "1.1",
+    "--type-tagline-size": "1.0625rem",
+    "--type-tagline-leading": "1.25",
     "--type-section-title-size": "3.5rem",
     "--type-section-title-leading": "1.1",
     "--type-display-l-size": "clamp(3.5rem, 1.8125rem + 1.875vw, 3.6875rem)",
@@ -286,6 +288,8 @@ export const portfolioTheme = {
     "--type-display-xl-leading": "portfolio",
     "--type-hero-title-size": "portfolio",
     "--type-hero-title-leading": "portfolio",
+    "--type-tagline-size": "portfolio",
+    "--type-tagline-leading": "portfolio",
     "--type-section-title-size": "portfolio",
     "--type-section-title-leading": "portfolio",
     "--type-display-l-size": "portfolio",
@@ -847,6 +851,7 @@ export const portfolioTheme = {
             "--type-display-xxl-size": "clamp(4rem, 2.1429rem + 7.619vw, 9rem)",
             "--type-display-xl-size": "clamp(3rem, 1.8857rem + 4.5714vw, 6rem)",
             "--type-hero-title-size": "clamp(2rem, 1.0714rem + 3.8095vw, 4.5rem)",
+            "--type-tagline-size": "1.0625rem",
             "--type-section-title-size": "clamp(1.75rem, 1.1rem + 2.6667vw, 3.5rem)",
             "--type-display-l-size": "clamp(2.75rem, 2.4714rem + 1.1429vw, 3.5rem)",
             "--type-display-m-size": "clamp(2.5rem, 2.3143rem + 0.7619vw, 3rem)",
@@ -881,6 +886,7 @@ export const portfolioTheme = {
         },
         "value": {
           "localTokens": {
+            "--type-tagline-size": "0.9375rem",
             "--type-label-xl-size": "1.0625rem",
             "--type-label-l-size": "1.0625rem",
             "--type-label-m-size": "0.9375rem",
@@ -906,6 +912,7 @@ export const portfolioTheme = {
         },
         "value": {
           "localTokens": {
+            "--type-tagline-size": "0.875rem",
             "--type-label-xl-size": "1.0625rem",
             "--type-label-l-size": "1rem",
             "--type-label-m-size": "0.875rem",

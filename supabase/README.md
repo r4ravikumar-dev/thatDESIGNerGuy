@@ -47,6 +47,15 @@ Every upload goes to Supabase Storage (bucket `case-study-media`) **and** gets a
 
 Editing always changes the **draft** (autosaved). **Publish** checks everything (required fields, every block's media and alt text, no unsafe links, no embedded data) and copies the draft into the **published** version the site reads. After that, edits stay in the draft until you press **Update**; the dashboard marks a live case study with "Unpublished changes" when it has some.
 
+## Downloads and the PDF request
+
+- **Downloads** (Case study tab): add a **PDF version** and a **Presentation** (PPT/PPTX). The page shows "Download PDF" and "Download presentation" buttons above the story. Run `supabase/migrations/0002_case_study_downloads.sql` once to add the column.
+- **Get the PDF by email**: when a case study has a PDF, its end offers "Email me the PDF". Visitors give their name, email and mobile; they're emailed a link to the PDF, and you're emailed their details. It sends through Gmail, so set in `.env.local` and Vercel:
+  - `GMAIL_USER`: `r4ravikumar2701@gmail.com`
+  - `GMAIL_APP_PASSWORD`: an app password from myaccount.google.com/apppasswords (you can reuse the one made for Supabase, or create one named "Portfolio site")
+  - `LEAD_NOTIFY_EMAIL` (optional): where request details go; defaults to `ADMIN_EMAIL`
+- Gmail allows about 500 emails a day from a personal account, far more than this needs.
+
 ## Good to know
 
 - Files are limited to **50 MB** each (the free-plan ceiling). For long videos, upload to YouTube, Vimeo or Loom and use **Video link**.

@@ -5,7 +5,9 @@ import {revalidatePath} from 'next/cache';
 import {createSupabaseServerClient, getOwner} from '@/lib/supabase/server';
 import {caseStudyTemplate} from '@/content/caseStudyTemplate';
 import {validateDocument} from '@/lib/caseStudies/validate';
+import {isStoragePath} from '@/lib/caseStudies/media';
 import {
+  downloadKind,
   missingForPublish,
   slugify,
   type CaseStudyDraft,
@@ -16,6 +18,20 @@ import {
 export type ActionResult = {ok: true; updatedAt?: string} | {ok: false; error: string};
 
 const LAYOUTS: CaseStudyLayout[] = ['wide', 'split', 'split-reverse'];
+
+/** One stored upload (.pdf, .pptx, .doc or .docx) with tidy fields. */
+function cleanDownloads(downloads: CaseStudyDraft['downloads'] | undefined): CaseStudyDraft['downloads'] {
+  return (downloads ?? [])
+    .filter(item => isStoragePath(item.path) && downloadKind(String(item.name ?? '')))
+    .slice(0, 1)
+    .map(item => ({
+      kind: downloadKind(String(item.name))!,
+      path: item.path,
+      name: String(item.name ?? '').slice(0, 200) || 'Case study',
+      size: Number(item.size) || 0,
+      mime: String(item.mime ?? ''),
+    }));
+}
 
 /** Every action checks the owner first (row-level security checks again). */
 async function ownerClient() {
@@ -74,6 +90,7 @@ export async function saveCaseStudy(id: string, draft: CaseStudyDraft): Promise<
         is_featured: Boolean(draft.is_featured),
         sort_order: Number.isFinite(draft.sort_order) ? Math.round(draft.sort_order) : 0,
         seo_description: draft.seo_description.trim(),
+        downloads: cleanDownloads(draft.downloads),
         content: draft.content,
       })
       .eq('id', id)
@@ -128,6 +145,7 @@ export async function publishCaseStudy(id: string, draft: CaseStudyDraft): Promi
       is_featured: current.is_featured,
       sort_order: current.sort_order,
       seo_description: current.seo_description,
+      downloads: current.downloads ?? [],
       content: current.content,
     };
     const previousSlug = (current.published as PublishedSnapshot | null)?.slug;

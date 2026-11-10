@@ -82,8 +82,8 @@ export function buildInsertCommands(editor: Editor, handlers: InsertHandlers): I
     {
       id: 'showcase',
       group: 'Visual',
-      label: 'Full-bleed showcase',
-      description: 'An image or video, edge to edge',
+      label: 'Showcase',
+      description: 'A large image or video, at content or page-frame width',
       icon: GalleryHorizontalEnd,
       keywords: 'hero full bleed wide showcase banner',
       run: block('showcase', defaultShowcase()),

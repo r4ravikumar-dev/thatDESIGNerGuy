@@ -5,7 +5,16 @@ import {Heading} from '@astryxdesign/core/Heading';
 import {Text} from '@astryxdesign/core/Text';
 import {caseStudyExtensions} from './schema';
 import {EmbedBlock, FileBlock, VideoBlock} from './blocks';
-import {Callout, Comparison, DeviceMockup, ImageGrid, Metrics, PullQuote, Showcase, SplitLayout} from './visualBlocks';
+import {
+  Callout,
+  Comparison,
+  DeviceMockup,
+  ImageGrid,
+  Metrics,
+  PullQuote,
+  Showcase,
+  SplitLayout,
+} from './visualBlocks';
 import {mediaUrl} from '@/lib/caseStudies/media';
 import {
   defaultComparison,
@@ -53,6 +62,32 @@ export function CaseStudyArticle({content}: {content: JSONContent}) {
     extensions: caseStudyExtensions,
     options: {
       nodeMapping: {
+        // Tables scroll sideways inside the column when they're wider than it.
+        table: ({children}: RenderProps) => (
+          <figure className="tableWrapper cs-table-wrap">
+            <table className="cs-table">
+              <tbody>{children}</tbody>
+            </table>
+          </figure>
+        ),
+        // A checklist on the live page is a record of what was done, not a form.
+        taskItem: ({node, children}: RenderProps) => {
+          const checked = Boolean(node.attrs?.checked);
+          return (
+            <li data-type="taskItem" data-checked={String(checked)}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  readOnly
+                  disabled
+                  aria-label={checked ? 'Done' : 'Not done'}
+                />
+              </label>
+              <div>{children}</div>
+            </li>
+          );
+        },
         heading: ({node, children}: RenderProps) => {
           const level = Number(node.attrs?.level ?? 2);
           const role = level <= 2 ? 'section-title' : level === 3 ? 'headline-l' : 'headline-s';
@@ -61,13 +96,22 @@ export function CaseStudyArticle({content}: {content: JSONContent}) {
               level={(level <= 2 ? 2 : level) as 2 | 3 | 4}
               textWrap="balance"
               className={level <= 2 ? 'cs-section-heading' : 'cs-heading'}
-              style={{...typeRole(role), letterSpacing: level <= 2 ? '-0.03em' : '-0.02em', ...align(node.attrs)}}>
+              style={{
+                ...typeRole(role),
+                letterSpacing: level <= 2 ? '-0.03em' : '-0.02em',
+                ...align(node.attrs),
+              }}>
               {children}
             </Heading>
           );
         },
         paragraph: ({node, children}: RenderProps) => (
-          <Text as="p" type="large" display="block" className="cs-paragraph" style={align(node.attrs)}>
+          <Text
+            as="p"
+            type="large"
+            display="block"
+            className="cs-paragraph"
+            style={align(node.attrs)}>
             {children}
           </Text>
         ),
@@ -109,17 +153,30 @@ export function CaseStudyArticle({content}: {content: JSONContent}) {
           return src ? <VideoBlock src={src} caption={String(node.attrs?.caption ?? '')} /> : null;
         },
         embed: ({node}: RenderProps) => (
-          <EmbedBlock src={String(node.attrs?.src ?? '')} caption={String(node.attrs?.caption ?? '')} />
+          <EmbedBlock
+            src={String(node.attrs?.src ?? '')}
+            caption={String(node.attrs?.caption ?? '')}
+          />
         ),
         callout: ({node, children}: RenderProps) => (
-          <Callout tone={(node.attrs?.tone as CalloutTone) ?? 'brand'} icon={(node.attrs?.icon as CalloutIcon) ?? 'lightbulb'}>
+          <Callout
+            tone={(node.attrs?.tone as CalloutTone) ?? 'brand'}
+            icon={(node.attrs?.icon as CalloutIcon) ?? 'lightbulb'}>
             {children}
           </Callout>
         ),
-        imageGrid: ({node}: RenderProps) => <ImageGrid config={configOf(node.attrs, defaultImageGrid)} />,
-        comparison: ({node}: RenderProps) => <Comparison config={configOf(node.attrs, defaultComparison)} />,
-        showcase: ({node}: RenderProps) => <Showcase config={configOf(node.attrs, defaultShowcase)} />,
-        deviceMockup: ({node}: RenderProps) => <DeviceMockup config={configOf(node.attrs, defaultDeviceMockup)} />,
+        imageGrid: ({node}: RenderProps) => (
+          <ImageGrid config={configOf(node.attrs, defaultImageGrid)} />
+        ),
+        comparison: ({node}: RenderProps) => (
+          <Comparison config={configOf(node.attrs, defaultComparison)} />
+        ),
+        showcase: ({node}: RenderProps) => (
+          <Showcase config={configOf(node.attrs, defaultShowcase)} />
+        ),
+        deviceMockup: ({node}: RenderProps) => (
+          <DeviceMockup config={configOf(node.attrs, defaultDeviceMockup)} />
+        ),
         metrics: ({node}: RenderProps) => <Metrics config={configOf(node.attrs, defaultMetrics)} />,
         splitLayout: ({node, children}: RenderProps) => (
           <SplitLayout config={configOf(node.attrs, defaultSplit)}>{children}</SplitLayout>

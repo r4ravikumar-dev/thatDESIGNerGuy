@@ -95,14 +95,19 @@ export const defaultComparison = (): ComparisonConfig => ({
 });
 
 // ----------------------------------------------------------------------------
-// 3. Full-bleed showcase
+// 3. Showcase
 // ----------------------------------------------------------------------------
 export type ShowcaseConfig = {
   media: MediaRef | null;
   ratio: Ratio;
   focus: string;
-  /** full: edge to edge of the screen; wide: the page frame's width. */
-  width: 'full' | 'wide';
+  /**
+   * content: the article's width, like the text and every other block
+   * (the default); frame: wider, up to the page's frame lines. Never edge
+   * to edge. Older documents may hold 'full' (shown at content width) or
+   * 'wide' (shown at the frame's width).
+   */
+  width: 'content' | 'frame' | 'full' | 'wide';
   surface: Surface;
   /** Breathing room around the media on its surface. */
   inset: Gap;
@@ -112,7 +117,7 @@ export const defaultShowcase = (): ShowcaseConfig => ({
   media: null,
   ratio: '16:9',
   focus: 'center',
-  width: 'full',
+  width: 'content',
   surface: 'none',
   inset: 'none',
   caption: '',
@@ -261,7 +266,7 @@ export const defaultMetrics = (): MetricsConfig => ({
 export const VISUAL_BLOCKS = {
   imageGrid: 'Image grid',
   comparison: 'Comparison',
-  showcase: 'Full-bleed showcase',
+  showcase: 'Showcase',
   deviceMockup: 'Device mockups',
   splitLayout: 'Split layout',
   pullQuote: 'Quote',

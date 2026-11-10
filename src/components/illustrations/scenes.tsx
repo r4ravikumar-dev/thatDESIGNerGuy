@@ -2,7 +2,7 @@
 
 import {useId, type CSSProperties} from 'react';
 import {motion} from 'framer-motion';
-import {ACCENT, Dot, Illustration, MUTED, Pulse, Stroke, Surface, Travel} from './Illustration';
+import {ACCENT, Dot, ERROR, Illustration, MUTED, Pulse, Stroke, Surface, Travel} from './Illustration';
 
 type SceneProps = {label?: string; maxWidth?: number};
 
@@ -759,6 +759,71 @@ export function LetsTalk({label, maxWidth = 340}: SceneProps) {
         <Dot order={3} cx={216} cy={154} r={5} />
       </g>
       <Pulse cx={196} cy={154} r={10} delay={0.4} />
+    </Illustration>
+  );
+}
+
+/** The envelope shared by the contact form's sent and error scenes. */
+const ENVELOPE =
+  'M70 70 h130 a10 10 0 0 1 10 10 v80 a10 10 0 0 1 -10 10 h-130 a10 10 0 0 1 -10 -10 v-80 a10 10 0 0 1 10 -10 Z';
+const ENVELOPE_FLAP = 'M64 76 L 135 126 L 206 76';
+const ENVELOPE_FOLDS = 'M64 166 L 116 120 M206 166 L 154 120';
+
+/**
+ * Contact form, sent: the message's envelope, a trail rising from it to a
+ * blue tick. In the loop a comet runs the trail, the tick ripples on
+ * arrival and the envelope floats: delivered.
+ */
+export function MessageSent({label, maxWidth = 300}: SceneProps) {
+  const trail = 'M210 90 C 236 84, 236 60, 254 54';
+  return (
+    <Illustration viewBox="0 0 320 200" label={label} maxWidth={maxWidth}>
+      <g className="ill-loop ill-float" style={{['--float' as string]: '4px'}}>
+        <Surface order={0} d={ENVELOPE} />
+        <Stroke order={0} d={ENVELOPE} />
+        <Stroke order={1} d={ENVELOPE_FLAP} />
+        <Stroke order={1} weight="fine" stroke={MUTED} d={ENVELOPE_FOLDS} />
+      </g>
+      <Stroke order={2} weight="fine" stroke={MUTED} strokeDasharray="2 6" d={trail} />
+      <Travel d={trail} duration={4} thickness={2.5} />
+      <Surface order={4} d="M272 46 m-24 0 a24 24 0 1 0 48 0 a24 24 0 1 0 -48 0" />
+      <Stroke order={4} stroke={ACCENT} d="M272 46 m-24 0 a24 24 0 1 0 48 0 a24 24 0 1 0 -48 0" />
+      <Stroke order={6} stroke={ACCENT} strokeWidth={2.5} d="M261 47 l8 8 l15 -17" />
+      <Pulse cx={272} cy={46} r={24} delay={0.6} />
+    </Illustration>
+  );
+}
+
+/**
+ * Contact form, not sent: the same envelope, all in red, its trail
+ * breaking off short of a red warning mark. In the loop the mark sways
+ * and ripples: something needs another look.
+ */
+export function MessageFailed({label, maxWidth = 300}: SceneProps) {
+  return (
+    <Illustration viewBox="0 0 320 200" label={label} maxWidth={maxWidth}>
+      <g style={{color: ERROR}}>
+        <Surface order={0} d={ENVELOPE} />
+        <Stroke order={0} d={ENVELOPE} />
+        <Stroke order={1} d={ENVELOPE_FLAP} />
+        <Stroke order={1} weight="fine" strokeOpacity={0.6} d={ENVELOPE_FOLDS} />
+        {/* The trail, broken: a plain path, since the draw-in would override the dashes. */}
+        <path
+          d="M210 90 C 222 87, 228 80, 232 74 M240 64 L 244 60"
+          fill="none"
+          stroke={ERROR}
+          strokeWidth={1}
+          strokeLinecap="round"
+          strokeDasharray="2 6"
+        />
+        <g className="ill-loop ill-sway" style={{transformBox: 'fill-box', transformOrigin: 'center'}}>
+          <Surface order={4} d="M272 46 m-24 0 a24 24 0 1 0 48 0 a24 24 0 1 0 -48 0" />
+          <Stroke order={4} stroke={ERROR} d="M272 46 m-24 0 a24 24 0 1 0 48 0 a24 24 0 1 0 -48 0" />
+          <Stroke order={6} stroke={ERROR} strokeWidth={2.5} d="M272 33 v16" />
+          <Dot order={7} cx={272} cy={58} r={2.5} fill={ERROR} />
+        </g>
+        <Pulse cx={272} cy={46} r={24} delay={0.6} stroke={ERROR} />
+      </g>
     </Illustration>
   );
 }
