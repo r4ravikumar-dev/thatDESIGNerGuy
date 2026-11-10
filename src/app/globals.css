@@ -174,7 +174,8 @@ html {
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#) {
   position: relative;
   isolation: isolate;
@@ -204,12 +205,14 @@ html {
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#)::before,
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#)::after {
   content: '';
   position: absolute;
@@ -224,7 +227,8 @@ html {
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#)::before {
   background:
     radial-gradient(90% 140% at 0% 0%, var(--lg-sheen) 0%, transparent 60%),
@@ -235,7 +239,8 @@ html {
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#)::after {
   background: radial-gradient(140% 110% at 50% 140%, var(--lg-glow) 0%, transparent 72%);
   opacity: 0.9;
@@ -243,19 +248,22 @@ html {
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#):hover {
   --lg-ring: var(--lg-ring-hover);
 }
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#):hover::before,
 :is(
     .astryx-button:is([data-variant='primary'], [data-variant='secondary']),
     .astryx-top-nav-item:is([aria-current='page'], :focus-visible),
-    .cursor-project-tag
+    .cursor-project-tag,
+    .studio-switch .astryx-segmented-control-item[data-selected]
   ):not(#\#):not(#\#):not(#\#):not(#\#):hover::after {
   opacity: 1;
 }
@@ -1333,7 +1341,8 @@ html {
   inline-size: var(--header-height);
   block-size: var(--header-height);
   border-inline-start: 1px solid var(--color-border);
-  color: var(--color-text-primary);
+  /* The resume and LinkedIn icons, in brand blue. */
+  color: var(--color-brand-text);
   transition:
     color 200ms ease,
     background-color 200ms ease;
@@ -3231,8 +3240,24 @@ dialog.pass-dialog > * {
 /* ---------- Popup backdrop ---------- */
 /* The scrim fades in with the popup instead of snapping to dark first, and
    stays light enough (with a soft blur) that the page still shows behind. */
+/* The popup itself reads as a card: the popover surface, a visible edge
+   and a real drop shadow, so it never melts into the page (dark mode
+   especially). */
+dialog.astryx-dialog {
+  background-color: var(--color-background-popover);
+  border: 1px solid var(--color-border-emphasized);
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-highlight),
+    0 24px 64px -16px rgb(0 0 0 / 0.55),
+    0 2px 8px rgb(0 0 0 / 0.25);
+}
+/* Confirmations get room to breathe inside the card. */
+dialog.astryx-alert-dialog > div {
+  padding: var(--spacing-6);
+}
 dialog.astryx-dialog::backdrop {
-  background-color: color-mix(in srgb, var(--color-overlay) 55%, transparent);
+  /* Dim the page so the card stands forward; the blur keeps it visible. */
+  background-color: light-dark(rgb(15 15 20 / 0.35), rgb(0 0 0 / 0.6));
   backdrop-filter: blur(6px);
   animation: popup-backdrop-in 240ms cubic-bezier(0.2, 0, 0, 1);
 }
@@ -4327,4 +4352,212 @@ dialog.astryx-dialog::backdrop {
   block-size: 1px;
   opacity: 0;
   pointer-events: none;
+}
+
+/* Side work (SideWorkTicker): a looping row of small pieces on Home and Work. */
+.side-work {
+  /* A lighter section than the main chapters: it sizes to its content,
+     with half the usual padding, instead of taking a whole screen. */
+  padding-block: calc(var(--space-section) / 2);
+  gap: var(--space-block);
+}
+.side-work-ticker {
+  position: relative;
+  overflow: hidden;
+  /* Outside the frame lines the cards all but vanish; inside, they fade up
+     to full over a short run, so the lines read as the ticker's edges. */
+  --side-work-fade: calc(var(--frame-inset) + clamp(3rem, 10vw, 10rem));
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    rgb(0 0 0 / 0.04) var(--frame-inset),
+    black var(--side-work-fade),
+    black calc(100% - var(--side-work-fade)),
+    rgb(0 0 0 / 0.04) calc(100% - var(--frame-inset)),
+    transparent 100%
+  );
+}
+/* A frosted blur over each edge, strongest at the screen edge and easing
+   off just inside the frame line. */
+.side-work-ticker::before,
+.side-work-ticker::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  z-index: 1;
+  inline-size: var(--side-work-fade);
+  backdrop-filter: blur(var(--spacing-4));
+  -webkit-backdrop-filter: blur(var(--spacing-4));
+  pointer-events: none;
+}
+.side-work-ticker::before {
+  inset-inline-start: 0;
+  mask-image: linear-gradient(to right, black calc(100% - var(--spacing-12)), transparent);
+}
+.side-work-ticker::after {
+  inset-inline-end: 0;
+  mask-image: linear-gradient(to left, black calc(100% - var(--spacing-12)), transparent);
+}
+.side-work-track {
+  inline-size: max-content;
+  animation: side-work-loop var(--side-work-duration, 40s) linear infinite;
+}
+/* Hovering slows the loop down (SideWorkTicker eases its speed); keyboard
+   focus and the pause button stop it. */
+.side-work-ticker:focus-within .side-work-track,
+.side-work-ticker[data-paused] .side-work-track {
+  animation-play-state: paused;
+}
+@keyframes side-work-loop {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.side-work-group {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex-wrap: nowrap;
+}
+.side-work-card {
+  flex: none;
+  /* Every photo shares one height; its width follows its proportions. */
+  block-size: clamp(13rem, 22vw, 20rem);
+  overflow: hidden;
+  border-radius: var(--radius-container);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background-muted);
+  /* Space after every photo, the last included, so the loop's seam matches. */
+  margin-inline-end: var(--spacing-6);
+}
+.side-work-card img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+.side-work-controls {
+  padding-block-start: var(--spacing-4);
+}
+/* Reduced motion: no loop, just a row to scroll through, without the copy. */
+@media (prefers-reduced-motion: reduce) {
+  .side-work-ticker::before,
+  .side-work-ticker::after {
+    display: none;
+  }
+  .side-work-ticker {
+    overflow-x: auto;
+    mask-image: none;
+    scroll-snap-type: x mandatory;
+    padding-inline: calc(var(--space-gutter) + var(--frame-padding));
+  }
+  .side-work-track {
+    animation: none;
+  }
+  .side-work-card {
+    scroll-snap-align: start;
+  }
+  .side-work-copy,
+  .side-work-controls {
+    display: none;
+  }
+}
+
+/* Studio: Side work (SideWorkManager). */
+.side-work-studio-item {
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+}
+.side-work-studio-image {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-container);
+  background: var(--color-background-muted);
+}
+.side-work-studio-error {
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+}
+
+/* Inner-page heroes (Work, About, Contact) with the dot grid behind them
+   (EditorialHero hasBackdrop, RippleGrid variant "hero"). The grid runs the
+   full width; the text sits above it. */
+.hero-backdrop {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.hero-backdrop > :not(.ripple-grid) {
+  position: relative;
+}
+.ripple-grid.ripple-grid-hero {
+  z-index: -1;
+  opacity: 1;
+  /* The fade: 40% at the very top, evenly down to 0% at 70% of the hero's
+     height. The wave and ripples play inside it and never break through. */
+  mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.4) 0%, transparent 70%);
+  -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.4) 0%, transparent 70%);
+}
+/* The studio's Case studies / Side work switch, in the CTAs' liquid glass:
+   the track is frosted clear glass (like a secondary CTA) and the chosen
+   section is brand-blue tinted glass (like the primary CTA; the shared
+   material is above). The control's sliding highlight copies the chosen
+   segment's surface, so the glass slides across; labels ease their colour. */
+.studio-switch .astryx-segmented-control {
+  background-color: light-dark(
+    color-mix(in srgb, var(--color-background-surface) 40%, transparent),
+    rgb(14 14 18 / 0.5)
+  );
+  backdrop-filter: blur(var(--spacing-3)) saturate(1.4);
+  -webkit-backdrop-filter: blur(var(--spacing-3)) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-highlight),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-brand-text) 16%, transparent),
+    0 10px 26px -14px var(--glass-shadow);
+}
+.studio-switch .astryx-segmented-control-item {
+  transition: color 240ms ease;
+}
+.studio-switch .astryx-segmented-control-item[data-selected] {
+  --lg-fill: color-mix(in srgb, var(--color-brand) 94%, transparent);
+  --lg-fill-hover: var(--color-brand);
+  --lg-fill-solid: var(--color-brand);
+  --lg-text: rgb(255 255 255);
+  --lg-light: light-dark(rgb(255 255 255 / 0.7), rgb(255 255 255 / 0.34));
+  --lg-sheen: light-dark(rgb(255 255 255 / 0.2), rgb(255 255 255 / 0.12));
+  --lg-ring: rgb(255 255 255 / 0.16);
+  --lg-ring-hover: rgb(255 255 255 / 0.28);
+  --lg-glow: light-dark(rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.1));
+  --lg-drop: 0 8px 20px -12px color-mix(in srgb, var(--color-brand) 70%, transparent);
+}
+/* Remove a side work photo: a quiet button in the destructive red. */
+.side-work-remove:not(#\#) {
+  color: var(--color-error);
+}
+.side-work-remove:not(#\#):hover {
+  background-color: color-mix(in srgb, var(--color-error) 12%, transparent);
+}
+/* A studio section arriving after a switch (template.tsx): fades and rises. */
+.studio-section-enter {
+  animation: studio-section-enter 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes studio-section-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--spacing-2));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-section-enter {
+    animation-duration: 1ms;
+  }
+}
+/* 64px between the studio switch and the section under it. */
+.studio-switch {
+  margin-block-end: calc(var(--spacing-8) * 2 - var(--spacing-6));
 }

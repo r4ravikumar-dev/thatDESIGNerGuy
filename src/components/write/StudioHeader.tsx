@@ -18,7 +18,7 @@ export function StudioHeader({children}: {children?: React.ReactNode}) {
       <HStack gap={4} vAlign="center">
         <NextLink href="/write" className="studio-home">
           <Text type="supporting" style={EYEBROW_STYLE}>
-            Studio · Case studies
+            Studio
           </Text>
         </NextLink>
         {children}

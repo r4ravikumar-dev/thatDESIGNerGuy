@@ -51,7 +51,7 @@ export type WorkFeature = {
 /** Work page copy (V2), in page order. "*word*" sets the italic serif accent. */
 export const workPage = {
   hero: {
-    label: 'Selected work · 01–03',
+    label: 'Selected work',
     title: 'A closer look at the things I’ve *worked on.*',
     description:
       'A few projects from my time at Visit Health. Different people, different needs, and different problems to figure out along the way.',

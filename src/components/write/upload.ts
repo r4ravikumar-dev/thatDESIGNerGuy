@@ -53,9 +53,10 @@ async function measure(file: File, kind: MediaKind): Promise<{width: number | nu
 /**
  * Uploads a file to the case study's folder in storage and records it in
  * public.assets (path, type, size, pixel size, original name). Returns the
- * asset row. Row-level security refuses anyone but the owner.
+ * asset row. Row-level security refuses anyone but the owner. With no case
+ * study (null), it goes in a shared folder such as side-work/.
  */
-export async function uploadAsset(caseStudyId: string, file: File): Promise<Asset> {
+export async function uploadAsset(caseStudyId: string | null, file: File, folder = caseStudyId ?? 'shared'): Promise<Asset> {
   const kind = kindOfFile(file);
   if (!kind) throw new Error(`${file.name} isn’t a supported image, video or document.`);
   if (file.size > MAX_UPLOAD_BYTES) {
@@ -63,7 +64,7 @@ export async function uploadAsset(caseStudyId: string, file: File): Promise<Asse
   }
   const {width, height} = await measure(file, kind);
   const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/^-+|-+$/g, '') || 'file';
-  const path = `${caseStudyId}/${Date.now()}-${safeName}`;
+  const path = `${folder}/${Date.now()}-${safeName}`;
 
   const supabase = createSupabaseBrowserClient();
   const {error: uploadError} = await supabase.storage.from(MEDIA_BUCKET).upload(path, file, {

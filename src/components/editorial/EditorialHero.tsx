@@ -14,6 +14,7 @@ import {Lines} from '@/components/storytelling/Lines';
 import {Container} from '@/components/layout/Container';
 import {typeRole} from '@/theme/typeScale';
 import {IndexLabel} from './IndexLabel';
+import {RippleGrid} from '@/components/illustrations/RippleGrid';
 import {EYEBROW_STYLE} from '@/theme/eyebrow';
 
 type HeroAction = {label: string; href: string; direction?: 'forward' | 'down' | 'out'};
@@ -36,6 +37,8 @@ type EditorialHeroProps = {
   align?: 'start' | 'center';
   /** The column it sits in: the page's default, or the narrow reading column (case studies). */
   width?: 'default' | 'narrow';
+  /** A dot grid behind it, fading down from the top, with a colour wave and pointer ripples. */
+  hasBackdrop?: boolean;
 };
 
 /**
@@ -56,6 +59,7 @@ export function EditorialHero({
   isFullHeight = false,
   align = 'start',
   width = 'default',
+  hasBackdrop = false,
 }: EditorialHeroProps) {
   const titleRef = useTextReveal({delay: 0.1});
   const isCentered = align === 'center' && !illustration;
@@ -66,6 +70,7 @@ export function EditorialHero({
       as="header"
       gap={0}
       justify="between"
+      className={hasBackdrop ? 'hero-backdrop' : undefined}
       style={{
         minHeight: isFullHeight
           ? 'calc(100svh - var(--nav-padding-block) * 2 - var(--size-element-lg))'
@@ -73,6 +78,7 @@ export function EditorialHero({
         paddingBlockStart: 'var(--space-chapter-gap)',
         paddingBlockEnd: 'var(--space-block)',
       }}>
+      {hasBackdrop && <RippleGrid variant="hero" />}
       <Container gap={0} size={width} style={{flex: 1}}>
         <Grid
           columns={1}

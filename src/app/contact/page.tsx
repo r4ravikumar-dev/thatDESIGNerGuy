@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <VStack gap={0}>
-      <EditorialHero {...contactHero} align="center" />
+      <EditorialHero {...contactHero} align="center" hasBackdrop />
 
       {/* 01 The form */}
       <Chapter label={contactForm.label}>
