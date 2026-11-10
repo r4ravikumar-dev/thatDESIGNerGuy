@@ -4557,3 +4557,7 @@ dialog.astryx-dialog::backdrop {
     animation-duration: 1ms;
   }
 }
+/* 64px between the studio switch and the section under it. */
+.studio-switch {
+  margin-block-end: calc(var(--spacing-8) * 2 - var(--spacing-6));
+}
