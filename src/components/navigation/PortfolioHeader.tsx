@@ -147,7 +147,7 @@ export function PortfolioHeader() {
           target="_blank"
           rel="noopener noreferrer"
           onClick={openResume}
-          aria-label="Résumé (PDF, opens in a new tab and downloads)">
+          aria-label="Resume (PDF, opens in a new tab and downloads)">
           <PdfIcon />
         </a>
         {site.linkedinUrl && (

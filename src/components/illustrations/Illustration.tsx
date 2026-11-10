@@ -7,6 +7,8 @@ import {motion, useInView, useReducedMotion, type Variants} from 'framer-motion'
 export const INK = 'currentColor';
 export const ACCENT = 'var(--color-brand-text)';
 export const MUTED = 'var(--color-text-secondary)';
+/** Error scenes are drawn in red instead of the text colour and brand blue. */
+export const ERROR = 'var(--color-error)';
 
 const draw: Variants = {
   off: {pathLength: 0, opacity: 0},
@@ -94,11 +96,14 @@ export function Pulse({
   cy,
   r = 8,
   delay = 0,
+  stroke = ACCENT,
 }: {
   cx: number;
   cy: number;
   r?: number;
   delay?: number;
+  /** The ring's colour (brand blue; red for error scenes). */
+  stroke?: string;
 }) {
   return (
     <circle
@@ -107,7 +112,7 @@ export function Pulse({
       cy={cy}
       r={r}
       fill="none"
-      stroke={ACCENT}
+      stroke={stroke}
       strokeWidth={1.5}
       style={{animationDelay: `${delay}s`}}
     />

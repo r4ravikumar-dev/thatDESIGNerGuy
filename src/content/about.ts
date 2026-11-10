@@ -16,6 +16,10 @@ export const profile = {
   quote: 'I like taking things apart, not to break them, but to understand what makes them *work.*',
   bio: 'I’m currently working as a UI/UX Designer at Visit Health, where I’ve been involved in building new features and rethinking existing experiences across mobile products.',
   team: 'My work has taken me through women’s wellness, emotional wellness, dental care, and design systems. I enjoy getting into the details, exploring different possibilities, and working with people who aren’t afraid to ask one more question.',
+  /** The resume, under the bio: opens the PDF and saves a copy. */
+  resume: {
+    label: 'Take my resume with you',
+  },
 };
 
 export const beliefs = {

@@ -6,23 +6,25 @@ import {Heading} from '@astryxdesign/core/Heading';
 import {Text} from '@astryxdesign/core/Text';
 import {TextInput} from '@astryxdesign/core/TextInput';
 import {TextArea} from '@astryxdesign/core/TextArea';
-import {NumberInput} from '@astryxdesign/core/NumberInput';
 import {Selector} from '@astryxdesign/core/Selector';
 import {Switch} from '@astryxdesign/core/Switch';
 import {Button} from '@astryxdesign/core/Button';
 import {Divider} from '@astryxdesign/core/Divider';
 import {Icon} from '@astryxdesign/core/Icon';
-import {ImageUp, Trash2} from 'lucide-react';
-import {slugify, type CaseStudyMeta} from '@/lib/caseStudies/types';
+import {FileText, ImageUp, Trash2, Upload} from 'lucide-react';
+import {
+  DOWNLOAD_EXTENSIONS,
+  DOWNLOAD_FORMAT,
+  downloadKind,
+  primaryDownload,
+  slugify,
+  type CaseStudyDownload,
+  type CaseStudyMeta,
+} from '@/lib/caseStudies/types';
+import {formatBytes} from '@/lib/caseStudies/embeds';
 import {useMedia} from './MediaLibrary';
 import {mediaUrl} from '@/lib/caseStudies/media';
 import {EYEBROW_STYLE} from '@/theme/eyebrow';
-
-const LAYOUTS = [
-  {value: 'wide', label: 'Wide', description: 'Full-width picture, text beneath'},
-  {value: 'split', label: 'Split', description: 'Text left, picture right'},
-  {value: 'split-reverse', label: 'Split, reversed', description: 'Picture left, text right'},
-];
 
 const FOCUS = [
   {value: 'center', label: 'Centre'},
@@ -93,6 +95,71 @@ function ImageField({
             label="Remove"
             variant="ghost"
             size="sm"
+            onClick={() => onChange(null)}
+            icon={<Icon icon={Trash2} size="sm" color="inherit" />}
+          />
+        )}
+      </HStack>
+    </VStack>
+  );
+}
+
+/**
+ * The case study's one download (.pdf, .pptx, .doc or .docx): shows the
+ * chosen file, chooses another from the media library (or uploads it), or
+ * removes it.
+ */
+function DownloadField({
+  file,
+  onChange,
+}: {
+  file: CaseStudyDownload | null;
+  onChange: (file: CaseStudyDownload | null) => void;
+}) {
+  const media = useMedia();
+  const [error, setError] = useState('');
+  const choose = async () => {
+    const asset = await media.pick('file');
+    if (!asset) return;
+    const kind = downloadKind(asset.original_name);
+    if (!kind) {
+      setError(`Choose a ${DOWNLOAD_EXTENSIONS.join(', ')} file.`);
+      return;
+    }
+    setError('');
+    onChange({kind, path: asset.path, name: asset.original_name, size: asset.size, mime: asset.mime});
+  };
+  return (
+    <VStack gap={2} className="inspector-item">
+      <HStack gap={2} vAlign="center">
+        <Icon icon={FileText} size="sm" color="inherit" />
+        <Text weight="semibold" maxLines={1}>
+          {file ? file.name : 'No file added'}
+        </Text>
+      </HStack>
+      <Text type="supporting" color="secondary" maxLines={1}>
+        {file
+          ? [DOWNLOAD_FORMAT[file.kind], formatBytes(file.size)].filter(Boolean).join(' · ')
+          : `${DOWNLOAD_EXTENSIONS.join(', ')} only`}
+      </Text>
+      {error && (
+        <Text type="supporting" style={{color: 'var(--color-text-error)'}}>
+          {error}
+        </Text>
+      )}
+      <HStack gap={2}>
+        <Button
+          label={file ? 'Replace' : 'Add file'}
+          size="sm"
+          variant="secondary"
+          onClick={choose}
+          icon={<Icon icon={Upload} size="sm" color="inherit" />}
+        />
+        {file && (
+          <Button
+            label="Remove"
+            size="sm"
+            variant="ghost"
             onClick={() => onChange(null)}
             icon={<Icon icon={Trash2} size="sm" color="inherit" />}
           />
@@ -209,19 +276,6 @@ export function SettingsPanel({
           onChange={value => onChange({focus: value})}
           width="100%"
         />
-        <Selector
-          label="Layout on the Work page"
-          options={LAYOUTS}
-          value={meta.layout}
-          onChange={value => onChange({layout: value as CaseStudyMeta['layout']})}
-        />
-        <NumberInput
-          label="Order"
-          description="Lower numbers come first."
-          value={meta.sort_order}
-          onChange={value => onChange({sort_order: typeof value === 'number' ? value : 0})}
-          step={1}
-        />
         <Switch
           label="Show on Home"
           description="Adds it to the Work showcase on the homepage."
@@ -234,6 +288,17 @@ export function SettingsPanel({
 
       <Group title="Opening visual" hint="The large picture at the top of the case study page (optional).">
         <ImageField label="Cover" url={meta.cover_url} onChange={path => onChange({cover_url: path})} />
+      </Group>
+
+      <Divider />
+
+      <Group
+        title="Downloads"
+        hint="Optional. One file (PDF, PowerPoint or Word), separate from the written story. Visitors can download it, or ask for it by email at the end.">
+        <DownloadField
+          file={primaryDownload(meta.downloads)}
+          onChange={file => onChange({downloads: file ? [file] : []})}
+        />
       </Group>
 
       <Divider />

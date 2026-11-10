@@ -10,6 +10,7 @@ import {typeRole, type TypeRole} from '@/theme/typeScale';
 import {IndexLabel} from './IndexLabel';
 
 type ChapterHeaderProps = {
+  /** Section number. No longer shown: section labels read as words only. */
   index?: number;
   label?: string;
   /** Use "\n" for a line break and "*word*" for the italic serif accent. */
@@ -27,7 +28,6 @@ type ChapterHeaderProps = {
  * intro pushed to the right. The scale contrast is the point.
  */
 export function ChapterHeader({
-  index,
   label,
   title,
   intro,
@@ -39,7 +39,7 @@ export function ChapterHeader({
     <VStack gap={6}>
       {label && (
         <Reveal>
-          <IndexLabel index={index}>{label}</IndexLabel>
+          <IndexLabel>{label}</IndexLabel>
         </Reveal>
       )}
       {/* The title rises line by line out of its masks (useTextReveal). */}

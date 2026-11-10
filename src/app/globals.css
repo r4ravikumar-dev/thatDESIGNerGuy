@@ -1455,6 +1455,45 @@ html {
     -apple-system,
     sans-serif;
 }
+/* Phones and tablets: the portrait and the name fill exactly the first
+   screen. The portrait takes the top part; the label, name, tagline and
+   scroll cue spread evenly through the rest, the cue resting on the bottom
+   edge. */
+@media (max-width: 1023.98px) {
+  .portfolio-hero {
+    --hero-photo-block: calc((100svh - var(--header-height)) * 0.45);
+  }
+  .portfolio-hero-photo {
+    block-size: var(--hero-photo-block);
+    padding-block: var(--spacing-4) 0;
+    box-sizing: border-box;
+  }
+  .portfolio-hero-photo .hero-portrait {
+    inline-size: auto;
+    max-inline-size: min(100%, 34rem);
+    max-block-size: calc(var(--hero-photo-block) - var(--spacing-4));
+    margin-inline: auto;
+  }
+  .portfolio-hero-block:has(.portfolio-hero-names) {
+    min-block-size: calc(100svh - var(--header-height) - var(--hero-photo-block));
+    padding-block: var(--spacing-5) var(--spacing-4);
+  }
+  /* Its one inner stack holds the label, name, tagline and cue. It fills the
+     block; the label, name and tagline stay together as one group (their
+     normal gaps), centred in the space under the portrait, and the scroll
+     cue rests on the bottom edge. */
+  .portfolio-hero-block:has(.portfolio-hero-names) > .astryx-stack {
+    flex: 1;
+  }
+  .portfolio-hero-block:has(.portfolio-hero-names) > .astryx-stack > :first-child,
+  .portfolio-hero-block:has(.portfolio-hero-names) > .astryx-stack > :last-child {
+    margin-block-start: auto;
+  }
+  /* The scroll cue sits centred at the bottom of the screen. */
+  .portfolio-hero-block:has(.portfolio-hero-names) > .astryx-stack > :last-child {
+    align-self: center;
+  }
+}
 @media (min-width: 1024px) {
   .portfolio-hero {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -2818,7 +2857,18 @@ html.lenis {
   border-color: var(--color-brand-text);
 }
 .contact-form-error {
-  color: var(--color-text-error);
+  color: var(--color-error);
+}
+/* The red illustration and its line, under Send. */
+.contact-form-problem {
+  padding: var(--spacing-4) var(--spacing-5);
+  border: 1px solid color-mix(in oklab, var(--color-error) 40%, transparent);
+  border-radius: var(--radius-container);
+  background: var(--color-error-muted);
+}
+.contact-form-problem .illustration {
+  flex: 0 0 auto;
+  inline-size: 160px;
 }
 /* The direct route: just two cells (email, LinkedIn) at every width from 768px. */
 @media (min-width: 768px) {
@@ -3325,6 +3375,178 @@ dialog.astryx-dialog::backdrop {
   border-radius: 2px;
   padding-inline: 0.1em;
 }
+/* Inline code, sub and superscript. */
+.cs-prose :not(pre) > code,
+.write-prose :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-inner);
+  background: var(--color-background-muted);
+  font-family: var(--font-family-code);
+  font-size: 0.9em;
+}
+.cs-prose sub,
+.cs-prose sup,
+.write-prose sub,
+.write-prose sup {
+  font-size: 0.75em;
+  line-height: 0;
+}
+/* Checklists: a box and its text on one line, nested lists indented. */
+.cs-prose ul[data-type='taskList'],
+.write-prose ul[data-type='taskList'] {
+  list-style: none;
+  padding-inline-start: 0;
+}
+.cs-prose ul[data-type='taskList'] ul[data-type='taskList'],
+.write-prose ul[data-type='taskList'] ul[data-type='taskList'] {
+  padding-inline-start: var(--spacing-6);
+}
+.cs-prose li[data-checked],
+.write-prose li[data-checked] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+}
+.cs-prose li[data-checked] > label,
+.write-prose li[data-checked] > label {
+  flex: 0 0 auto;
+  margin-block-start: 0.3em;
+}
+.cs-prose li[data-checked] > label input,
+.write-prose li[data-checked] > label input {
+  accent-color: var(--color-brand-text);
+}
+.cs-prose li[data-checked] > div,
+.write-prose li[data-checked] > div {
+  flex: 1;
+  min-inline-size: 0;
+}
+.cs-prose li[data-checked='true'] > div,
+.write-prose li[data-checked='true'] > div {
+  color: var(--color-text-tertiary, var(--color-text-secondary));
+  text-decoration: line-through;
+}
+/* The live page's checkboxes are a record, not a control. */
+.cs-prose li[data-checked] input {
+  pointer-events: none;
+}
+/* Space blocks: empty air on the page, a dashed outline only while writing. */
+.cs-spacer[data-size='sm'] {
+  block-size: var(--spacing-6);
+}
+.cs-spacer,
+.cs-spacer[data-size='md'] {
+  block-size: var(--spacing-12);
+}
+.cs-spacer[data-size='lg'] {
+  block-size: var(--spacing-20, calc(var(--spacing-12) * 2));
+}
+.cs-spacer[data-size='xl'] {
+  block-size: var(--spacing-32, calc(var(--spacing-12) * 3));
+}
+.write-prose .cs-spacer {
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-inner);
+}
+.write-prose .cs-spacer.ProseMirror-selectednode {
+  border-color: var(--color-brand-text);
+}
+/* Collapsible sections: a summary line that opens to more. */
+.cs-prose details.cs-details,
+.write-prose [data-type='details'] {
+  border-block: 1px solid var(--color-border);
+  padding-block: var(--spacing-4);
+}
+.cs-prose details.cs-details > summary {
+  cursor: pointer;
+  color: var(--color-text-primary);
+  font-weight: 600;
+  list-style-position: outside;
+}
+.cs-prose details.cs-details > summary::marker {
+  color: var(--color-brand-text);
+}
+.cs-prose details.cs-details > [data-type='detailsContent'] {
+  display: grid;
+  gap: var(--spacing-4);
+  padding-block-start: var(--spacing-4);
+  color: var(--color-text-secondary);
+}
+.write-prose [data-type='details'] {
+  display: flex;
+  gap: var(--spacing-3);
+}
+.write-prose [data-type='details'] > button {
+  flex: 0 0 auto;
+  inline-size: var(--spacing-6);
+  block-size: var(--spacing-6);
+  border: 0;
+  border-radius: var(--radius-inner);
+  background: var(--color-background-muted);
+  color: var(--color-brand-text);
+  cursor: pointer;
+}
+.write-prose [data-type='details'] > button::before {
+  content: '▸';
+}
+.write-prose [data-type='details'].is-open > button::before {
+  content: '▾';
+}
+.write-prose [data-type='details'] > div {
+  flex: 1;
+  display: grid;
+  gap: var(--spacing-3);
+}
+.write-prose [data-type='details'] summary {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+.write-prose [data-type='details']:not(.is-open) [data-type='detailsContent'] {
+  display: none;
+}
+/* Tables: hairline rows, a tinted header, scrolling sideways when wide. */
+.cs-prose .tableWrapper,
+.write-prose .tableWrapper {
+  margin: 0;
+  overflow-x: auto;
+}
+.cs-prose table,
+.write-prose table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  color: var(--color-text-secondary);
+}
+.cs-prose th,
+.cs-prose td,
+.write-prose th,
+.write-prose td {
+  position: relative;
+  min-inline-size: 6rem;
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-border);
+  text-align: start;
+  vertical-align: top;
+}
+.cs-prose th,
+.write-prose th {
+  background: var(--color-background-muted);
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+.cs-prose th > p,
+.cs-prose td > p,
+.write-prose th > p,
+.write-prose td > p {
+  margin: 0;
+}
+.write-prose .selectedCell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, var(--color-brand-text) 14%, transparent);
+  pointer-events: none;
+}
 
 /* Media: images, video and embeds sit in the work-frame style. */
 .cs-media {
@@ -3473,9 +3695,38 @@ dialog.astryx-dialog::backdrop {
   position: sticky;
   inset-block-start: 57px;
   z-index: 10;
-  padding: var(--spacing-2) var(--spacing-5);
+  padding: var(--spacing-3) var(--spacing-5) var(--spacing-3);
   border-block-end: 1px solid var(--color-border);
   background: var(--color-background-surface);
+}
+/* The tab row, then the open tab's tools. */
+.write-tool-separator {
+  align-self: stretch;
+  margin-inline: var(--spacing-1);
+}
+.write-tool-tabs {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding-block-end: var(--spacing-1);
+}
+/* Undo and redo at the left edge, the tabs in the middle, Insert at the right. */
+.write-tool-quick {
+  grid-column: 1;
+  justify-self: start;
+}
+.write-tool-centre {
+  grid-column: 2;
+  min-inline-size: 0;
+}
+.write-tool-end {
+  grid-column: 3;
+  justify-self: end;
+}
+.write-tool-panel {
+  justify-content: center;
+  min-block-size: var(--spacing-10);
+  padding-block: var(--spacing-2) 0;
 }
 .write-document {
   padding: var(--spacing-10) var(--spacing-5) 40svh;
@@ -3694,26 +3945,21 @@ dialog.astryx-dialog::backdrop {
   .vb-compare .vb-compare-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
-/* 3. Full-bleed showcase: edge to edge of the screen, or the page frame's width. */
-.vb-showcase {
-  inline-size: 100vw;
-  margin-inline: calc(50% - 50vw);
-}
-.vb-showcase[data-width='wide'] {
+/* 3. Showcase: a large image or video at the content width (like the text
+   and every other block), or wider up to the page's frame lines. Never
+   edge to edge. */
+.vb-showcase[data-width='frame'] {
   inline-size: min(100vw - 2 * var(--space-gutter), var(--content-max));
   margin-inline: calc(50% - min(50vw - var(--space-gutter), var(--content-max) / 2));
 }
-.vb-showcase .vb-media { border-radius: 0; }
-.vb-showcase[data-width='wide'] .vb-media { border-radius: var(--radius-container); }
 .vb-showcase[data-surface='muted'] { background: var(--color-background-muted); }
 .vb-showcase[data-surface='brand'] { background: color-mix(in srgb, var(--color-brand-text) 12%, var(--color-background-surface)); }
 .vb-showcase[data-surface='inverse'] { background: var(--color-background-inverted); }
 .vb-showcase[data-inset='sm'] { padding: var(--spacing-4); }
 .vb-showcase[data-inset='md'] { padding: var(--space-block); }
 .vb-showcase[data-inset='lg'] { padding: var(--space-chapter-gap); }
-.vb-showcase[data-inset]:not([data-inset='none']) .vb-media { border-radius: var(--radius-container); }
-.vb-showcase .cs-caption { padding-inline: var(--space-gutter); }
-/* Keep the bleed from widening the page. */
+.vb-showcase:not([data-surface='none']) { border-radius: var(--radius-container); }
+/* Keep a frame-wide showcase from ever widening the page. */
 .cs-article-chapter { overflow-x: clip; }
 
 /* 4. Device mockups: devices placed on a stage by %, so the composition
@@ -3950,7 +4196,7 @@ dialog.astryx-dialog::backdrop {
 .write-block-grip:active { cursor: grabbing; }
 .write-block[data-content] .write-block-content { display: grid; gap: var(--spacing-3); }
 .write-block .vb-showcase {
-  /* In the editor the bleed stays within the canvas. */
+  /* In the editor a frame-wide showcase stays within the canvas. */
   inline-size: auto;
   margin-inline: 0;
 }
@@ -4058,4 +4304,27 @@ dialog.astryx-dialog::backdrop {
 .vb-quote[data-style='bordered'] .vb-quote-text {
   font-family: inherit;
   font-style: normal;
+}
+
+/* A case study's downloads (PDF, presentation): a quiet row above the story. */
+.cs-downloads {
+  padding-block-end: var(--spacing-6);
+  margin-block-end: var(--space-block);
+  border-block-end: 1px solid var(--color-border);
+}
+
+/* The end-of-story PDF offer (CaseStudyPdfRequest). */
+.cs-pdf-link.astryx-button {
+  padding-inline: 0;
+  color: var(--color-brand-text);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+/* The bot trap stays out of sight and out of the tab order. */
+.cs-pdf-trap {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
 }

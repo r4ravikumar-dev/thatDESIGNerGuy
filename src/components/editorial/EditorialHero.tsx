@@ -1,5 +1,6 @@
 'use client';
 
+import {Fragment} from 'react';
 import type {ReactNode} from 'react';
 import {VStack, HStack} from '@astryxdesign/core/Layout';
 import {Heading} from '@astryxdesign/core/Heading';
@@ -33,6 +34,8 @@ type EditorialHeroProps = {
   isFullHeight?: boolean;
   /** Centre the text (only without an illustration). Left-aligned by default. */
   align?: 'start' | 'center';
+  /** The column it sits in: the page's default, or the narrow reading column (case studies). */
+  width?: 'default' | 'narrow';
 };
 
 /**
@@ -52,6 +55,7 @@ export function EditorialHero({
   size = 'hero-title',
   isFullHeight = false,
   align = 'start',
+  width = 'default',
 }: EditorialHeroProps) {
   const titleRef = useTextReveal({delay: 0.1});
   const isCentered = align === 'center' && !illustration;
@@ -69,7 +73,7 @@ export function EditorialHero({
         paddingBlockStart: 'var(--space-chapter-gap)',
         paddingBlockEnd: 'var(--space-block)',
       }}>
-      <Container gap={0} style={{flex: 1}}>
+      <Container gap={0} size={width} style={{flex: 1}}>
         <Grid
           columns={1}
           className={illustration ? 'hero-split' : undefined}
@@ -130,23 +134,28 @@ export function EditorialHero({
         </Grid>
       </Container>
       {meta && meta.length > 0 && (
-        <Container gap={0}>
+        <Container gap={0} size={width}>
           <Reveal delay={0.3}>
+            {/* One line, the items joined by "•"; each item (with its dot)
+              stays in one piece, so a wrap never leaves a dot dangling. */}
             <HStack
-              gap={6}
-              wrap="wrap"
-              justify="between"
               className="hero-meta"
               style={{
                 borderBlockStart: '1px solid var(--color-border)',
                 paddingBlockStart: 'var(--spacing-4)',
                 marginBlockStart: 'var(--space-block)',
               }}>
-              {meta.map(item => (
-                <Text key={item} type="supporting" color="secondary" style={EYEBROW_STYLE}>
-                  {item}
-                </Text>
-              ))}
+              <Text type="supporting" color="secondary" style={EYEBROW_STYLE}>
+                {meta.map((item, index) => (
+                  <Fragment key={item}>
+                    <span style={{whiteSpace: 'nowrap'}}>
+                      {item}
+                      {index < meta.length - 1 && '\u00a0\u00a0•\u00a0'}
+                    </span>
+                    {index < meta.length - 1 && ' '}
+                  </Fragment>
+                ))}
+              </Text>
             </HStack>
           </Reveal>
         </Container>

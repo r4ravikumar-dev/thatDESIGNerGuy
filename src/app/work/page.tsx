@@ -23,7 +23,7 @@ export const revalidate = 300;
 export default async function WorkPage() {
   // Published case studies from the studio; the static projects until there are any.
   const studies = await getPublishedCaseStudies();
-  const projects = studies.length ? studies.map(toWorkFeature) : undefined;
+  const projects = studies.length ? studies.map((study, index) => toWorkFeature(study, index)) : undefined;
   return (
     <VStack gap={0}>
       <EditorialHero {...workPage.hero} align="center" />

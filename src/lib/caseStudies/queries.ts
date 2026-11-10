@@ -29,8 +29,8 @@ function fromSnapshot(row: PublishedRow): CaseStudy | null {
 }
 
 /**
- * Published case studies (their live versions), in the order set in the
- * studio. Returns [] when Supabase isn't connected or can't be reached, so
+ * Published case studies (their live versions), newest first: the one
+ * started most recently leads (re-publishing an edit doesn't move it). Returns [] when Supabase isn't connected or can't be reached, so
  * the site falls back to its static projects instead of breaking.
  */
 export async function getPublishedCaseStudies(): Promise<CaseStudy[]> {
@@ -47,11 +47,7 @@ export async function getPublishedCaseStudies(): Promise<CaseStudy[]> {
   return ((data ?? []) as PublishedRow[])
     .map(fromSnapshot)
     .filter((study): study is CaseStudy => study !== null)
-    .sort(
-      (a, b) =>
-        a.sort_order - b.sort_order ||
-        (b.published_at ?? '').localeCompare(a.published_at ?? ''),
-    );
+    .sort((a, b) => b.created_at.localeCompare(a.created_at));
 }
 
 /** Published case studies marked "Show on Home". */
@@ -98,8 +94,14 @@ export async function getCaseStudyForOwner(id: string): Promise<CaseStudy | null
   return (data as CaseStudy | null) ?? null;
 }
 
-/** A case study as a project on the Work page (WorkFeatures). */
-export function toWorkFeature(study: CaseStudy): WorkFeature {
+/**
+ * The Work page picks each project's layout from its place in the list, so
+ * the page always keeps the same rhythm: wide, split, split reversed, again.
+ */
+const WORK_RHYTHM: WorkFeature['layout'][] = ['wide', 'split', 'split-reverse'];
+
+/** A case study as a project on the Work page (WorkFeatures), at its place in the list. */
+export function toWorkFeature(study: CaseStudy, index: number): WorkFeature {
   return {
     slug: study.slug,
     label: study.label || study.title,
@@ -114,7 +116,7 @@ export function toWorkFeature(study: CaseStudy): WorkFeature {
       focus: study.thumbnail_focus,
     },
     href: `/work/${study.slug}`,
-    layout: study.layout,
+    layout: WORK_RHYTHM[index % WORK_RHYTHM.length],
     isLive: true,
   };
 }

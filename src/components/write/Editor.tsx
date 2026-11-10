@@ -57,6 +57,8 @@ function metaOf(study: CaseStudy): CaseStudyMeta {
     is_featured: study.is_featured,
     sort_order: study.sort_order,
     seo_description: study.seo_description,
+    // Older rows (before the downloads column) have none.
+    downloads: study.downloads ?? [],
   };
 }
 

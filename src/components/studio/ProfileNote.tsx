@@ -6,14 +6,20 @@ import {Heading} from '@astryxdesign/core/Heading';
 import {Text} from '@astryxdesign/core/Text';
 import {VisuallyHidden} from '@astryxdesign/core/VisuallyHidden';
 import {Reveal} from '@/components/motion/Reveal';
+import {Button} from '@astryxdesign/core/Button';
+import {Icon} from '@astryxdesign/core/Icon';
+import {Download} from 'lucide-react';
 import {CtaButton} from '@/components/navigation/CtaButton';
+import {openResume} from '@/components/navigation/resume';
+import {site} from '@/content/site';
 import {IndexLabel} from '@/components/editorial/IndexLabel';
 import {Lines, accentStyle} from '@/components/storytelling/Lines';
 import {typeRole} from '@/theme/typeScale';
 import {EYEBROW_STYLE} from '@/theme/eyebrow';
 
 type ProfileNoteProps = {
-  index: number;
+  /** Section number. No longer shown: section labels read as words only. */
+  index?: number;
   label: string;
   name: string;
   role: string;
@@ -23,6 +29,8 @@ type ProfileNoteProps = {
   team: string;
   /** A link to know more about me; hidden while href is empty. */
   profile?: {label: string; href: string};
+  /** The resume download under the bio. */
+  resume?: {label: string};
 };
 
 /**
@@ -33,7 +41,6 @@ type ProfileNoteProps = {
  * globals.css).
  */
 export function ProfileNote({
-  index,
   label,
   name,
   role,
@@ -41,12 +48,13 @@ export function ProfileNote({
   bio,
   team,
   profile,
+  resume,
 }: ProfileNoteProps) {
   return (
     <Grid columns={1} gap={10} className="profile-grid">
       <VStack gap={6} className="profile-quote">
         <Reveal>
-          <IndexLabel index={index}>{label}</IndexLabel>
+          <IndexLabel>{label}</IndexLabel>
         </Reveal>
         <Reveal delay={0.05} distance={32}>
           <figure style={{margin: 0}}>
@@ -112,6 +120,25 @@ export function ProfileNote({
           <Text color="secondary" textWrap="pretty">
             {team}
           </Text>
+          {resume && site.resumeUrl && (
+            <HStack
+              gap={4}
+              vAlign="center"
+              wrap="wrap"
+              style={{paddingBlockStart: 'var(--spacing-2)'}}>
+              <Button
+                label={resume.label}
+                href={site.resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={openResume}
+                variant="primary"
+                size="lg"
+                aria-label={`${resume.label} (PDF, opens in a new tab and downloads)`}
+                endContent={<Icon icon={Download} size="sm" color="inherit" />}
+              />
+            </HStack>
+          )}
           {profile?.href && (
             <HStack>
               <CtaButton

@@ -18,6 +18,7 @@ import {ANCHORS, fluid, rem} from './breakpoints';
 
 export type TypeRole =
   | 'hero-title'
+  | 'tagline'
   | 'section-title'
   | 'display-xxl'
   | 'display-xl'
@@ -83,6 +84,9 @@ export const typeScale: Record<TypeRole, RoleSpec> = {
   // Every page hero's headline: 72px on the web (no further growth on wide
   // screens), fluid down to 32px on phones.
   'hero-title': display(72, 72, 52, 32, LINE_HEIGHT.display),
+  // The hero's signature line (an h5-sized line): 17px on the web, 15px on
+  // tablets, 14px on phones, stepping at the breakpoints like body text.
+  tagline: text(17, 17, 15, 14, LINE_HEIGHT.headline),
   // Every section's headline, site-wide, for consistency: 56px on the web
   // (no further growth on wide screens), fluid down to 28px on phones.
   'section-title': display(56, 56, 40, 28, LINE_HEIGHT.display),

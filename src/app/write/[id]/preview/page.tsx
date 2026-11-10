@@ -25,7 +25,7 @@ export default async function PreviewPage({
   return (
     <>
       {!isEmbedded && <PreviewBar id={study.id} status={study.status} />}
-      <CaseStudyPage study={study} />
+      <CaseStudyPage study={study} isPreview />
     </>
   );
 }
