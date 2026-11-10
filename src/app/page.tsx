@@ -7,6 +7,8 @@ import {BigStatement} from '@/components/editorial/BigStatement';
 import {PortfolioHero} from '@/components/home/PortfolioHero';
 import {WorkShowcase} from '@/components/home/WorkShowcase';
 import {getFeaturedCaseStudies, toWorkProject} from '@/lib/caseStudies/queries';
+import {SideWorkTicker} from '@/components/home/SideWorkTicker';
+import {getSideWork} from '@/lib/sideWork/queries';
 import {AboutSection} from '@/components/home/AboutSection';
 import {Timeline} from '@/components/home/Timeline';
 import {closing, disciplines, process} from '@/content/home';
@@ -16,7 +18,7 @@ export const revalidate = 300;
 
 export default async function HomePage() {
   // Featured case studies from the studio; the static projects until there are any.
-  const featured = await getFeaturedCaseStudies();
+  const [featured, sideWorkPhotos] = await Promise.all([getFeaturedCaseStudies(), getSideWork()]);
   const projects = featured.length ? featured.map(toWorkProject) : undefined;
   return (
     <VStack gap={0}>
@@ -54,6 +56,9 @@ export default async function HomePage() {
         <ChapterHeader index={process.index} label={process.label} title={process.title} />
         <SequenceRail steps={process.steps} label="How I work, step by step" />
       </Chapter>
+
+      {/* Side work: AI tools, graphics and small pieces, looping past. */}
+      {sideWorkPhotos.length > 0 && <SideWorkTicker photos={sideWorkPhotos} />}
 
       <BigStatement {...closing} />
     </VStack>

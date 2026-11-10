@@ -19,7 +19,7 @@ export default function AboutPage() {
   return (
     <VStack gap={0}>
       {/* Full width and centred: the title and introduction on their own. */}
-      <EditorialHero {...aboutHero} align="center" />
+      <EditorialHero {...aboutHero} align="center" hasBackdrop />
 
       {/* 01 The person */}
       <Chapter label={profile.label}>

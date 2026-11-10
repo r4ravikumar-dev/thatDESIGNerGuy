@@ -1333,7 +1333,8 @@ html {
   inline-size: var(--header-height);
   block-size: var(--header-height);
   border-inline-start: 1px solid var(--color-border);
-  color: var(--color-text-primary);
+  /* The resume and LinkedIn icons, in brand blue. */
+  color: var(--color-brand-text);
   transition:
     color 200ms ease,
     background-color 200ms ease;
@@ -4327,4 +4328,169 @@ dialog.astryx-dialog::backdrop {
   block-size: 1px;
   opacity: 0;
   pointer-events: none;
+}
+
+/* Side work (SideWorkTicker): a looping row of small pieces on Home and Work. */
+.side-work {
+  /* A lighter section than the main chapters: it sizes to its content,
+     with half the usual padding, instead of taking a whole screen. */
+  padding-block: calc(var(--space-section) / 2);
+  gap: var(--space-block);
+}
+.side-work-ticker {
+  position: relative;
+  overflow: hidden;
+  /* Outside the frame lines the cards all but vanish; inside, they fade up
+     to full over a short run, so the lines read as the ticker's edges. */
+  --side-work-fade: calc(var(--frame-inset) + clamp(3rem, 10vw, 10rem));
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    rgb(0 0 0 / 0.04) var(--frame-inset),
+    black var(--side-work-fade),
+    black calc(100% - var(--side-work-fade)),
+    rgb(0 0 0 / 0.04) calc(100% - var(--frame-inset)),
+    transparent 100%
+  );
+}
+/* A frosted blur over each edge, strongest at the screen edge and easing
+   off just inside the frame line. */
+.side-work-ticker::before,
+.side-work-ticker::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  z-index: 1;
+  inline-size: var(--side-work-fade);
+  backdrop-filter: blur(var(--spacing-4));
+  -webkit-backdrop-filter: blur(var(--spacing-4));
+  pointer-events: none;
+}
+.side-work-ticker::before {
+  inset-inline-start: 0;
+  mask-image: linear-gradient(to right, black calc(100% - var(--spacing-12)), transparent);
+}
+.side-work-ticker::after {
+  inset-inline-end: 0;
+  mask-image: linear-gradient(to left, black calc(100% - var(--spacing-12)), transparent);
+}
+.side-work-track {
+  inline-size: max-content;
+  animation: side-work-loop var(--side-work-duration, 40s) linear infinite;
+}
+/* Hovering slows the loop down (SideWorkTicker eases its speed); keyboard
+   focus and the pause button stop it. */
+.side-work-ticker:focus-within .side-work-track,
+.side-work-ticker[data-paused] .side-work-track {
+  animation-play-state: paused;
+}
+@keyframes side-work-loop {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.side-work-group {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex-wrap: nowrap;
+}
+.side-work-card {
+  flex: none;
+  /* Every photo shares one height; its width follows its proportions. */
+  block-size: clamp(13rem, 22vw, 20rem);
+  overflow: hidden;
+  border-radius: var(--radius-container);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background-muted);
+  /* Space after every photo, the last included, so the loop's seam matches. */
+  margin-inline-end: var(--spacing-6);
+}
+.side-work-card img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+.side-work-controls {
+  padding-block-start: var(--spacing-4);
+}
+/* Reduced motion: no loop, just a row to scroll through, without the copy. */
+@media (prefers-reduced-motion: reduce) {
+  .side-work-ticker::before,
+  .side-work-ticker::after {
+    display: none;
+  }
+  .side-work-ticker {
+    overflow-x: auto;
+    mask-image: none;
+    scroll-snap-type: x mandatory;
+    padding-inline: calc(var(--space-gutter) + var(--frame-padding));
+  }
+  .side-work-track {
+    animation: none;
+  }
+  .side-work-card {
+    scroll-snap-align: start;
+  }
+  .side-work-copy,
+  .side-work-controls {
+    display: none;
+  }
+}
+
+/* Studio: Side work (SideWorkManager). */
+.studio-nav {
+  gap: var(--spacing-4);
+}
+.studio-nav-link {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+.studio-nav-link:hover,
+.studio-nav-link[aria-current='page'] {
+  color: var(--color-text-primary);
+}
+.studio-nav-link[aria-current='page'] {
+  text-decoration: underline;
+  text-underline-offset: var(--spacing-1);
+}
+.side-work-studio-item {
+  padding: var(--spacing-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+}
+.side-work-studio-image {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-container);
+  background: var(--color-background-muted);
+}
+.side-work-studio-error {
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-container);
+}
+
+/* Inner-page heroes (Work, About, Contact) with the dot grid behind them
+   (EditorialHero hasBackdrop, RippleGrid variant "hero"). The grid runs the
+   full width; the text sits above it. */
+.hero-backdrop {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.hero-backdrop > :not(.ripple-grid) {
+  position: relative;
+}
+.ripple-grid.ripple-grid-hero {
+  z-index: -1;
+  opacity: 1;
+  /* The fade: 40% at the very top, evenly down to 0% at 70% of the hero's
+     height. The wave and ripples play inside it and never break through. */
+  mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.4) 0%, transparent 70%);
+  -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.4) 0%, transparent 70%);
 }
